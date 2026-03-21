@@ -118,7 +118,7 @@ input,textarea,select,button{font-family:var(--fb)}
 .ecard:active{transform:scale(.99);border-color:var(--ac);border-color:var(--bl)}
 .ecard.arc{opacity:.52}
 /* #11 Ready to Roll glow */
-.ecard.rtr{border-color:rgba(16,185,129,.5);box-shadow:0 0 18px rgba(16,185,129,.18)}
+.ecard.rtr{border-color:var(--ok);border-width:2px;box-shadow:0 0 0 3px rgba(5,150,105,.2),0 4px 24px rgba(5,150,105,.25)}
 .ehd{padding:14px 14px 10px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
 .ename{font-family:var(--fh);font-size:25px;font-weight:900;line-height:1;color:var(--tx)}
 .evenue{font-size:12px;color:var(--mu);margin-top:3px}
@@ -127,17 +127,17 @@ input,textarea,select,button{font-family:var(--fb)}
 .plive{color:var(--ok);border-color:rgba(16,185,129,.35);background:var(--ok2)}
 .pdraft{color:var(--wn);border-color:rgba(245,158,11,.35);background:var(--wn2)}
 .parc{color:var(--mu);border-color:var(--br);background:var(--s2)}
-.prtr{color:var(--ok);border-color:rgba(16,185,129,.5);background:rgba(16,185,129,.15);font-weight:900}
+.prtr{color:#fff;border-color:var(--ok);background:var(--ok);font-weight:900;letter-spacing:1px}
 .emeta{padding:0 14px 10px;display:grid;grid-template-columns:1fr 1fr;gap:6px}
 .mchip{background:var(--s2);border-radius:var(--r);padding:7px 10px}
 .mchip .ml{font-size:9px;font-weight:700;letter-spacing:2px;color:var(--mu);text-transform:uppercase}
 .mchip .mv{font-size:12px;font-weight:600;color:var(--tx);margin-top:2px}
 .eprog{padding:0 14px 14px}
 .ptrack{background:var(--s2);border-radius:3px;height:5px;overflow:hidden}
-.pfill{background:var(--bl);height:100%;border-radius:3px;transition:width .5s}
+.pfill{background:#B45309;height:100%;border-radius:3px;transition:width .5s}
 .pfill.rtr{background:var(--ok)}
 .plbls{display:flex;justify-content:space-between;margin-top:5px;font-size:10px;color:var(--mu)}
-.plbls.rtr{color:var(--ok);font-weight:800;font-size:11px}
+.plbls.rtr{color:var(--ok);font-weight:900;font-size:12px;letter-spacing:.5px}
 
 /* EVENT DETAIL */
 .backrow{display:flex;align-items:center;gap:7px;margin-bottom:14px;color:var(--mu);cursor:pointer;width:fit-content}
@@ -183,9 +183,9 @@ input,textarea,select,button{font-family:var(--fb)}
 .spill{font-size:9px;font-weight:700;padding:3px 8px;border-radius:20px;border:1px solid}
 
 /* #11 Ready to Roll button */
-.rtr-btn{width:100%;background:linear-gradient(135deg,rgba(5,150,105,.15),rgba(5,150,105,.08));border:2px solid var(--ok);border-radius:var(--rl);padding:16px;color:var(--ok);font-family:var(--fh);font-size:18px;font-weight:900;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:.2s;margin-bottom:11px;display:flex;align-items:center;justify-content:center;gap:10px}
+.rtr-btn{width:100%;background:linear-gradient(135deg,rgba(5,150,105,.15),rgba(5,150,105,.08));border:2px solid var(--ok);border-radius:var(--rl);padding:18px;color:var(--ok);font-family:var(--fh);font-size:20px;font-weight:900;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:.2s;margin-bottom:20px;display:flex;align-items:center;justify-content:center;gap:10px}
 .rtr-btn:active{opacity:.8}
-.rtr-locked{width:100%;background:rgba(16,185,129,.08);border:2px solid rgba(16,185,129,.3);border-radius:var(--rl);padding:14px;color:rgba(16,185,129,.4);font-family:var(--fh);font-size:14px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:11px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:default}
+.rtr-locked{width:100%;background:rgba(5,150,105,.06);border:2px dashed rgba(5,150,105,.3);border-radius:var(--rl);padding:14px;color:rgba(5,150,105,.5);font-family:var(--fh);font-size:14px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:20px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:default}
 .rtr-banner{background:rgba(16,185,129,.1);border:2px solid var(--ok);border-radius:var(--rl);padding:14px 16px;margin-bottom:11px;display:flex;align-items:center;gap:10px}
 .rtr-banner-text{font-family:var(--fh);font-size:16px;font-weight:900;letter-spacing:2px;color:var(--ok);text-transform:uppercase;font-weight:900}
 .edit-event-btn{background:var(--dn2);border:1px solid var(--dn);border-radius:var(--r);padding:8px 14px;color:var(--dn);font-size:12px;font-weight:700;cursor:pointer;margin-bottom:11px;display:inline-flex;align-items:center;gap:5px}
@@ -202,7 +202,7 @@ input,textarea,select,button{font-family:var(--fb)}
 /* #4 loaded = bigger bolder checkmark */
 .ichk.loaded{border-color:var(--ok);background:var(--ok2)}
 .imain{flex:1;min-width:0}
-.iname{font-size:14px;font-weight:600;color:var(--tx)}
+.iname{font-size:16px;font-weight:600;color:var(--tx);line-height:1.3;word-break:break-word;white-space:normal}
 .iqty{font-size:11px;color:var(--mu);margin-top:1px}
 /* #7 lighter timestamps */
 .iby{font-size:10px;color:var(--mu);margin-top:3px;font-style:italic}
@@ -308,6 +308,8 @@ const db = {
       readyToRoll: ev.ready_to_roll || false,
       installCrew: ev.install_crew || [],
       strikeCrew: ev.strike_crew || [],
+      installLead: ev.install_lead || '',
+      strikeLead: ev.strike_lead || '',
       createdAt: ev.created_at, updatedAt: ev.updated_at,
       items: (items || []).filter(i => i.event_id === ev.id).map(i => ({
         id: i.id, name: i.name, qty: i.qty, category: i.category, notes: i.notes,
@@ -338,6 +340,8 @@ const db = {
     ready_to_roll: ev.readyToRoll||false,
     install_crew: ev.installCrew||[],
     strike_crew: ev.strikeCrew||[],
+    install_lead: ev.installLead||'',
+    strike_lead: ev.strikeLead||'',
     updated_at: nowISO(),
   }),
   upsertItem: async (item, eventId) => supabase.from('cf_items').upsert({
@@ -508,7 +512,7 @@ function TruckModal({ event, onSave, onClose, fleet }) {
   );
 }
 
-function ItemModal({ item, onSave, onClose, masterItems }) {
+function ItemModal({ item, onSave, onClose, masterItems, isAdmin }) {
   const categories = useContext(CatContext);
   const isEdit = !!item;
   const UNITS = ['units','pcs','ft','m','boxes','cases','rolls','sets','ea'];
@@ -517,12 +521,38 @@ function ItemModal({ item, onSave, onClose, masterItems }) {
   const [unit, setUnit] = useState(item ? (item.qty.split(' ').slice(1).join(' ') || 'units') : 'units');
   const [cat, setCat] = useState(item ? item.category : categories[0]);
   const [notes, setNotes] = useState(item ? (item.notes || '') : '');
-  const handleSave = () => {
+  const [confirmSave, setConfirmSave] = useState(false);
+
+  const handleSaveAttempt = () => {
     if (!name.trim()) return;
+    if (isEdit) { setConfirmSave(true); return; }
+    doSave();
+  };
+
+  const doSave = () => {
     const match = masterItems.find(m => m.name.toLowerCase() === name.toLowerCase());
     const base = isEdit ? { ...item } : { id:uid(), status:'pending', addedBy:null, removedAt:null };
     onSave({ ...base, name:name.trim(), qty:`${qty} ${unit}`, category:match ? match.category : cat, notes });
+    setConfirmSave(false);
   };
+
+  if (confirmSave) {
+    return (
+      <div className="mback ctr">
+        <div className="mover" onClick={() => setConfirmSave(false)} />
+        <div className="modal">
+          <Confirm
+            title="Save Changes?"
+            body={`Confirm changes to "${item.name}"? This will be logged.`}
+            onConfirm={doSave}
+            onCancel={() => setConfirmSave(false)}
+            confirmLabel="Yes, Save"
+          />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="mback">
       <div className="mover" onClick={onClose} />
@@ -533,11 +563,13 @@ function ItemModal({ item, onSave, onClose, masterItems }) {
           <div className="field"><label className="flbl">Qty</label><input className="fi" type="number" value={qty} onChange={e => setQty(e.target.value)} min="1" /></div>
           <div className="field"><label className="flbl">Unit</label><select className="fsel" value={unit} onChange={e => setUnit(e.target.value)}>{UNITS.map(u => <option key={u}>{u}</option>)}</select></div>
         </div>
-        <div className="field"><label className="flbl">Category</label><select className="fsel" value={cat} onChange={e => setCat(e.target.value)}>{categories.map(c => <option key={c}>{c}</option>)}</select></div>
+        {isAdmin && (
+          <div className="field"><label className="flbl">Category</label><select className="fsel" value={cat} onChange={e => setCat(e.target.value)}>{categories.map(c => <option key={c}>{c}</option>)}</select></div>
+        )}
         <div className="field"><label className="flbl">Notes (optional)</label><textarea className="fta" value={notes} onChange={e => setNotes(e.target.value)} rows={2} /></div>
         <div className="macts">
           <button className="btn bghost" onClick={onClose}>Cancel</button>
-          <button className="btn bprim" style={{ flex:2 }} onClick={handleSave}>{isEdit ? 'Save Changes' : 'Add Item'}</button>
+          <button className="btn bprim" style={{ flex:2 }} onClick={handleSaveAttempt}>{isEdit ? 'Save Changes' : 'Add Item'}</button>
         </div>
       </div>
     </div>
@@ -578,10 +610,14 @@ function EventForm({ onSave, onClose, existing, masterItems, users }) {
   const [ni, setNi] = useState({ name:'', qty:'1', unit:'units', cat:categories[0] });
   const [installCrew, setInstallCrew] = useState(e.installCrew || []);
   const [strikeCrew, setStrikeCrew] = useState(e.strikeCrew || []);
+  const [installLead, setInstallLead] = useState(e.installLead || '');
+  const [strikeLead, setStrikeLead] = useState(e.strikeLead || '');
   const employees = (users || []).filter(u => u.active && u.role === 'employee');
 
-  const toggleCrew = (list, setList, name) => {
-    setList(prev => prev.includes(name) ? prev.filter(n => n !== name) : [...prev, name]);
+  const toggleCrew = (list, setList, name, lead, setLead) => {
+    const isOn = list.includes(name);
+    setList(prev => isOn ? prev.filter(n => n !== name) : [...prev, name]);
+    if (isOn && lead === name) setLead('');
   };
 
   const addItem = () => {
@@ -593,7 +629,7 @@ function EventForm({ onSave, onClose, existing, masterItems, users }) {
 
   const save = (live) => {
     if (!name.trim()) return;
-    onSave({ ...e, id:e.id||uid(), name, venue, address, eventStart, eventEnd, installDT, strikeDT, departureDT, brief, installCrew, strikeCrew, items:[...items, ...(e.items||[]).filter(i=>i.removedAt)], live, archived:e.archived||false, createdAt:e.createdAt||nowISO(), truck:e.truck||'', trailer:e.trailer||'', readyToRoll:e.readyToRoll||false });
+    onSave({ ...e, id:e.id||uid(), name, venue, address, eventStart, eventEnd, installDT, strikeDT, departureDT, brief, installCrew, strikeCrew, installLead, strikeLead, items:[...items, ...(e.items||[]).filter(i=>i.removedAt)], live, archived:e.archived||false, createdAt:e.createdAt||nowISO(), truck:e.truck||'', trailer:e.trailer||'', readyToRoll:e.readyToRoll||false });
   };
 
   return (
@@ -619,11 +655,22 @@ function EventForm({ onSave, onClose, existing, masterItems, users }) {
               <label className="flbl">Install Crew</label>
               <div style={{ background:'var(--s2)', border:'1px solid var(--br)', borderRadius:'var(--r)', padding:'8px 10px' }}>
                 {employees.map(u => (
-                  <div key={u.id} className="crew-member" onClick={() => toggleCrew(installCrew, setInstallCrew, u.name)}>
-                    <div className={'crew-cb' + (installCrew.includes(u.name) ? ' on' : '')}>
-                      {installCrew.includes(u.name) && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--ac)" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>}
+                  <div key={u.id} style={{ marginBottom:6 }}>
+                    <div className="crew-member" onClick={() => toggleCrew(installCrew, setInstallCrew, u.name, installLead, setInstallLead)}>
+                      <div className={'crew-cb' + (installCrew.includes(u.name) ? ' on' : '')}>
+                        {installCrew.includes(u.name) && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--bl)" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>}
+                      </div>
+                      <span className="crew-name">{u.name}</span>
                     </div>
-                    <span className="crew-name">{u.name}</span>
+                    {installCrew.includes(u.name) && (
+                      <div style={{ display:'flex', alignItems:'center', gap:6, paddingLeft:22, marginTop:3 }}
+                        onClick={() => setInstallLead(installLead === u.name ? '' : u.name)}>
+                        <div style={{ width:14, height:14, borderRadius:7, border:`2px solid ${installLead===u.name?'#D97706':'var(--br2)'}`, background:installLead===u.name?'#D97706':'transparent', display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', flexShrink:0 }}>
+                          {installLead === u.name && <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>}
+                        </div>
+                        <span style={{ fontSize:10, color: installLead===u.name?'#D97706':'var(--mu)', fontWeight:700, letterSpacing:.5 }}>⭐ Lead</span>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -632,11 +679,22 @@ function EventForm({ onSave, onClose, existing, masterItems, users }) {
               <label className="flbl">Strike Crew</label>
               <div style={{ background:'var(--s2)', border:'1px solid var(--br)', borderRadius:'var(--r)', padding:'8px 10px' }}>
                 {employees.map(u => (
-                  <div key={u.id} className="crew-member" onClick={() => toggleCrew(strikeCrew, setStrikeCrew, u.name)}>
-                    <div className={'crew-cb' + (strikeCrew.includes(u.name) ? ' on' : '')}>
-                      {strikeCrew.includes(u.name) && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--ac)" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>}
+                  <div key={u.id} style={{ marginBottom:6 }}>
+                    <div className="crew-member" onClick={() => toggleCrew(strikeCrew, setStrikeCrew, u.name, strikeLead, setStrikeLead)}>
+                      <div className={'crew-cb' + (strikeCrew.includes(u.name) ? ' on' : '')}>
+                        {strikeCrew.includes(u.name) && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--bl)" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>}
+                      </div>
+                      <span className="crew-name">{u.name}</span>
                     </div>
-                    <span className="crew-name">{u.name}</span>
+                    {strikeCrew.includes(u.name) && (
+                      <div style={{ display:'flex', alignItems:'center', gap:6, paddingLeft:22, marginTop:3 }}
+                        onClick={() => setStrikeLead(strikeLead === u.name ? '' : u.name)}>
+                        <div style={{ width:14, height:14, borderRadius:7, border:`2px solid ${strikeLead===u.name?'#D97706':'var(--br2)'}`, background:strikeLead===u.name?'#D97706':'transparent', display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', flexShrink:0 }}>
+                          {strikeLead === u.name && <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>}
+                        </div>
+                        <span style={{ fontSize:10, color: strikeLead===u.name?'#D97706':'var(--mu)', fontWeight:700, letterSpacing:.5 }}>⭐ Lead</span>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -967,13 +1025,23 @@ function EventDetail({ event, user, onBack, onUpdate, masterItems, fleet, users 
                 <div className="crew-lbl">Install Crew</div>
                 {(event.installCrew||[]).length === 0
                   ? <div style={{ fontSize:11, color:'var(--mu)' }}>Not assigned</div>
-                  : (event.installCrew||[]).map(n => <div key={n} className="crew-name-assigned">👤 {n}</div>)}
+                  : (event.installCrew||[]).map(n => (
+                    <div key={n} className="crew-name-assigned" style={{ display:'flex', alignItems:'center', gap:4, marginBottom:3 }}>
+                      👤 {n}
+                      {event.installLead === n && <span style={{ fontSize:9, fontWeight:800, color:'#D97706', background:'rgba(217,119,6,.1)', border:'1px solid #D97706', borderRadius:10, padding:'1px 6px', letterSpacing:.5 }}>⭐ LEAD</span>}
+                    </div>
+                  ))}
               </div>
               <div className="crew-block">
                 <div className="crew-lbl">Strike Crew</div>
                 {(event.strikeCrew||[]).length === 0
                   ? <div style={{ fontSize:11, color:'var(--mu)' }}>Not assigned</div>
-                  : (event.strikeCrew||[]).map(n => <div key={n} className="crew-name-assigned">👤 {n}</div>)}
+                  : (event.strikeCrew||[]).map(n => (
+                    <div key={n} className="crew-name-assigned" style={{ display:'flex', alignItems:'center', gap:4, marginBottom:3 }}>
+                      👤 {n}
+                      {event.strikeLead === n && <span style={{ fontSize:9, fontWeight:800, color:'#D97706', background:'rgba(217,119,6,.1)', border:'1px solid #D97706', borderRadius:10, padding:'1px 6px', letterSpacing:.5 }}>⭐ LEAD</span>}
+                    </div>
+                  ))}
               </div>
             </div>
 
@@ -1028,9 +1096,9 @@ function EventDetail({ event, user, onBack, onUpdate, masterItems, fleet, users 
 
       {/* Gear list */}
       {canEdit && (
-        <div className="shd">
+        <div className="shd" style={{ marginBottom:14, marginTop:8 }}>
           <span className="slbl">Gear List ({active.length})</span>
-          <button className="btn bacc bsm" onClick={() => setShowAdd(true)}>+ Add Item</button>
+          <button className="btn" style={{ background:'var(--bl)', color:'#fff', padding:'8px 16px', fontSize:13, fontWeight:800, borderRadius:'var(--r)', letterSpacing:.5 }} onClick={() => setShowAdd(true)}>+ Add Item</button>
         </div>
       )}
       {isRTR && !isAdmin && (
@@ -1170,8 +1238,8 @@ function EventDetail({ event, user, onBack, onUpdate, masterItems, fleet, users 
       )}
 
       {statusTarget && <StatusSheet item={statusTarget} onSelect={handleStatus} onClose={() => setStatusTarget(null)} />}
-      {showAdd && <ItemModal masterItems={masterItems} onSave={handleAddItem} onClose={() => setShowAdd(false)} />}
-      {editTarget && <ItemModal item={editTarget} masterItems={masterItems} onSave={handleEditItem} onClose={() => setEditTarget(null)} />}
+      {showAdd && <ItemModal masterItems={masterItems} onSave={handleAddItem} onClose={() => setShowAdd(false)} isAdmin={isAdmin} />}
+      {editTarget && <ItemModal item={editTarget} masterItems={masterItems} onSave={handleEditItem} onClose={() => setEditTarget(null)} isAdmin={isAdmin} />}
       {showTruck && <TruckModal event={event} onSave={handleTruck} onClose={() => setShowTruck(false)} fleet={fleet} />}
       {showExport && <ExportModal event={event} onClose={() => setShowExport(false)} />}
       {showEditEvent && <EventForm existing={event} masterItems={masterItems} users={users} onSave={async ev => { await db.upsertEvent(ev); for (const item of ev.items) { await db.upsertItem(item, ev.id); } onUpdate(ev); setShowEditEvent(false); pt('Event updated!', 'ok'); }} onClose={() => setShowEditEvent(false)} />}
@@ -1239,19 +1307,70 @@ function EventList({ events, user, onSelect, onCreateNew }) {
 
 function ActivityLog({ users }) {
   const [logs, setLogs] = useState([]);
-  const [filter, setFilter] = useState('all');
+  const [filterType, setFilterType] = useState('all'); // 'all' | empId | projectName
+  const [filterMode, setFilterMode] = useState('employee'); // 'employee' | 'project'
   const [loading, setLoading] = useState(true);
   useEffect(() => { db.getAllActivity().then(data => { setLogs(data); setLoading(false); }); }, []);
-  const empIds = [...new Set(logs.map(l => l.user_id))];
-  const filtered = filter === 'all' ? logs : logs.filter(l => l.user_id === filter);
+
   const resolveUser = (id) => users.find(u => u.id === id);
+  const empIds = [...new Set(logs.map(l => l.user_id).filter(Boolean))];
+  const projects = [...new Set(logs.map(l => l.event_name).filter(Boolean))];
+
+  const filtered = filterType === 'all'
+    ? logs
+    : filterMode === 'employee'
+      ? logs.filter(l => l.user_id === filterType)
+      : logs.filter(l => l.event_name === filterType);
+
+  // Contribution % per employee (based on status_change actions)
+  const statusLogs = logs.filter(l => l.action === 'status_change');
+  const contribMap = {};
+  statusLogs.forEach(l => {
+    if (l.user_id) contribMap[l.user_id] = (contribMap[l.user_id] || 0) + 1;
+  });
+  const totalActions = Object.values(contribMap).reduce((a,b) => a+b, 0);
+
   if (loading) return <div className="empty"><div className="etxt">Loading…</div></div>;
   return (
     <div>
-      <div className="tabrow">
-        <button className={'btn bsm '+(filter==='all'?'bacc':'bghost')} onClick={() => setFilter('all')}>All</button>
-        {empIds.map(id => { const u = resolveUser(id); return <button key={id} className={'btn bsm '+(filter===id?'bacc':'bghost')} onClick={() => setFilter(id)}>{u?u.name:id}</button>; })}
+      {/* Mode toggle */}
+      <div className="tabrow" style={{ marginBottom:8 }}>
+        <button className={'btn bsm '+(filterMode==='employee'?'bacc':'bghost')} onClick={() => { setFilterMode('employee'); setFilterType('all'); }}>By Employee</button>
+        <button className={'btn bsm '+(filterMode==='project'?'bacc':'bghost')} onClick={() => { setFilterMode('project'); setFilterType('all'); }}>By Project</button>
       </div>
+
+      {/* Filter buttons */}
+      <div className="tabrow">
+        <button className={'btn bsm '+(filterType==='all'?'bacc':'bghost')} onClick={() => setFilterType('all')}>All</button>
+        {filterMode === 'employee'
+          ? empIds.map(id => { const u = resolveUser(id); return <button key={id} className={'btn bsm '+(filterType===id?'bacc':'bghost')} onClick={() => setFilterType(id)}>{u?u.name:id}</button>; })
+          : projects.map(p => <button key={p} className={'btn bsm '+(filterType===p?'bacc':'bghost')} onClick={() => setFilterType(p)} style={{ maxWidth:120, overflow:'hidden', textOverflow:'ellipsis' }}>{p}</button>)
+        }
+      </div>
+
+      {/* Contribution stats — shown when filtering by employee or all */}
+      {filterMode === 'employee' && totalActions > 0 && (
+        <div style={{ background:'var(--sf)', border:'1px solid var(--br)', borderRadius:'var(--rl)', padding:'12px 14px', marginBottom:12 }}>
+          <div style={{ fontSize:10, fontWeight:700, letterSpacing:2, color:'var(--mu)', textTransform:'uppercase', marginBottom:10 }}>Load Contributions</div>
+          {empIds.map(id => {
+            const u = resolveUser(id);
+            const count = contribMap[id] || 0;
+            const pct = totalActions > 0 ? Math.round((count / totalActions) * 100) : 0;
+            return (
+              <div key={id} style={{ marginBottom:8 }}>
+                <div style={{ display:'flex', justifyContent:'space-between', marginBottom:3 }}>
+                  <span style={{ fontSize:12, fontWeight:600, color:'var(--tx)' }}>{u?u.name:id}</span>
+                  <span style={{ fontSize:12, fontWeight:700, color:'var(--bl)' }}>{pct}% <span style={{ color:'var(--mu)', fontWeight:400 }}>({count} actions)</span></span>
+                </div>
+                <div style={{ background:'var(--s2)', borderRadius:3, height:6, overflow:'hidden' }}>
+                  <div style={{ background:'var(--bl)', width:`${pct}%`, height:'100%', borderRadius:3, transition:'width .4s' }} />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
       {filtered.length === 0 && <div className="empty"><div className="eico">📋</div><div className="etxt">No activity yet.</div></div>}
       <div style={{ background:'var(--sf)', border:'1px solid var(--br)', borderRadius:'var(--rl)', overflow:'hidden' }}>
         {filtered.map((l, i) => {
