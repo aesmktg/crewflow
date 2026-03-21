@@ -5,11 +5,11 @@ import { supabase } from './supabaseClient';
 const DEFAULT_CATEGORIES = ['Audio','Video','Lighting','Staging','Rigging','Power','Backline','Décor','Misc'];
 const CatContext = React.createContext(DEFAULT_CATEGORIES);
 
+// #3 Updated status colors — Pending=Red, Prepped=Orange, Loaded=Green, Returned REMOVED
 const STATUS_CONFIG = {
-  pending:  { label:'Pending',        color:'#F59E0B', bg:'rgba(245,158,11,0.12)'  },
-  prepped:  { label:'Pulled/Prepped', color:'#3B82F6', bg:'rgba(59,130,246,0.12)'  },
-  loaded:   { label:'Loaded',         color:'#10B981', bg:'rgba(16,185,129,0.12)'  },
-  returned: { label:'Returned',       color:'#8B5CF6', bg:'rgba(139,92,246,0.12)'  },
+  pending:  { label:'Pending',        color:'#FF4040', bg:'rgba(255,64,64,0.12)'    },
+  prepped:  { label:'Pulled/Prepped', color:'#F97316', bg:'rgba(249,115,22,0.12)'   },
+  loaded:   { label:'Loaded',         color:'#10B981', bg:'rgba(16,185,129,0.12)'   },
 };
 
 // ─── STYLES ───────────────────────────────────────────────────────────────────
@@ -19,13 +19,13 @@ const CSS = `
 :root{
   --bg:#040406;--sf:#09090C;--s2:#0F0F14;--s3:#14141A;
   --br:#1A1A22;--br2:#242430;
-  --tx:#EDEDF0;--mu:#8A8A9A;--fa:#1E1E2A;
+  --tx:#EDEDF0;--mu:#8A8A9A;--fa:#4A4A5A;
   --ac:#E8FF47;--ac2:rgba(232,255,71,0.13);
   --dn:#FF4040;--dn2:rgba(255,64,64,0.12);
   --wn:#F59E0B;--wn2:rgba(245,158,11,0.12);
   --ok:#10B981;--ok2:rgba(16,185,129,0.12);
   --bl:#3B82F6;--bl2:rgba(59,130,246,0.12);
-  --pu:#8B5CF6;--pu2:rgba(139,92,246,0.12);
+  --or:#F97316;--or2:rgba(249,115,22,0.12);
   --r:6px;--rl:10px;--rx:16px;
   --fh:'Barlow Condensed',sans-serif;--fb:'Barlow',sans-serif;
 }
@@ -67,6 +67,8 @@ input,textarea,select,button{font-family:var(--fb)}
 .fta{resize:vertical;min-height:74px}
 .frow{display:flex;gap:10px}
 .frow .field{flex:1}
+
+/* #9 LOGIN — CREWFLOW branding */
 .login{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:24px;background:#040406}
 .l-eyebrow{font-family:var(--fh);font-size:11px;font-weight:700;letter-spacing:4px;color:var(--mu);text-transform:uppercase;margin-bottom:8px;text-align:center}
 .l-title{font-family:var(--fh);font-size:54px;font-weight:900;line-height:.93;text-align:center;margin-bottom:6px}
@@ -86,11 +88,15 @@ input,textarea,select,button{font-family:var(--fb)}
 .lc-body{font-size:13px;color:var(--tx);line-height:1.5;margin-bottom:14px}
 .lc-btns{display:flex;gap:8px}
 .lc-btns .btn{flex:1;padding:11px;font-size:14px;font-family:var(--fh);font-weight:800;letter-spacing:.8px;text-transform:uppercase}
+
+/* TOAST */
 .twrap{position:fixed;top:60px;left:50%;transform:translateX(-50%);z-index:999;pointer-events:none}
 .toast{background:var(--sf);border:1px solid var(--br);border-radius:20px;padding:8px 16px;font-size:13px;font-weight:600;color:var(--tx);white-space:nowrap;animation:tin .22s ease;box-shadow:0 4px 20px rgba(0,0,0,.4)}
 .toast.ok{border-color:var(--ok);color:var(--ok)}
 .toast.err{border-color:var(--dn);color:var(--dn)}
 @keyframes tin{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+
+/* MODAL */
 .mback{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:400;display:flex;align-items:flex-end}
 .mback.ctr{align-items:center;justify-content:center;padding:20px}
 .modal{position:relative;background:var(--sf);border-top:1px solid var(--br);border-radius:var(--rx) var(--rx) 0 0;padding:20px;width:100%;max-height:88vh;overflow-y:auto}
@@ -106,9 +112,13 @@ input,textarea,select,button{font-family:var(--fb)}
 .cb{font-size:13px;color:var(--mu);line-height:1.5;margin-bottom:13px}
 .cbtns{display:flex;gap:8px}
 .cbtns .btn{flex:1;padding:11px;font-size:12px;font-family:var(--fh);font-weight:800;letter-spacing:.5px;text-transform:uppercase}
+
+/* EVENT CARDS */
 .ecard{background:var(--sf);border:1px solid var(--br);border-radius:var(--rl);margin-bottom:10px;overflow:hidden;transition:.15s;cursor:pointer}
 .ecard:active{transform:scale(.99);border-color:var(--ac)}
 .ecard.arc{opacity:.52}
+/* #11 Ready to Roll glow */
+.ecard.rtr{border-color:rgba(16,185,129,.5);box-shadow:0 0 18px rgba(16,185,129,.18)}
 .ehd{padding:14px 14px 10px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
 .ename{font-family:var(--fh);font-size:25px;font-weight:900;line-height:1;color:var(--tx)}
 .evenue{font-size:12px;color:var(--mu);margin-top:3px}
@@ -117,6 +127,7 @@ input,textarea,select,button{font-family:var(--fb)}
 .plive{color:var(--ok);border-color:rgba(16,185,129,.35);background:var(--ok2)}
 .pdraft{color:var(--wn);border-color:rgba(245,158,11,.35);background:var(--wn2)}
 .parc{color:var(--mu);border-color:var(--br);background:var(--s2)}
+.prtr{color:var(--ok);border-color:rgba(16,185,129,.5);background:rgba(16,185,129,.15);font-weight:900}
 .emeta{padding:0 14px 10px;display:grid;grid-template-columns:1fr 1fr;gap:6px}
 .mchip{background:var(--s2);border-radius:var(--r);padding:7px 10px}
 .mchip .ml{font-size:9px;font-weight:700;letter-spacing:2px;color:var(--mu);text-transform:uppercase}
@@ -124,51 +135,89 @@ input,textarea,select,button{font-family:var(--fb)}
 .eprog{padding:0 14px 14px}
 .ptrack{background:var(--s2);border-radius:3px;height:5px;overflow:hidden}
 .pfill{background:var(--ac);height:100%;border-radius:3px;transition:width .5s}
+.pfill.rtr{background:var(--ok)}
 .plbls{display:flex;justify-content:space-between;margin-top:5px;font-size:10px;color:var(--mu)}
+.plbls.rtr{color:var(--ok);font-weight:800;font-size:11px}
+
+/* EVENT DETAIL */
 .backrow{display:flex;align-items:center;gap:7px;margin-bottom:14px;color:var(--mu);cursor:pointer;width:fit-content}
 .backrow:active{color:var(--ac)}
 .backrow svg{width:15px;height:15px}
 .backrow span{font-size:13px;font-weight:600}
-.dh{background:var(--sf);border:1px solid var(--br);border-radius:var(--rl);padding:16px;margin-bottom:11px}
-.dh-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:11px}
+
+/* #8 Collapsible event info */
+.dh{background:var(--sf);border:1px solid var(--br);border-radius:var(--rl);margin-bottom:11px;overflow:hidden}
+.dh-always{padding:14px 16px 0;display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.dh-collapse-btn{background:none;border:none;color:var(--mu);cursor:pointer;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;display:flex;align-items:center;gap:4px;padding:0;flex-shrink:0;margin-top:4px}
+.dh-body{padding:0 16px 14px}
 .dname{font-family:var(--fh);font-size:30px;font-weight:900;line-height:1}
 .dsub{font-size:12px;color:var(--mu);margin-top:3px}
-.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:11px}
 .ichip{background:var(--s2);border:1px solid var(--br);border-radius:var(--r);padding:9px 11px}
 .icl{font-size:9px;font-weight:700;letter-spacing:2px;color:var(--mu);text-transform:uppercase}
 .icv{font-size:13px;font-weight:600;color:var(--tx);margin-top:2px;line-height:1.3}
 .trchip{background:var(--s2);border:1px solid var(--br);border-radius:var(--r);padding:9px 11px;display:flex;align-items:center;cursor:pointer;transition:.15s;gap:8px;margin-top:7px}
 .trchip:active{border-color:var(--ac)}
-.brief{background:var(--s2);border-left:3px solid var(--ac);border-radius:0 var(--r) var(--r) 0;padding:12px 14px;margin-bottom:11px}
+
+/* Crew assignment */
+.crew-section{margin-top:7px;display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.crew-block{background:var(--s2);border:1px solid var(--br);border-radius:var(--r);padding:9px 11px}
+.crew-lbl{font-size:9px;font-weight:700;letter-spacing:2px;color:var(--mu);text-transform:uppercase;margin-bottom:7px}
+.crew-member{display:flex;align-items:center;gap:7px;padding:4px 0;cursor:pointer}
+.crew-cb{width:16px;height:16px;border-radius:3px;border:2px solid var(--br2);background:var(--s3);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:.15s}
+.crew-cb.on{border-color:var(--ac);background:var(--ac2)}
+.crew-name{font-size:12px;color:var(--tx);font-weight:500}
+.crew-name-assigned{font-size:11px;color:var(--tx);font-weight:500}
+
+/* Admin brief inside event info */
+.brief-inline{background:var(--s3);border-left:3px solid var(--ac);border-radius:0 var(--r) var(--r) 0;padding:10px 12px;margin-top:8px}
 .brieft{font-size:9px;font-weight:800;letter-spacing:2px;color:var(--ac);text-transform:uppercase;margin-bottom:5px}
-.briefb{font-size:14px;color:var(--tx);line-height:1.6;white-space:pre-wrap}
+.briefb{font-size:13px;color:var(--tx);line-height:1.6;white-space:pre-wrap}
+
+/* PROGRESS BLOCK */
 .pblock{background:var(--sf);border:1px solid var(--br);border-radius:var(--rl);padding:12px 14px;margin-bottom:11px}
 .phd{display:flex;justify-content:space-between;margin-bottom:7px}
 .phd span:first-child{font-size:10px;font-weight:700;letter-spacing:2px;color:var(--mu);text-transform:uppercase}
 .phd span:last-child{font-size:14px;font-weight:800;color:var(--ac)}
 .spills{display:flex;gap:7px;flex-wrap:wrap;margin-top:7px}
 .spill{font-size:9px;font-weight:700;padding:3px 8px;border-radius:20px;border:1px solid}
+
+/* #11 Ready to Roll button */
+.rtr-btn{width:100%;background:linear-gradient(135deg,rgba(16,185,129,.15),rgba(16,185,129,.08));border:2px solid var(--ok);border-radius:var(--rl);padding:16px;color:var(--ok);font-family:var(--fh);font-size:18px;font-weight:900;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:.2s;margin-bottom:11px;display:flex;align-items:center;justify-content:center;gap:10px}
+.rtr-btn:active{opacity:.8}
+.rtr-locked{width:100%;background:rgba(16,185,129,.08);border:2px solid rgba(16,185,129,.3);border-radius:var(--rl);padding:14px;color:rgba(16,185,129,.4);font-family:var(--fh);font-size:14px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:11px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:default}
+.rtr-banner{background:rgba(16,185,129,.1);border:2px solid var(--ok);border-radius:var(--rl);padding:14px 16px;margin-bottom:11px;display:flex;align-items:center;gap:10px}
+.rtr-banner-text{font-family:var(--fh);font-size:16px;font-weight:900;letter-spacing:2px;color:var(--ok);text-transform:uppercase}
+.edit-event-btn{background:var(--dn2);border:1px solid var(--dn);border-radius:var(--r);padding:8px 14px;color:var(--dn);font-size:12px;font-weight:700;cursor:pointer;margin-bottom:11px;display:inline-flex;align-items:center;gap:5px}
+
+/* ITEMS */
 .shd{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 .slbl{font-family:var(--fh);font-size:14px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--mu)}
 .catblk{margin-bottom:16px}
-.catlbl{font-family:var(--fh);font-size:11px;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--fa);border-bottom:1px solid var(--br);padding-bottom:5px;margin-bottom:7px}
+/* #7 lighter category labels */
+.catlbl{font-family:var(--fh);font-size:11px;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--mu);border-bottom:1px solid var(--br);padding-bottom:5px;margin-bottom:7px}
 .irow{background:var(--sf);border:1px solid var(--br);border-radius:var(--r);padding:11px 12px;margin-bottom:5px;display:flex;align-items:center;gap:10px}
 .ichk{width:26px;height:26px;border-radius:50%;border:2px solid var(--br2);background:var(--s2);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.18s}
-.ichk.prepped{border-color:var(--bl);background:var(--bl2)}
+.ichk.prepped{border-color:var(--or);background:var(--or2)}
+/* #4 loaded = bigger bolder checkmark */
 .ichk.loaded{border-color:var(--ok);background:var(--ok2)}
-.ichk.returned{border-color:var(--pu);background:var(--pu2)}
 .imain{flex:1;min-width:0}
 .iname{font-size:14px;font-weight:600;color:var(--tx)}
 .iqty{font-size:11px;color:var(--mu);margin-top:1px}
-.iby{font-size:10px;color:var(--fa);margin-top:3px;font-style:italic}
+/* #7 lighter timestamps */
+.iby{font-size:10px;color:var(--mu);margin-top:3px;font-style:italic}
 .iright{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0}
 .sbadge{font-size:8px;font-weight:800;letter-spacing:1px;padding:3px 8px;border-radius:20px;text-transform:uppercase;white-space:nowrap;border:1px solid}
+
+/* AUTOCOMPLETE */
 .acwrap{position:relative}
 .aclist{position:absolute;top:100%;left:0;right:0;background:var(--sf);border:1px solid var(--ac);border-top:none;border-radius:0 0 var(--r) var(--r);z-index:60;max-height:190px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,.45)}
 .acitem{padding:10px 13px;cursor:pointer;font-size:14px;color:var(--tx);border-bottom:1px solid var(--br);display:flex;align-items:center;justify-content:space-between}
 .acitem:last-child{border-bottom:none}
 .acitem:hover{background:var(--s2)}
 .accat{font-size:10px;color:var(--mu);font-weight:600}
+
+/* STATUS SHEET */
 .sback{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:300}
 .sheet{position:fixed;bottom:0;left:0;right:0;background:var(--sf);border-top:1px solid var(--br);border-radius:var(--rx) var(--rx) 0 0;padding:20px;z-index:301;max-width:680px;margin:0 auto;animation:sup .22s ease}
 @keyframes sup{from{transform:translateY(36px);opacity:0}to{transform:translateY(0);opacity:1}}
@@ -178,14 +227,27 @@ input,textarea,select,button{font-family:var(--fb)}
 .sdot{width:11px;height:11px;border-radius:50%;flex-shrink:0}
 .solbl{font-size:15px;font-weight:600}
 .scur{margin-left:auto;font-size:9px;color:var(--mu);font-weight:700;letter-spacing:1px;text-transform:uppercase}
-.auditsec{background:var(--sf);border:1px solid var(--br);border-radius:var(--rl);padding:14px;margin-top:18px}
-.auditt{font-family:var(--fh);font-size:14px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--dn);margin-bottom:11px;display:flex;align-items:center;gap:6px}
+
+/* #6 Collapsible audit */
+.auditsec{background:var(--sf);border:1px solid var(--br);border-radius:var(--rl);margin-top:18px;overflow:hidden}
+.audit-hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;cursor:pointer}
+.audit-hdr:active{background:var(--s2)}
+.auditt{font-family:var(--fh);font-size:12px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--mu);display:flex;align-items:center;gap:6px}
+.audit-body{padding:0 14px 12px}
 .aurow{border-left:2px solid var(--br2);padding:6px 10px;margin-bottom:6px;border-radius:0 var(--r) var(--r) 0}
 .aurow.rm{border-left-color:var(--dn)}
 .aurow.add{border-left-color:var(--ok)}
 .aurow.mod{border-left-color:var(--wn)}
 .auitem{font-size:12px;color:var(--tx)}
 .aumeta{font-size:10px;color:var(--mu);margin-top:2px}
+
+/* EXPORT BUTTONS */
+.export-row{display:flex;gap:8px;margin-top:16px;margin-bottom:4px}
+.export-btn{flex:1;background:var(--s2);border:1px solid var(--br);border-radius:var(--r);padding:10px 6px;color:var(--mu);font-size:11px;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;transition:.15s}
+.export-btn:active{border-color:var(--ac);color:var(--ac)}
+.export-ico{font-size:18px}
+
+/* ACTIVITY LOG */
 .logrow{padding:11px 13px;border-bottom:1px solid var(--br);display:flex;align-items:flex-start;gap:10px}
 .logrow:last-child{border-bottom:none}
 .logav{width:30px;height:30px;border-radius:50%;background:var(--s2);border:1px solid var(--br);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;font-family:var(--fh);color:var(--ac);flex-shrink:0}
@@ -193,6 +255,8 @@ input,textarea,select,button{font-family:var(--fb)}
 .logact{font-size:13px;color:var(--tx);line-height:1.4}
 .logt{font-size:10px;color:var(--mu);margin-top:2px}
 .logevt{font-size:10px;color:var(--mu);font-style:italic}
+
+/* USER MGMT */
 .ucard{background:var(--sf);border:1px solid var(--br);border-radius:var(--rl);padding:13px;margin-bottom:8px;display:flex;align-items:center;gap:11px}
 .uavlg{width:42px;height:42px;border-radius:50%;background:var(--s2);border:1px solid var(--br2);display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:900;font-family:var(--fh);color:var(--ac);flex-shrink:0}
 .ucinfo{flex:1;min-width:0}
@@ -217,17 +281,18 @@ input,textarea,select,button{font-family:var(--fb)}
 const uid = () => Math.random().toString(36).slice(2, 9);
 const nowISO = () => new Date().toISOString();
 const fmt = (d) => d ? new Date(d).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }) : '—';
-const fmtDT = (d) => d ? new Date(d).toLocaleString('en-US', { month:'short', day:'numeric', hour:'numeric', minute:'2-digit' }) : '—';
+const fmtDT = (d) => {
+  if (!d) return '—';
+  if (d === 'TBD') return 'TBD';
+  return new Date(d).toLocaleString('en-US', { month:'short', day:'numeric', hour:'numeric', minute:'2-digit' });
+};
 const fmtFull = (d) => d ? new Date(d).toLocaleString('en-US', { month:'short', day:'numeric', year:'numeric', hour:'numeric', minute:'2-digit', second:'2-digit' }) : '—';
 
 // ─── SUPABASE DATA LAYER ──────────────────────────────────────────────────────
 const db = {
-  // Users
   getUsers: async () => { const { data } = await supabase.from('cf_users').select('*').order('created_at'); return data || []; },
   upsertUser: async (u) => supabase.from('cf_users').upsert({ id:u.id, name:u.name, pin:u.pin, role:u.role, email:u.email||'', active:u.active, deactivated_at:u.deactivatedAt||null }),
   deleteUser: async (id) => supabase.from('cf_users').update({ active:false, deactivated_at:nowISO() }).eq('id', id),
-
-  // Events
   getEvents: async () => {
     const { data: events } = await supabase.from('cf_events').select('*').order('created_at', { ascending:false });
     if (!events) return [];
@@ -240,13 +305,16 @@ const db = {
       installDT: ev.install_dt, strikeDT: ev.strike_dt, departureDT: ev.departure_dt,
       brief: ev.brief, truck: ev.truck, trailer: ev.trailer,
       live: ev.live, archived: ev.archived, archivedAt: ev.archived_at,
+      readyToRoll: ev.ready_to_roll || false,
+      installCrew: ev.install_crew || [],
+      strikeCrew: ev.strike_crew || [],
       createdAt: ev.created_at, updatedAt: ev.updated_at,
       items: (items || []).filter(i => i.event_id === ev.id).map(i => ({
         id: i.id, name: i.name, qty: i.qty, category: i.category, notes: i.notes,
         status: i.status, addedBy: i.added_by, addedByUserId: i.added_by_user_id,
         addedAt: i.added_at, preppedBy: i.prepped_by, preppedAt: i.prepped_at,
-        loadedBy: i.loaded_by, loadedAt: i.loaded_at, returnedBy: i.returned_by,
-        returnedAt: i.returned_at, modifiedBy: i.modified_by, modifiedAt: i.modified_at,
+        loadedBy: i.loaded_by, loadedAt: i.loaded_at,
+        modifiedBy: i.modified_by, modifiedAt: i.modified_at,
         removedBy: i.removed_by, removedByUserId: i.removed_by_user_id, removedAt: i.removed_at,
         statusLog: [],
       })),
@@ -260,7 +328,6 @@ const db = {
       })),
     }));
   },
-
   upsertEvent: async (ev) => supabase.from('cf_events').upsert({
     id: ev.id, name: ev.name, venue: ev.venue||'', address: ev.address||'',
     event_start: ev.eventStart||'', event_end: ev.eventEnd||'',
@@ -268,9 +335,11 @@ const db = {
     brief: ev.brief||'', truck: ev.truck||'', trailer: ev.trailer||'',
     live: ev.live, archived: ev.archived||false,
     archived_at: ev.archivedAt||null, archived_reason: ev.archivedReason||'',
+    ready_to_roll: ev.readyToRoll||false,
+    install_crew: ev.installCrew||[],
+    strike_crew: ev.strikeCrew||[],
     updated_at: nowISO(),
   }),
-
   upsertItem: async (item, eventId) => supabase.from('cf_items').upsert({
     id: item.id, event_id: eventId, name: item.name, qty: item.qty,
     category: item.category, notes: item.notes||'', status: item.status||'pending',
@@ -278,29 +347,22 @@ const db = {
     added_at: item.addedAt||null,
     prepped_by: item.preppedBy||'', prepped_at: item.preppedAt||null,
     loaded_by: item.loadedBy||'', loaded_at: item.loadedAt||null,
-    returned_by: item.returnedBy||'', returned_at: item.returnedAt||null,
     modified_by: item.modifiedBy||'', modified_at: item.modifiedAt||null,
     removed_by: item.removedBy||'', removed_by_user_id: item.removedByUserId||'',
     removed_at: item.removedAt||null,
   }),
-
   addAudit: async (eventId, entry) => supabase.from('cf_audit_log').insert({
     id: uid(), event_id: eventId, type: entry.type, item_name: entry.itemName||'',
     qty: entry.qty||'', category: entry.category||'', changes: entry.changes||'',
     prev_status: entry.prevStatus||'', by_name: entry.by,
   }),
-
   addActivity: async (eventId, eventName, log) => supabase.from('cf_activity_log').insert({
     id: log.id||uid(), event_id: eventId, event_name: eventName,
     action: log.action, detail: log.detail, by_name: log.by, user_id: log.userId||'',
   }),
-
-  // Master items
   getMasterItems: async () => { const { data } = await supabase.from('cf_master_items').select('*').order('name'); return data || []; },
   addMasterItem: async (item) => supabase.from('cf_master_items').insert({ id:item.id, name:item.name, category:item.category }),
   deleteMasterItem: async (id) => supabase.from('cf_master_items').delete().eq('id', id),
-
-  // Fleet
   getFleet: async () => {
     const { data } = await supabase.from('cf_fleet').select('*').order('created_at');
     if (!data) return { trucks:[], trailers:[] };
@@ -308,14 +370,10 @@ const db = {
   },
   addFleetItem: async (item) => supabase.from('cf_fleet').insert({ id:item.id, type:item.type, name:item.name, detail:item.detail||'' }),
   deleteFleetItem: async (id) => supabase.from('cf_fleet').delete().eq('id', id),
-
-  // Categories
   getCategories: async () => { const { data } = await supabase.from('cf_categories').select('*').order('sort_order'); return (data||[]).map(c=>c.name); },
   addCategory: async (name, order) => supabase.from('cf_categories').insert({ name, sort_order:order }),
   updateCategory: async (oldName, newName) => supabase.from('cf_categories').update({ name:newName }).eq('name', oldName),
   deleteCategory: async (name) => supabase.from('cf_categories').delete().eq('name', name),
-
-  // Activity log (global)
   getAllActivity: async () => { const { data } = await supabase.from('cf_activity_log').select('*').order('created_at', { ascending:false }).limit(200); return data || []; },
 };
 
@@ -363,16 +421,40 @@ function AutocompleteInput({ value, onChange, masterItems, placeholder }) {
   );
 }
 
+// #5 Status confirmation sheet
 function StatusSheet({ item, onSelect, onClose }) {
+  const [pending, setPending] = useState(null);
+  const statuses = ['pending','prepped','loaded'];
+
+  if (pending) {
+    const sc = STATUS_CONFIG[pending];
+    return (
+      <>
+        <div className="sback" onClick={onClose} />
+        <div className="sheet">
+          <div className="stitle">Confirm Status Change</div>
+          <div className="cdlg" style={{ marginBottom:14 }}>
+            <div className="ct" style={{ color: sc.color }}>Confirm: {sc.label}</div>
+            <div className="cb">Set <strong style={{ color:'var(--tx)' }}>{item.name}</strong> to <strong style={{ color: sc.color }}>{sc.label}</strong>?</div>
+            <div className="cbtns">
+              <button className="btn bghost bsm" onClick={() => setPending(null)}>Back</button>
+              <button className="btn bacc bsm" style={{ borderColor: sc.color, color: sc.color, background: sc.bg }} onClick={() => onSelect(pending)}>Confirm</button>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
+
   return (
     <>
       <div className="sback" onClick={onClose} />
       <div className="sheet">
         <div className="stitle">Update — {item.name}</div>
-        {['pending','prepped','loaded','returned'].map(s => {
+        {statuses.map(s => {
           const sc = STATUS_CONFIG[s];
           return (
-            <div key={s} className="sopt" onClick={() => onSelect(s)}>
+            <div key={s} className="sopt" onClick={() => setPending(s)}>
               <div className="sdot" style={{ background: sc.color }} />
               <span className="solbl" style={{ color: sc.color }}>{sc.label}</span>
               {item.status === s && <span className="scur">current</span>}
@@ -462,7 +544,24 @@ function ItemModal({ item, onSave, onClose, masterItems }) {
   );
 }
 
-function EventForm({ onSave, onClose, existing, masterItems }) {
+// #2 TBD date field helper
+function DateTimeFieldWithTBD({ label, value, onChange }) {
+  const isTBD = value === 'TBD';
+  return (
+    <div className="field">
+      <label className="flbl">{label}</label>
+      <div style={{ display:'flex', alignItems:'center', gap:8 }}>
+        <input className="fi" type="datetime-local" value={isTBD ? '' : value} onChange={e => onChange(e.target.value)} disabled={isTBD} style={{ flex:1, opacity: isTBD ? .4 : 1 }} />
+        <label style={{ display:'flex', alignItems:'center', gap:5, cursor:'pointer', flexShrink:0 }}>
+          <input type="checkbox" checked={isTBD} onChange={e => onChange(e.target.checked ? 'TBD' : '')} style={{ width:14, height:14 }} />
+          <span style={{ fontSize:11, color: isTBD ? 'var(--ac)' : 'var(--mu)', fontWeight:700 }}>TBD</span>
+        </label>
+      </div>
+    </div>
+  );
+}
+
+function EventForm({ onSave, onClose, existing, masterItems, users }) {
   const categories = useContext(CatContext);
   const e = existing || {};
   const UNITS = ['units','pcs','ft','m','boxes','cases','rolls','sets','ea'];
@@ -477,6 +576,13 @@ function EventForm({ onSave, onClose, existing, masterItems }) {
   const [brief, setBrief] = useState(e.brief || '');
   const [items, setItems] = useState((e.items || []).filter(i => !i.removedAt));
   const [ni, setNi] = useState({ name:'', qty:'1', unit:'units', cat:categories[0] });
+  const [installCrew, setInstallCrew] = useState(e.installCrew || []);
+  const [strikeCrew, setStrikeCrew] = useState(e.strikeCrew || []);
+  const employees = (users || []).filter(u => u.active && u.role === 'employee');
+
+  const toggleCrew = (list, setList, name) => {
+    setList(prev => prev.includes(name) ? prev.filter(n => n !== name) : [...prev, name]);
+  };
 
   const addItem = () => {
     if (!ni.name.trim()) return;
@@ -487,7 +593,7 @@ function EventForm({ onSave, onClose, existing, masterItems }) {
 
   const save = (live) => {
     if (!name.trim()) return;
-    onSave({ ...e, id:e.id||uid(), name, venue, address, eventStart, eventEnd, installDT, strikeDT, departureDT, brief, items:[...items, ...(e.items||[]).filter(i=>i.removedAt)], live, archived:e.archived||false, createdAt:e.createdAt||nowISO(), truck:e.truck||'', trailer:e.trailer||'' });
+    onSave({ ...e, id:e.id||uid(), name, venue, address, eventStart, eventEnd, installDT, strikeDT, departureDT, brief, installCrew, strikeCrew, items:[...items, ...(e.items||[]).filter(i=>i.removedAt)], live, archived:e.archived||false, createdAt:e.createdAt||nowISO(), truck:e.truck||'', trailer:e.trailer||'', readyToRoll:e.readyToRoll||false });
   };
 
   return (
@@ -502,11 +608,42 @@ function EventForm({ onSave, onClose, existing, masterItems }) {
           <div className="field"><label className="flbl">Event Start</label><input className="fi" type="date" value={eventStart} onChange={e=>setEventStart(e.target.value)} /></div>
           <div className="field"><label className="flbl">Event End</label><input className="fi" type="date" value={eventEnd} onChange={e=>setEventEnd(e.target.value)} /></div>
         </div>
-        <div className="frow">
-          <div className="field"><label className="flbl">Install Date/Time</label><input className="fi" type="datetime-local" value={installDT} onChange={e=>setInstallDT(e.target.value)} /></div>
-          <div className="field"><label className="flbl">Strike Date/Time</label><input className="fi" type="datetime-local" value={strikeDT} onChange={e=>setStrikeDT(e.target.value)} /></div>
-        </div>
-        <div className="field"><label className="flbl">Warehouse Departure</label><input className="fi" type="datetime-local" value={departureDT} onChange={e=>setDepartureDT(e.target.value)} /></div>
+        <DateTimeFieldWithTBD label="Install Date/Time" value={installDT} onChange={setInstallDT} />
+        <DateTimeFieldWithTBD label="Strike Date/Time" value={strikeDT} onChange={setStrikeDT} />
+        <DateTimeFieldWithTBD label="Warehouse Departure" value={departureDT} onChange={setDepartureDT} />
+
+        {/* #1 Crew assignment in form */}
+        {employees.length > 0 && (
+          <div className="frow">
+            <div className="field">
+              <label className="flbl">Install Crew</label>
+              <div style={{ background:'var(--s2)', border:'1px solid var(--br)', borderRadius:'var(--r)', padding:'8px 10px' }}>
+                {employees.map(u => (
+                  <div key={u.id} className="crew-member" onClick={() => toggleCrew(installCrew, setInstallCrew, u.name)}>
+                    <div className={'crew-cb' + (installCrew.includes(u.name) ? ' on' : '')}>
+                      {installCrew.includes(u.name) && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--ac)" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>}
+                    </div>
+                    <span className="crew-name">{u.name}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="field">
+              <label className="flbl">Strike Crew</label>
+              <div style={{ background:'var(--s2)', border:'1px solid var(--br)', borderRadius:'var(--r)', padding:'8px 10px' }}>
+                {employees.map(u => (
+                  <div key={u.id} className="crew-member" onClick={() => toggleCrew(strikeCrew, setStrikeCrew, u.name)}>
+                    <div className={'crew-cb' + (strikeCrew.includes(u.name) ? ' on' : '')}>
+                      {strikeCrew.includes(u.name) && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--ac)" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>}
+                    </div>
+                    <span className="crew-name">{u.name}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="field"><label className="flbl">Project Brief / Admin Notes</label><textarea className="fta" value={brief} onChange={e=>setBrief(e.target.value)} rows={3} /></div>
         <div className="field">
           <label className="flbl">Initial Gear List</label>
@@ -538,7 +675,106 @@ function EventForm({ onSave, onClose, existing, masterItems }) {
   );
 }
 
-function EventDetail({ event, user, onBack, onUpdate, masterItems, fleet }) {
+// #12 Export helpers
+function generatePlainText(event) {
+  const lines = [];
+  lines.push('CREWFLOW — EVENT SNAPSHOT');
+  lines.push('⚠ SNAPSHOT ONLY — This list may be outdated. Always confirm against the live CrewFlow app before use.');
+  lines.push('');
+  lines.push(`Event: ${event.name}`);
+  if (event.venue) lines.push(`Venue: ${event.venue}`);
+  if (event.address) lines.push(`Address: ${event.address}`);
+  lines.push(`Event Dates: ${fmt(event.eventStart)} – ${fmt(event.eventEnd)}`);
+  lines.push(`Install: ${fmtDT(event.installDT)}`);
+  lines.push(`Strike: ${fmtDT(event.strikeDT)}`);
+  lines.push(`WH Departure: ${fmtDT(event.departureDT)}`);
+  if (event.truck || event.trailer) lines.push(`Vehicle: ${event.truck||'—'} / ${event.trailer||'—'}`);
+  if (event.installCrew?.length) lines.push(`Install Crew: ${event.installCrew.join(', ')}`);
+  if (event.strikeCrew?.length) lines.push(`Strike Crew: ${event.strikeCrew.join(', ')}`);
+  if (event.brief) { lines.push(''); lines.push(`Brief: ${event.brief}`); }
+  lines.push('');
+  lines.push('GEAR LIST:');
+  const active = (event.items || []).filter(i => !i.removedAt);
+  active.forEach((item, idx) => {
+    lines.push(`${idx+1}. [${(item.status||'pending').toUpperCase()}] ${item.name} — ${item.qty} [${item.category}]${item.notes ? ' — '+item.notes : ''}`);
+  });
+  lines.push('');
+  lines.push(`Generated: ${new Date().toLocaleString()}`);
+  return lines.join('\n');
+}
+
+function ExportModal({ event, onClose }) {
+  const [copied, setCopied] = useState(false);
+
+  const copyText = () => {
+    const text = generatePlainText(event);
+    navigator.clipboard.writeText(text).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000); });
+  };
+
+  const exportPDF = () => {
+    const active = (event.items || []).filter(i => !i.removedAt);
+    const watermark = 'SNAPSHOT ONLY — Verify you are referencing the most current version in the CrewFlow app before use';
+    const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>CrewFlow — ${event.name}</title>
+    <style>
+      body{font-family:Arial,sans-serif;padding:30px;color:#111;max-width:700px;margin:0 auto;background:#fff}
+      h1{font-size:26px;margin-bottom:4px}
+      .sub{color:#666;font-size:13px;margin-bottom:16px}
+      .meta{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+      .chip{background:#f4f4f4;border-radius:6px;padding:8px 10px}
+      .chip-lbl{font-size:9px;font-weight:700;letter-spacing:1.5px;color:#888;text-transform:uppercase}
+      .chip-val{font-size:13px;font-weight:600;margin-top:2px}
+      .brief{background:#fffbe6;border-left:3px solid #F59E0B;padding:10px 14px;margin-bottom:16px;font-size:13px}
+      table{width:100%;border-collapse:collapse;margin-top:8px}
+      th{background:#111;color:#fff;padding:8px 10px;font-size:11px;letter-spacing:1px;text-transform:uppercase;text-align:left}
+      td{padding:8px 10px;border-bottom:1px solid #eee;font-size:13px}
+      .status{font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;text-transform:uppercase}
+      .pending{background:#ffe5e5;color:#cc0000}
+      .prepped{background:#fff1e5;color:#c05000}
+      .loaded{background:#e5f7f0;color:#087050}
+      .watermark{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-35deg);font-size:18px;font-weight:900;color:rgba(0,0,0,0.08);text-align:center;white-space:nowrap;pointer-events:none;z-index:1000;width:100%;letter-spacing:2px}
+      .crew{font-size:12px;color:#444;margin-bottom:4px}
+    </style></head><body>
+    <div class="watermark">${watermark}</div>
+    <h1>${event.name}</h1>
+    <div class="sub">${event.venue || ''}${event.venue && event.address ? ' — ' : ''}${event.address || ''}</div>
+    <div class="meta">
+      <div class="chip"><div class="chip-lbl">Event Dates</div><div class="chip-val">${fmt(event.eventStart)} – ${fmt(event.eventEnd)}</div></div>
+      <div class="chip"><div class="chip-lbl">Install</div><div class="chip-val">${fmtDT(event.installDT)}</div></div>
+      <div class="chip"><div class="chip-lbl">Strike</div><div class="chip-val">${fmtDT(event.strikeDT)}</div></div>
+      <div class="chip"><div class="chip-lbl">WH Departure</div><div class="chip-val">${fmtDT(event.departureDT)}</div></div>
+      ${event.truck || event.trailer ? `<div class="chip"><div class="chip-lbl">Vehicle</div><div class="chip-val">${event.truck||'—'} / ${event.trailer||'—'}</div></div>` : ''}
+    </div>
+    ${event.installCrew?.length ? `<div class="crew"><strong>Install Crew:</strong> ${event.installCrew.join(', ')}</div>` : ''}
+    ${event.strikeCrew?.length ? `<div class="crew"><strong>Strike Crew:</strong> ${event.strikeCrew.join(', ')}</div>` : ''}
+    ${event.brief ? `<div class="brief"><strong>Admin Brief:</strong> ${event.brief}</div>` : ''}
+    <table><thead><tr><th>#</th><th>Item</th><th>Qty</th><th>Category</th><th>Status</th></tr></thead><tbody>
+    ${active.map((item,i) => `<tr><td>${i+1}</td><td>${item.name}${item.notes?'<br><small style="color:#888">'+item.notes+'</small>':''}</td><td>${item.qty}</td><td>${item.category}</td><td><span class="status ${item.status||'pending'}">${(item.status||'pending').toUpperCase()}</span></td></tr>`).join('')}
+    </tbody></table>
+    <p style="margin-top:20px;font-size:11px;color:#999">Generated: ${new Date().toLocaleString()} — ⚠ ${watermark}</p>
+    </body></html>`;
+    const w = window.open('', '_blank');
+    w.document.write(html);
+    w.document.close();
+    setTimeout(() => w.print(), 500);
+  };
+
+  return (
+    <div className="mback ctr">
+      <div className="mover" onClick={onClose} />
+      <div className="modal">
+        <div className="mtitle">📤 Export / Hard Copy</div>
+        <p style={{ fontSize:13, color:'var(--mu)', marginBottom:20, lineHeight:1.5 }}>All exports include a watermark reminding crew to verify against the live app.</p>
+        <button className="btn bprim" style={{ marginBottom:10 }} onClick={exportPDF}>📄 Open Print / PDF View</button>
+        <button className="btn bghost" style={{ width:'100%', marginBottom:10 }} onClick={copyText}>
+          {copied ? '✓ Copied to Clipboard!' : '📋 Copy as Plain Text'}
+        </button>
+        <button className="btn bghost" style={{ width:'100%' }} onClick={onClose}>Close</button>
+      </div>
+    </div>
+  );
+}
+
+function EventDetail({ event, user, onBack, onUpdate, masterItems, fleet, users }) {
   const categories = useContext(CatContext);
   const [statusTarget, setStatusTarget] = useState(null);
   const [editTarget, setEditTarget] = useState(null);
@@ -546,27 +782,29 @@ function EventDetail({ event, user, onBack, onUpdate, masterItems, fleet }) {
   const [showAdd, setShowAdd] = useState(false);
   const [showTruck, setShowTruck] = useState(false);
   const [showEditEvent, setShowEditEvent] = useState(false);
+  const [showExport, setShowExport] = useState(false);
+  const [showRTRConfirm, setShowRTRConfirm] = useState(false);
+  const [showUnlockConfirm, setShowUnlockConfirm] = useState(false);
+  const [auditOpen, setAuditOpen] = useState(false); // #6 collapsed by default
+  const [infoOpen, setInfoOpen] = useState(true); // #8 open by default
   const [toast, setToast] = useState(null);
   const [saving, setSaving] = useState(false);
   const isAdmin = user.role === 'admin';
   const items = event.items || [];
   const active = items.filter(i => !i.removedAt);
   const removed = items.filter(i => i.removedAt);
-  const pct = active.length ? Math.round((active.filter(i => i.status === 'loaded' || i.status === 'returned').length / active.length) * 100) : 0;
+  const allLoaded = active.length > 0 && active.every(i => i.status === 'loaded');
+  const pct = active.length ? Math.round((active.filter(i => i.status === 'loaded').length / active.length) * 100) : 0;
   const pt = (msg, type) => setToast({ msg, type });
-
-  const statusKey = active.map(i => i.status).join(',');
-  useEffect(() => {
-    if (active.length > 0 && active.every(i => i.status === 'returned') && !event.archived) {
-      handleArchive('auto');
-    }
-  }, [statusKey]);
+  const isRTR = event.readyToRoll;
+  // Employee is locked out of editing unless they unlock
+  const isLocked = isRTR && !isAdmin;
 
   const handleArchive = async (reason) => {
     const updated = { ...event, archived:true, archivedAt:nowISO(), archivedReason:reason };
     await db.upsertEvent(updated);
     onUpdate(updated);
-    if (reason === 'auto') pt('All items returned — event auto-archived ✓', 'ok');
+    if (reason === 'auto') pt('Event auto-archived ✓', 'ok');
   };
 
   const handleStatus = async (status) => {
@@ -576,8 +814,7 @@ function EventDetail({ event, user, onBack, onUpdate, masterItems, fleet }) {
     await db.upsertItem(updatedItem, event.id);
     const logEntry = { id:uid(), action:'status_change', detail:`"${item.name}": ${item.status} → ${status}`, by:user.name, userId:user.id };
     await db.addActivity(event.id, event.name, logEntry);
-    const updatedEvent = { ...event, items:items.map(i => i.id === item.id ? updatedItem : i), activityLog:[...(event.activityLog||[]), { ...logEntry, at:nowISO() }] };
-    onUpdate(updatedEvent);
+    onUpdate({ ...event, items:items.map(i => i.id === item.id ? updatedItem : i), activityLog:[...(event.activityLog||[]), { ...logEntry, at:nowISO() }] });
     setStatusTarget(null);
     setSaving(false);
     pt(`${item.name} → ${STATUS_CONFIG[status].label}`, 'ok');
@@ -641,84 +878,207 @@ function EventDetail({ event, user, onBack, onUpdate, masterItems, fleet }) {
     pt('Vehicle assignment saved', 'ok');
   };
 
+  // #11 Ready to Roll
+  const handleReadyToRoll = async () => {
+    const updated = { ...event, readyToRoll:true };
+    await db.upsertEvent(updated);
+    const logEntry = { id:uid(), action:'ready_to_roll', detail:'Marked as READY TO ROLL', by:user.name, userId:user.id };
+    await db.addActivity(event.id, event.name, logEntry);
+    onUpdate({ ...updated, activityLog:[...(event.activityLog||[]), { ...logEntry, at:nowISO() }] });
+    setShowRTRConfirm(false);
+    pt('🟢 Event marked READY TO ROLL!', 'ok');
+  };
+
+  const handleUnlock = async () => {
+    const updated = { ...event, readyToRoll:false };
+    await db.upsertEvent(updated);
+    const logEntry = { id:uid(), action:'rtr_unlocked', detail:'Ready to Roll status removed — event reopened for editing', by:user.name, userId:user.id };
+    await db.addActivity(event.id, event.name, logEntry);
+    onUpdate({ ...updated, activityLog:[...(event.activityLog||[]), { ...logEntry, at:nowISO() }] });
+    setShowUnlockConfirm(false);
+    pt('Event unlocked for editing', 'ok');
+  };
+
   const byCategory = categories.reduce((acc, cat) => {
     const ci = active.filter(i => i.category === cat);
     if (ci.length) acc[cat] = ci;
     return acc;
   }, {});
 
+  const canEdit = !isLocked && !event.archived;
+
   return (
     <div>
       {toast && <Toast msg={toast.msg} type={toast.type} onDone={() => setToast(null)} />}
-      {saving && <div style={{ position:'fixed', top:52, left:0, right:0, height:2, background:'var(--ac)', zIndex:200, animation:'tin .3s ease' }} />}
+      {saving && <div style={{ position:'fixed', top:52, left:0, right:0, height:2, background:'var(--ac)', zIndex:200 }} />}
+
       <div className="backrow" onClick={onBack}>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="15 18 9 12 15 6" /></svg>
         <span>All Events</span>
       </div>
+
+      {/* #8 Collapsible event info — name always visible */}
       <div className="dh">
-        <div className="dh-top">
-          <div>
-            <div className="dname">{event.name}</div>
-            <div className="dsub">{event.venue}</div>
-            <div className="dsub">{event.address}</div>
-          </div>
-          <div className="pills">
-            <span className={'pill ' + (event.archived ? 'parc' : event.live ? 'plive' : 'pdraft')}>{event.archived ? 'Archived' : event.live ? 'Live' : 'Draft'}</span>
-            {isAdmin && !event.archived && <button className="btn bacc bsm" onClick={() => setShowEditEvent(true)}>Edit</button>}
-            {isAdmin && !event.archived && <button className="btn bghost bsm" onClick={() => handleArchive('manual')}>Archive</button>}
-          </div>
-        </div>
-        <div className="dgrid">
-          <div className="ichip"><div className="icl">Event Dates</div><div className="icv">{fmt(event.eventStart)} – {fmt(event.eventEnd)}</div></div>
-          <div className="ichip"><div className="icl">Install</div><div className="icv">{fmtDT(event.installDT)}</div></div>
-          <div className="ichip"><div className="icl">Strike</div><div className="icv">{fmtDT(event.strikeDT)}</div></div>
-          <div className="ichip"><div className="icl">WH Departure</div><div className="icv">{fmtDT(event.departureDT)}</div></div>
-        </div>
-        <div className="trchip" onClick={() => !event.archived && setShowTruck(true)}>
-          <span style={{ fontSize:18 }}>🚛</span>
+        <div className="dh-always">
           <div style={{ flex:1 }}>
-            <div className="icl">Truck / Trailer</div>
-            <div className="icv">{event.truck || event.trailer ? `${event.truck||'—'} · ${event.trailer||'—'}` : <span style={{ color:'var(--mu)', fontSize:12 }}>Tap to assign vehicle</span>}</div>
+            <div className="dname">{event.name}</div>
+            {!infoOpen && <div className="dsub" style={{ marginTop:4 }}>{event.venue}{event.venue && event.address ? ' — ' : ''}{event.address}</div>}
           </div>
-          {!event.archived && <span style={{ color:'var(--mu)', fontSize:18 }}>›</span>}
+          <div style={{ display:'flex', alignItems:'flex-start', gap:6, flexShrink:0 }}>
+            <div className="pills" style={{ marginBottom:6 }}>
+              <span className={'pill ' + (event.archived ? 'parc' : isRTR ? 'prtr' : event.live ? 'plive' : 'pdraft')}>
+                {event.archived ? 'Archived' : isRTR ? '✓ Ready to Roll' : event.live ? 'Live' : 'Draft'}
+              </span>
+              {isAdmin && !event.archived && <button className="btn bacc bsm" onClick={() => setShowEditEvent(true)}>Edit</button>}
+              {isAdmin && !event.archived && <button className="btn bghost bsm" onClick={() => handleArchive('manual')}>Archive</button>}
+            </div>
+          </div>
         </div>
+        <div style={{ padding:'4px 16px 8px', display:'flex', justifyContent:'flex-end' }}>
+          <button className="dh-collapse-btn" onClick={() => setInfoOpen(o => !o)}>
+            {infoOpen ? '▲ collapse' : '▼ expand'}
+          </button>
+        </div>
+
+        {infoOpen && (
+          <div className="dh-body">
+            {event.venue && <div className="dsub">{event.venue}</div>}
+            {event.address && <div className="dsub">{event.address}</div>}
+            <div className="dgrid">
+              <div className="ichip"><div className="icl">Event Dates</div><div className="icv">{fmt(event.eventStart)} – {fmt(event.eventEnd)}</div></div>
+              <div className="ichip"><div className="icl">Install</div><div className="icv">{fmtDT(event.installDT)}</div></div>
+              <div className="ichip"><div className="icl">Strike</div><div className="icv">{fmtDT(event.strikeDT)}</div></div>
+              <div className="ichip"><div className="icl">WH Departure</div><div className="icv">{fmtDT(event.departureDT)}</div></div>
+            </div>
+
+            {/* Vehicle */}
+            <div className="trchip" onClick={() => canEdit && setShowTruck(true)}>
+              <span style={{ fontSize:18 }}>🚛</span>
+              <div style={{ flex:1 }}>
+                <div className="icl">Truck / Trailer</div>
+                <div className="icv">{event.truck || event.trailer ? `${event.truck||'—'} · ${event.trailer||'—'}` : <span style={{ color:'var(--mu)', fontSize:12 }}>Tap to assign vehicle</span>}</div>
+              </div>
+              {canEdit && <span style={{ color:'var(--mu)', fontSize:18 }}>›</span>}
+            </div>
+
+            {/* #1 Crew display */}
+            <div className="crew-section">
+              <div className="crew-block">
+                <div className="crew-lbl">Install Crew</div>
+                {(event.installCrew||[]).length === 0
+                  ? <div style={{ fontSize:11, color:'var(--mu)' }}>Not assigned</div>
+                  : (event.installCrew||[]).map(n => <div key={n} className="crew-name-assigned">👤 {n}</div>)}
+              </div>
+              <div className="crew-block">
+                <div className="crew-lbl">Strike Crew</div>
+                {(event.strikeCrew||[]).length === 0
+                  ? <div style={{ fontSize:11, color:'var(--mu)' }}>Not assigned</div>
+                  : (event.strikeCrew||[]).map(n => <div key={n} className="crew-name-assigned">👤 {n}</div>)}
+              </div>
+            </div>
+
+            {/* #8 Brief inside event info */}
+            {event.brief && (
+              <div className="brief-inline">
+                <div className="brieft">📋 Admin Brief</div>
+                <div className="briefb">{event.brief}</div>
+              </div>
+            )}
+          </div>
+        )}
       </div>
+
+      {/* Progress */}
       <div className="pblock">
-        <div className="phd"><span>Progress</span><span>{pct}%</span></div>
-        <div className="ptrack"><div className="pfill" style={{ width:`${pct}%` }} /></div>
-        <div className="spills">
-          {Object.entries(STATUS_CONFIG).map(([k,v]) => (
-            <span key={k} className="spill" style={{ color:v.color, borderColor:`${v.color}44`, background:v.bg }}>{active.filter(i=>i.status===k).length} {v.label}</span>
-          ))}
-        </div>
+        <div className="phd"><span>Progress</span><span style={{ color: isRTR ? 'var(--ok)' : 'var(--ac)' }}>{pct}%</span></div>
+        <div className="ptrack"><div className={'pfill' + (isRTR ? ' rtr' : '')} style={{ width:`${pct}%` }} /></div>
+        {isRTR ? (
+          <div style={{ marginTop:8, textAlign:'center', color:'var(--ok)', fontFamily:'var(--fh)', fontSize:15, fontWeight:900, letterSpacing:2 }}>✓ READY TO ROLL</div>
+        ) : (
+          <div className="spills">
+            {Object.entries(STATUS_CONFIG).map(([k,v]) => (
+              <span key={k} className="spill" style={{ color:v.color, borderColor:`${v.color}44`, background:v.bg }}>{active.filter(i=>i.status===k).length} {v.label}</span>
+            ))}
+          </div>
+        )}
       </div>
-      {event.brief && <div className="brief"><div className="brieft">📋 Admin Brief</div><div className="briefb">{event.brief}</div></div>}
-      {!event.archived && (
+
+      {/* #11 Ready to Roll / unlock */}
+      {!event.archived && isRTR && (
+        <div className="rtr-banner">
+          <span style={{ fontSize:22 }}>✅</span>
+          <div style={{ flex:1 }}>
+            <div className="rtr-banner-text">Ready to Roll</div>
+            <div style={{ fontSize:11, color:'var(--ok)', marginTop:2 }}>All items loaded & verified</div>
+          </div>
+          <button className="edit-event-btn" style={{ margin:0 }} onClick={() => setShowUnlockConfirm(true)}>Edit Event</button>
+        </div>
+      )}
+      {!event.archived && !isRTR && (
+        allLoaded ? (
+          <button className="rtr-btn" onClick={() => setShowRTRConfirm(true)}>
+            <span>🟢</span> Mark as Ready to Roll
+          </button>
+        ) : (
+          <div className="rtr-locked">
+            <span>🔒</span> Ready to Roll — {active.filter(i=>i.status!=='loaded').length} item{active.filter(i=>i.status!=='loaded').length !== 1 ? 's' : ''} not yet loaded
+          </div>
+        )
+      )}
+
+      {/* Gear list */}
+      {canEdit && (
         <div className="shd">
           <span className="slbl">Gear List ({active.length})</span>
           <button className="btn bacc bsm" onClick={() => setShowAdd(true)}>+ Add Item</button>
         </div>
       )}
+      {isRTR && !isAdmin && (
+        <div className="shd">
+          <span className="slbl">Gear List ({active.length})</span>
+          <span style={{ fontSize:11, color:'var(--ok)', fontWeight:700 }}>✓ Verified</span>
+        </div>
+      )}
+      {!canEdit && !isRTR && event.archived && (
+        <div className="shd"><span className="slbl">Gear List ({active.length})</span></div>
+      )}
+
       {Object.keys(byCategory).length === 0 && <div className="empty"><div className="eico">📦</div><div className="etxt">No items yet.</div></div>}
+
       {Object.entries(byCategory).map(([cat, catItems]) => (
         <div key={cat} className="catblk">
           <div className="catlbl">{cat}</div>
           {catItems.map(item => {
             const sc = STATUS_CONFIG[item.status || 'pending'];
+            const isLoaded = item.status === 'loaded';
             return (
               <div key={item.id} className="irow">
-                <div className={'ichk ' + (item.status || 'pending')} onClick={() => !event.archived && setStatusTarget(item)} style={event.archived ? { opacity:.5, cursor:'default' } : { cursor:'pointer' }}>
-                  {item.status !== 'pending' && <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={sc.color} strokeWidth="3"><polyline points="20 6 9 17 4 12" /></svg>}
+                {/* #4 Bigger bolder checkmark for loaded */}
+                <div className={'ichk ' + (item.status || 'pending')}
+                  onClick={() => canEdit && !isLocked && setStatusTarget(item)}
+                  style={(event.archived || isRTR) ? { opacity: isLoaded ? 1 : .7, cursor:'default' } : { cursor:'pointer' }}>
+                  {item.status !== 'pending' && (
+                    <svg
+                      width={isLoaded ? "18" : "13"}
+                      height={isLoaded ? "18" : "13"}
+                      viewBox="0 0 24 24" fill="none" stroke={sc.color}
+                      strokeWidth={isLoaded ? "4" : "3"}>
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  )}
                 </div>
                 <div className="imain">
                   <div className="iname">{item.name}</div>
                   <div className="iqty">Qty: {item.qty}{item.notes ? ` · ${item.notes}` : ''}</div>
                   {item.addedBy && item.addedBy !== 'admin' && <div className="iby">Added by {item.addedBy}</div>}
-                  {item[`${item.status}By`] && item.status !== 'pending' && <div className="iby">{sc.label} by {item[`${item.status}By`]} · {fmtDT(item[`${item.status}At`])}</div>}
+                  {/* #7 Lighter timestamp text */}
+                  {item[`${item.status}By`] && item.status !== 'pending' && (
+                    <div className="iby">{sc.label} by {item[`${item.status}By`]} · {fmtDT(item[`${item.status}At`])}</div>
+                  )}
                 </div>
                 <div className="iright">
                   <span className="sbadge" style={{ color:sc.color, borderColor:`${sc.color}44`, background:sc.bg }}>{sc.label}</span>
-                  {!event.archived && (
+                  {canEdit && !isLocked && (
                     <div style={{ display:'flex', gap:4 }}>
                       <button className="btn bghost bsm" onClick={() => setEditTarget(item)}>Edit</button>
                       <button className="btn bdng bsm" onClick={() => setRemoveTarget(item)}>✕</button>
@@ -730,34 +1090,91 @@ function EventDetail({ event, user, onBack, onUpdate, masterItems, fleet }) {
           })}
         </div>
       ))}
+
+      {/* #12 Export buttons */}
+      <div className="export-row">
+        <button className="export-btn" onClick={() => setShowExport(true)}>
+          <span className="export-ico">📤</span>Export
+        </button>
+      </div>
+
+      {/* #6 Collapsible audit log */}
       {(removed.length > 0 || (event.auditLog||[]).length > 0) && (
         <div className="auditsec">
-          <div className="auditt">⚠ Audit Log</div>
-          {removed.map(item => (
-            <div key={item.id} className="aurow rm">
-              <div className="auitem">🗑 {item.name} ({item.qty}) [{item.category}]</div>
-              <div className="aumeta">Removed by {item.removedBy} · {fmtDT(item.removedAt)} · was {item.status}</div>
+          <div className="audit-hdr" onClick={() => setAuditOpen(o => !o)}>
+            <div className="auditt">⚠ Audit Log <span style={{ fontSize:10, color:'var(--mu)' }}>({removed.length + (event.auditLog||[]).length} entries)</span></div>
+            <span style={{ fontSize:11, color:'var(--mu)', fontWeight:700 }}>{auditOpen ? '▲' : '▼'}</span>
+          </div>
+          {auditOpen && (
+            <div className="audit-body">
+              {removed.map(item => (
+                <div key={item.id} className="aurow rm">
+                  <div className="auitem">🗑 {item.name} ({item.qty}) [{item.category}]</div>
+                  <div className="aumeta">Removed by {item.removedBy} · {fmtDT(item.removedAt)} · was {item.status}</div>
+                </div>
+              ))}
+              {(event.auditLog||[]).filter(l=>l.type==='mod').map((l,i) => (
+                <div key={i} className="aurow mod"><div className="auitem">✏ {l.itemName}</div><div className="aumeta">{l.changes} · by {l.by} · {fmtDT(l.at)}</div></div>
+              ))}
+              {(event.auditLog||[]).filter(l=>l.type==='add'&&l.by!=='admin').map((l,i) => (
+                <div key={i} className="aurow add"><div className="auitem">✚ {l.itemName} ({l.qty})</div><div className="aumeta">Added by {l.by} · {fmtDT(l.at)}</div></div>
+              ))}
             </div>
-          ))}
-          {(event.auditLog||[]).filter(l=>l.type==='mod').map((l,i) => (
-            <div key={i} className="aurow mod"><div className="auitem">✏ {l.itemName}</div><div className="aumeta">{l.changes} · by {l.by} · {fmtDT(l.at)}</div></div>
-          ))}
-          {(event.auditLog||[]).filter(l=>l.type==='add'&&l.by!=='admin').map((l,i) => (
-            <div key={i} className="aurow add"><div className="auitem">✚ {l.itemName} ({l.qty})</div><div className="aumeta">Added by {l.by} · {fmtDT(l.at)}</div></div>
-          ))}
+          )}
         </div>
       )}
+
       <div className="spacer" />
+
+      {/* Modals */}
       {removeTarget && (
         <div className="mback ctr"><div className="mover" onClick={() => setRemoveTarget(null)} />
           <div className="modal"><Confirm title="Remove Item?" body={`Remove "${removeTarget.name}" (${removeTarget.qty})? This will be logged.`} danger onConfirm={handleRemove} onCancel={() => setRemoveTarget(null)} confirmLabel="Yes, Remove" /></div>
         </div>
       )}
+
+      {/* #11 RTR confirmation */}
+      {showRTRConfirm && (
+        <div className="mback ctr"><div className="mover" onClick={() => setShowRTRConfirm(false)} />
+          <div className="modal">
+            <div className="mtitle" style={{ color:'var(--ok)' }}>🟢 Ready to Roll?</div>
+            <div style={{ background:'var(--ok2)', border:'2px solid var(--ok)', borderRadius:'var(--rl)', padding:'16px', marginBottom:16 }}>
+              <div style={{ fontFamily:'var(--fh)', fontSize:15, fontWeight:800, color:'var(--ok)', marginBottom:6, letterSpacing:1 }}>⚠ PHYSICAL VERIFICATION REQUIRED</div>
+              <div style={{ fontSize:13, color:'var(--tx)', lineHeight:1.6 }}>
+                Before confirming, physically verify that <strong>every item on the list is on the truck</strong>.<br /><br />
+                Once marked Ready to Roll, the checklist will be locked. Make sure everything is loaded and accounted for.
+              </div>
+            </div>
+            <div className="macts">
+              <button className="btn bghost" onClick={() => setShowRTRConfirm(false)}>Go Back & Check</button>
+              <button className="btn bprim" style={{ flex:2, background:'var(--ok)', flex:2 }} onClick={handleReadyToRoll}>✓ Confirm — We're Ready</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* #11 Unlock / edit confirmation */}
+      {showUnlockConfirm && (
+        <div className="mback ctr"><div className="mover" onClick={() => setShowUnlockConfirm(false)} />
+          <div className="modal">
+            <Confirm
+              title="Edit This Event?"
+              body="Editing this event will remove the Ready to Roll status. You will need to re-verify and resubmit once your changes are complete."
+              danger
+              onConfirm={handleUnlock}
+              onCancel={() => setShowUnlockConfirm(false)}
+              confirmLabel="Yes, Unlock & Edit"
+            />
+          </div>
+        </div>
+      )}
+
       {statusTarget && <StatusSheet item={statusTarget} onSelect={handleStatus} onClose={() => setStatusTarget(null)} />}
       {showAdd && <ItemModal masterItems={masterItems} onSave={handleAddItem} onClose={() => setShowAdd(false)} />}
       {editTarget && <ItemModal item={editTarget} masterItems={masterItems} onSave={handleEditItem} onClose={() => setEditTarget(null)} />}
       {showTruck && <TruckModal event={event} onSave={handleTruck} onClose={() => setShowTruck(false)} fleet={fleet} />}
-      {showEditEvent && <EventForm existing={event} masterItems={masterItems} onSave={async ev => { await db.upsertEvent(ev); for (const item of ev.items) { await db.upsertItem(item, ev.id); } onUpdate(ev); setShowEditEvent(false); pt('Event updated!', 'ok'); }} onClose={() => setShowEditEvent(false)} />}
+      {showExport && <ExportModal event={event} onClose={() => setShowExport(false)} />}
+      {showEditEvent && <EventForm existing={event} masterItems={masterItems} users={users} onSave={async ev => { await db.upsertEvent(ev); for (const item of ev.items) { await db.upsertItem(item, ev.id); } onUpdate(ev); setShowEditEvent(false); pt('Event updated!', 'ok'); }} onClose={() => setShowEditEvent(false)} />}
     </div>
   );
 }
@@ -767,7 +1184,16 @@ function EventList({ events, user, onSelect, onCreateNew }) {
   const isAdmin = user.role === 'admin';
   const live = events.filter(e => !e.archived && (isAdmin || e.live));
   const archived = events.filter(e => e.archived);
-  const visible = tab === 'active' ? live : archived;
+
+  // #10 Sort by event start date soonest first
+  const sortByDate = (arr) => [...arr].sort((a, b) => {
+    if (!a.eventStart) return 1;
+    if (!b.eventStart) return -1;
+    return new Date(a.eventStart) - new Date(b.eventStart);
+  });
+
+  const visible = tab === 'active' ? sortByDate(live) : sortByDate(archived);
+
   return (
     <div>
       <div className="tabrow">
@@ -777,13 +1203,18 @@ function EventList({ events, user, onSelect, onCreateNew }) {
       {visible.length === 0 && <div className="empty"><div className="eico">{tab==='active'?'🎪':'📁'}</div><div className="etxt">{tab==='active'?(isAdmin?'No events. Create one!':'No live events right now.'):'No archived events.'}</div></div>}
       {visible.map(ev => {
         const active = (ev.items||[]).filter(i => !i.removedAt);
-        const done = active.filter(i => i.status==='loaded'||i.status==='returned').length;
+        const done = active.filter(i => i.status==='loaded').length;
         const pct = active.length ? Math.round((done/active.length)*100) : 0;
+        const isRTR = ev.readyToRoll;
         return (
-          <div key={ev.id} className={'ecard'+(ev.archived?' arc':'')} onClick={() => onSelect(ev)}>
+          <div key={ev.id} className={'ecard' + (ev.archived ? ' arc' : '') + (isRTR ? ' rtr' : '')} onClick={() => onSelect(ev)}>
             <div className="ehd">
               <div><div className="ename">{ev.name}</div><div className="evenue">{ev.venue||ev.address||'—'}</div></div>
-              <div className="pills"><span className={'pill '+(ev.archived?'parc':ev.live?'plive':'pdraft')}>{ev.archived?'Archived':ev.live?'Live':'Draft'}</span></div>
+              <div className="pills">
+                <span className={'pill ' + (ev.archived ? 'parc' : isRTR ? 'prtr' : ev.live ? 'plive' : 'pdraft')}>
+                  {ev.archived ? 'Archived' : isRTR ? '✓ Ready to Roll' : ev.live ? 'Live' : 'Draft'}
+                </span>
+              </div>
             </div>
             <div className="emeta">
               <div className="mchip"><div className="ml">Event Dates</div><div className="mv">{fmt(ev.eventStart)} – {fmt(ev.eventEnd)}</div></div>
@@ -792,8 +1223,11 @@ function EventList({ events, user, onSelect, onCreateNew }) {
               {ev.trailer && <div className="mchip"><div className="ml">Trailer</div><div className="mv">{ev.trailer}</div></div>}
             </div>
             <div className="eprog">
-              <div className="ptrack"><div className="pfill" style={{ width:`${pct}%` }} /></div>
-              <div className="plbls"><span>{active.length} items</span><span>{pct}% complete</span></div>
+              <div className="ptrack"><div className={'pfill' + (isRTR ? ' rtr' : '')} style={{ width:`${pct}%` }} /></div>
+              <div className={'plbls' + (isRTR ? ' rtr' : '')}>
+                <span>{active.length} items</span>
+                <span>{isRTR ? '✓ READY TO ROLL' : `${pct}% complete`}</span>
+              </div>
             </div>
           </div>
         );
@@ -941,10 +1375,10 @@ function FleetLibrary({ fleet, onUpdate }) {
   return (
     <div>
       {toast && <Toast msg={toast.msg} type={toast.type} onDone={() => setToast(null)} />}
-      <div className="infobanner">Trucks and trailers listed here appear as dropdown options when assigning vehicles to events.</div>
+      <div className="infobanner">Trucks and trailers here appear as dropdown options when assigning vehicles to events.</div>
       {renderSection('Trucks', trucks, 'truck', '🚛')}
       {renderSection('Trailers', trailers, 'trailer', '🚚')}
-      {showAdd && (<div className="mback ctr"><div className="mover" onClick={() => setShowAdd(null)} /><div className="modal"><div className="mtitle">Add {showAdd==='truck'?'Truck':'Trailer'}</div><div className="field"><label className="flbl">Name / ID *</label><input className="fi" value={newItem.name} onChange={e=>setNewItem(p=>({...p,name:e.target.value}))} placeholder={showAdd==='truck'?'e.g. Box Truck #3':'e.g. 20ft Enclosed #3'} autoFocus /></div><div className="field"><label className="flbl">Make / Model</label><input className="fi" value={newItem.detail} onChange={e=>setNewItem(p=>({...p,detail:e.target.value}))} placeholder={showAdd==='truck'?'e.g. Ford F-650':'e.g. Haulmark 20ft'} /></div><div className="macts"><button className="btn bghost" onClick={() => setShowAdd(null)}>Cancel</button><button className="btn bprim" style={{ flex:2 }} onClick={handleAdd}>Add</button></div></div></div>)}
+      {showAdd && (<div className="mback ctr"><div className="mover" onClick={() => setShowAdd(null)} /><div className="modal"><div className="mtitle">Add {showAdd==='truck'?'Truck':'Trailer'}</div><div className="field"><label className="flbl">Name / ID *</label><input className="fi" value={newItem.name} onChange={e=>setNewItem(p=>({...p,name:e.target.value}))} autoFocus /></div><div className="field"><label className="flbl">Make / Model</label><input className="fi" value={newItem.detail} onChange={e=>setNewItem(p=>({...p,detail:e.target.value}))} /></div><div className="macts"><button className="btn bghost" onClick={() => setShowAdd(null)}>Cancel</button><button className="btn bprim" style={{ flex:2 }} onClick={handleAdd}>Add</button></div></div></div>)}
       {confirmDel && (<div className="mback ctr"><div className="mover" onClick={() => setConfirmDel(null)} /><div className="modal"><Confirm title="Remove Vehicle?" body={`Remove "${confirmDel.name}"?`} danger onConfirm={handleDel} onCancel={() => setConfirmDel(null)} confirmLabel="Remove" /></div></div>)}
     </div>
   );
@@ -978,7 +1412,7 @@ function CategoryManager({ categories, onUpdate }) {
   return (
     <div>
       {toast && <Toast msg={toast.msg} type={toast.type} onDone={() => setToast(null)} />}
-      <div className="infobanner">Categories organize gear items across all events. Renaming won't retroactively update existing items.</div>
+      <div className="infobanner">Categories organize gear items. Renaming won't retroactively update existing items.</div>
       <div style={{ display:'flex', gap:8, marginBottom:14 }}>
         <input className="fi" value={newCat} onChange={e=>setNewCat(e.target.value)} onKeyDown={e=>e.key==='Enter'&&handleAdd()} placeholder="New category name…" style={{ flex:1 }} />
         <button className="btn bacc bsm" onClick={handleAdd}>+ Add</button>
@@ -992,11 +1426,12 @@ function CategoryManager({ categories, onUpdate }) {
           )}
         </div>
       ))}
-      {confirmDel !== null && (<div className="mback ctr"><div className="mover" onClick={() => setConfirmDel(null)} /><div className="modal"><Confirm title="Remove Category?" body={`Remove "${categories[confirmDel]}"? Items using this category won't be affected.`} danger onConfirm={() => handleDelete(confirmDel)} onCancel={() => setConfirmDel(null)} confirmLabel="Remove" /></div></div>)}
+      {confirmDel !== null && (<div className="mback ctr"><div className="mover" onClick={() => setConfirmDel(null)} /><div className="modal"><Confirm title="Remove Category?" body={`Remove "${categories[confirmDel]}"?`} danger onConfirm={() => handleDelete(confirmDel)} onCancel={() => setConfirmDel(null)} confirmLabel="Remove" /></div></div>)}
     </div>
   );
 }
 
+// #9 Login — CREWFLOW branding
 function Login({ onLogin, users }) {
   const [userId, setUserId] = useState('');
   const [pin, setPin] = useState('');
@@ -1018,9 +1453,10 @@ function Login({ onLogin, users }) {
   };
   return (
     <div className="login">
-      <div className="l-eyebrow">Crew Portal</div>
-      <div className="l-title">EVENT<em>FLOW</em></div>
-      <div className="l-sub">Warehouse &amp; Event Management</div>
+      <div className="l-eyebrow">Warehouse &amp; Event Management</div>
+      {/* #9 CREWFLOW branding */}
+      <div className="l-title">CREW<em>FLOW</em></div>
+      <div className="l-sub">Powered by AES Marketing</div>
       <div className="l-card">
         {stage === 'confirm' && pendingUser ? (
           <div className="l-confirm">
@@ -1148,7 +1584,7 @@ export default function App() {
         )}
         <div className="main">
           {selectedEvent ? (
-            <EventDetail event={selectedEvent} user={user} onBack={() => setSelectedEvent(null)} onUpdate={handleUpdateEvent} masterItems={masterItems} fleet={fleet} />
+            <EventDetail event={selectedEvent} user={user} onBack={() => setSelectedEvent(null)} onUpdate={handleUpdateEvent} masterItems={masterItems} fleet={fleet} users={users} />
           ) : !isAdmin ? (
             <EventList events={events} user={user} onSelect={setSelectedEvent} onCreateNew={() => setShowCreate(true)} />
           ) : adminTab === 'Events' ? (
@@ -1165,7 +1601,7 @@ export default function App() {
             <CategoryManager categories={categories} onUpdate={setCategories} />
           ) : null}
         </div>
-        {showCreate && <EventForm masterItems={masterItems} onSave={handleCreateEvent} onClose={() => setShowCreate(false)} />}
+        {showCreate && <EventForm masterItems={masterItems} users={users} onSave={handleCreateEvent} onClose={() => setShowCreate(false)} />}
       </div>
     </CatContext.Provider>
   );
