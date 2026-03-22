@@ -691,9 +691,11 @@ function ItemModal({ item, onSave, onClose, masterItems, isAdmin }) {
           <div className="field"><label className="flbl">Qty</label><input className="fi" type="number" value={qty} onChange={e => setQty(e.target.value)} min="1" /></div>
           <div className="field"><label className="flbl">Unit</label><select className="fsel" value={unit} onChange={e => setUnit(e.target.value)}>{UNITS.map(u => <option key={u}>{u}</option>)}</select></div>
         </div>
-        {isAdmin && (
-          <div className="field"><label className="flbl">Category</label><select className="fsel" value={cat} onChange={e => setCat(e.target.value)}>{categories.map(c => <option key={c}>{c}</option>)}</select></div>
-        )}
+        {/* Category is auto-assigned from Gear Library — managed in Categories tab only */}
+        <div className="field">
+          <label className="flbl">Category</label>
+          <div className="fi" style={{background:'var(--s2)',color:'var(--mu)',cursor:'default'}}>{cat}</div>
+        </div>
         <div className="field"><label className="flbl">Notes (optional)</label><textarea className="fta" value={notes} onChange={e => setNotes(e.target.value)} rows={2} /></div>
         <div className="macts">
           <button className="btn bghost" onClick={onClose}>Cancel</button>
@@ -1046,7 +1048,7 @@ function EventDetail({ event, user, onBack, onUpdate, masterItems, fleet, users 
   const pt = (msg, type) => setToast({ msg, type });
   const isRTR = event.readyToRoll;
   // Employee is locked out of editing unless they unlock
-  const isLocked = isRTR && !isAdmin;
+  const isLocked = isRTR; // RTR locks for everyone including admin — must unlock first
 
   const handleArchive = async (reason) => {
     const updated = { ...event, archived:true, archivedAt:nowISO(), archivedReason:reason };
@@ -1177,8 +1179,8 @@ function EventDetail({ event, user, onBack, onUpdate, masterItems, fleet, users 
               <span className={'pill ' + (event.archived ? 'parc' : isRTR ? 'prtr' : event.live ? 'plive' : 'pdraft')}>
                 {event.archived ? 'Archived' : isRTR ? '✓ Ready to Roll' : event.live ? 'Live' : 'Draft'}
               </span>
-              {isAdmin && !event.archived && <button className="btn bacc bsm" onClick={() => setShowEditEvent(true)}>Edit</button>}
-              {isAdmin && !event.archived && <button className="btn bghost bsm" onClick={() => handleArchive('manual')}>Archive</button>}
+              {isAdmin && !event.archived && !isRTR && <button className="btn bacc bsm" onClick={() => setShowEditEvent(true)}>Edit</button>}
+              {isAdmin && !event.archived && !isRTR && <button className="btn bghost bsm" onClick={() => handleArchive('manual')}>Archive</button>}
             </div>
           </div>
         </div>
