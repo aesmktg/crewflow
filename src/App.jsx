@@ -1344,7 +1344,8 @@ function EventDetail({ event, user, onBack, onUpdate, masterItems, fleet, users 
         </div>
       ))}
 
-      {/* Notes section */}
+      {/* Divider + Notes section */}
+      <div style={{borderTop:'2px solid var(--br)',margin:'22px 0 0'}} />
       <NotesSection refId={event.id} refType="event" user={user} />
 
       {/* #12 Export buttons */}
@@ -1398,6 +1399,7 @@ function EventDetail({ event, user, onBack, onUpdate, masterItems, fleet, users 
               <div style={{ fontFamily:'var(--fh)', fontSize:15, fontWeight:800, color:'var(--ok)', marginBottom:6, letterSpacing:1 }}>⚠ PHYSICAL VERIFICATION REQUIRED</div>
               <div style={{ fontSize:13, color:'var(--tx)', lineHeight:1.6 }}>
                 Before confirming, physically verify that <strong>every item on the list is on the truck</strong>.<br /><br />
+                Also check the <strong>📝 Notes section</strong> below — crew may have left important last-minute notes.<br /><br />
                 Once marked Ready to Roll, the checklist will be locked. Make sure everything is loaded and accounted for.
               </div>
             </div>
@@ -1586,25 +1588,41 @@ function ActivityLog({ users, events }) {
     );
   };
 
-  const LogList = ({ items }) => (
-    <div style={{background:'var(--sf)',border:'1px solid var(--br)',borderRadius:'var(--rl)',overflow:'hidden',marginTop:10}}>
-      {items.length===0 && <div className="empty" style={{padding:20}}><div className="etxt">No activity for this period.</div></div>}
-      {items.slice(0,100).map((l,i) => {
-        const u = resolveUser(l.user_id);
-        return (
-          <div key={i} className="logrow">
-            <div className="logav">{(u?u.name:l.by_name||'?')[0]}</div>
-            <div className="logbody">
-              <div className="logact"><strong style={{color:'var(--tx)'}}>{l.by_name}</strong> — {l.detail}</div>
-              <div className="logt">{fmtFull(l.created_at)}</div>
-              {l.event_name && <div className="logevt">{l.activity_type==='task'?'Task':'Event'}: {l.event_name}</div>}
-            </div>
-          </div>
-        );
-      })}
-      {items.length>100 && <div style={{padding:'8px 14px',fontSize:11,color:'var(--mu)',textAlign:'center'}}>Showing 100 of {items.length} entries</div>}
-    </div>
-  );
+  const LogList = ({ items }) => {
+    if (items.length===0) return <div className="empty" style={{padding:20}}><div className="etxt">No activity for this period.</div></div>;
+    const sliced = items.slice(0,150);
+    let lastDay = null;
+    return (
+      <div style={{background:'var(--sf)',border:'1px solid var(--br)',borderRadius:'var(--rl)',overflow:'hidden',marginTop:10}}>
+        {sliced.map((l,i) => {
+          const u = resolveUser(l.user_id);
+          const entryDay = l.created_at ? new Date(l.created_at).toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'}) : null;
+          const showDivider = entryDay && entryDay !== lastDay;
+          if (showDivider) lastDay = entryDay;
+          return (
+            <React.Fragment key={i}>
+              {showDivider && (
+                <div style={{padding:'7px 14px',background:'var(--s2)',borderBottom:'1px solid var(--br)',borderTop:i>0?'1px solid var(--br)':'none',display:'flex',alignItems:'center',gap:10}}>
+                  <div style={{flex:1,height:1,background:'var(--br)'}} />
+                  <span style={{fontSize:10,fontWeight:800,letterSpacing:1.5,color:'var(--mu)',textTransform:'uppercase',whiteSpace:'nowrap'}}>{entryDay}</span>
+                  <div style={{flex:1,height:1,background:'var(--br)'}} />
+                </div>
+              )}
+              <div className="logrow">
+                <div className="logav">{(u?u.name:l.by_name||'?')[0]}</div>
+                <div className="logbody">
+                  <div className="logact"><strong style={{color:'var(--tx)'}}>{l.by_name}</strong> — {l.detail}</div>
+                  <div className="logt">{fmtFull(l.created_at)}</div>
+                  {l.event_name && <div className="logevt">{l.activity_type==='task'?'Task':'Event'}: {l.event_name}</div>}
+                </div>
+              </div>
+            </React.Fragment>
+          );
+        })}
+        {items.length>150 && <div style={{padding:'8px 14px',fontSize:11,color:'var(--mu)',textAlign:'center'}}>Showing 150 of {items.length} entries</div>}
+      </div>
+    );
+  };
 
   if (loading) return <div className="empty"><div className="etxt">Loading…</div></div>;
 
@@ -1959,6 +1977,7 @@ function CategoryManager({ categories, onUpdate }) {
   const [editVal, setEditVal] = useState('');
   const [confirmDel, setConfirmDel] = useState(null);
   const [toast, setToast] = useState(null);
+
   const handleAdd = async () => {
     const trimmed = newCat.trim();
     if (!trimmed) return;
@@ -1966,6 +1985,7 @@ function CategoryManager({ categories, onUpdate }) {
     await db.addCategory(trimmed, categories.length + 1);
     onUpdate([...categories, trimmed]); setNewCat(''); setToast({ msg:`"${trimmed}" added`, type:'ok' });
   };
+
   const handleEdit = async (idx) => {
     const trimmed = editVal.trim();
     if (!trimmed) return;
@@ -1973,33 +1993,83 @@ function CategoryManager({ categories, onUpdate }) {
     onUpdate(categories.map((c,i) => i===idx ? trimmed : c));
     setEditIdx(null); setToast({ msg:'Category updated', type:'ok' });
   };
+
   const handleDelete = async (idx) => {
     await db.deleteCategory(categories[idx]);
     onUpdate(categories.filter((_,i) => i!==idx));
     setConfirmDel(null); setToast({ msg:'Category removed', type:'err' });
   };
+
+  const moveUp = async (idx) => {
+    if (idx === 0) return;
+    const updated = [...categories];
+    [updated[idx-1], updated[idx]] = [updated[idx], updated[idx-1]];
+    // Update sort_order for both in Supabase
+    await supabase.from('cf_categories').upsert([
+      { name: updated[idx-1], sort_order: idx-1 },
+      { name: updated[idx], sort_order: idx },
+    ]);
+    onUpdate(updated);
+  };
+
+  const moveDown = async (idx) => {
+    if (idx === categories.length - 1) return;
+    const updated = [...categories];
+    [updated[idx], updated[idx+1]] = [updated[idx+1], updated[idx]];
+    await supabase.from('cf_categories').upsert([
+      { name: updated[idx], sort_order: idx },
+      { name: updated[idx+1], sort_order: idx+1 },
+    ]);
+    onUpdate(updated);
+  };
+
   return (
     <div>
       {toast && <Toast msg={toast.msg} type={toast.type} onDone={() => setToast(null)} />}
-      <div className="infobanner">Categories organize gear items. Renaming won't retroactively update existing items.</div>
+      <div className="infobanner">Categories organize gear items and display in this order on load lists. Use ▲▼ to reorder.</div>
       <div style={{ display:'flex', gap:8, marginBottom:14 }}>
         <input className="fi" value={newCat} onChange={e=>setNewCat(e.target.value)} onKeyDown={e=>e.key==='Enter'&&handleAdd()} placeholder="New category name…" style={{ flex:1 }} />
         <button className="btn bacc bsm" onClick={handleAdd}>+ Add</button>
       </div>
       {categories.map((cat, idx) => (
-        <div key={idx} className="mitem">
+        <div key={idx} className="mitem" style={{alignItems:'center'}}>
+          {/* Order arrows */}
+          <div style={{display:'flex',flexDirection:'column',gap:1,marginRight:6,flexShrink:0}}>
+            <button
+              onClick={() => moveUp(idx)}
+              disabled={idx===0}
+              style={{background:'none',border:'none',cursor:idx===0?'default':'pointer',color:idx===0?'var(--br2)':'var(--bl)',fontSize:12,lineHeight:1,padding:'1px 4px',fontWeight:700}}>▲</button>
+            <button
+              onClick={() => moveDown(idx)}
+              disabled={idx===categories.length-1}
+              style={{background:'none',border:'none',cursor:idx===categories.length-1?'default':'pointer',color:idx===categories.length-1?'var(--br2)':'var(--bl)',fontSize:12,lineHeight:1,padding:'1px 4px',fontWeight:700}}>▼</button>
+          </div>
+          <span style={{fontSize:11,color:'var(--mu)',fontWeight:700,minWidth:18,textAlign:'right',marginRight:8}}>{idx+1}</span>
           {editIdx === idx ? (
-            <><input className="fi" value={editVal} onChange={e=>setEditVal(e.target.value)} onKeyDown={e=>e.key==='Enter'&&handleEdit(idx)} style={{ flex:1, marginRight:8 }} autoFocus /><button className="btn bok bsm" onClick={() => handleEdit(idx)}>Save</button><button className="btn bghost bsm" onClick={() => setEditIdx(null)}>Cancel</button></>
+            <>
+              <input className="fi" value={editVal} onChange={e=>setEditVal(e.target.value)} onKeyDown={e=>e.key==='Enter'&&handleEdit(idx)} style={{ flex:1, marginRight:8 }} autoFocus />
+              <button className="btn bok bsm" onClick={() => handleEdit(idx)}>Save</button>
+              <button className="btn bghost bsm" onClick={() => setEditIdx(null)}>Cancel</button>
+            </>
           ) : (
-            <><span className="mname">{cat}</span><button className="btn bghost bsm" onClick={() => { setEditIdx(idx); setEditVal(cat); }}>Edit</button><button className="btn bdng bsm" onClick={() => setConfirmDel(idx)}>✕</button></>
+            <>
+              <span className="mname">{cat}</span>
+              <button className="btn bghost bsm" onClick={() => { setEditIdx(idx); setEditVal(cat); }}>Edit</button>
+              <button className="btn bdng bsm" onClick={() => setConfirmDel(idx)}>✕</button>
+            </>
           )}
         </div>
       ))}
-      {confirmDel !== null && (<div className="mback ctr"><div className="mover" onClick={() => setConfirmDel(null)} /><div className="modal"><Confirm title="Remove Category?" body={`Remove "${categories[confirmDel]}"?`} danger onConfirm={() => handleDelete(confirmDel)} onCancel={() => setConfirmDel(null)} confirmLabel="Remove" /></div></div>)}
+      {confirmDel !== null && (
+        <div className="mback ctr"><div className="mover" onClick={() => setConfirmDel(null)} />
+          <div className="modal">
+            <Confirm title="Remove Category?" body={`Remove "${categories[confirmDel]}"?`} danger onConfirm={() => handleDelete(confirmDel)} onCancel={() => setConfirmDel(null)} confirmLabel="Remove" />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
-
 
 // ─── TASK HELPERS ─────────────────────────────────────────────────────────────
 const TASK_STATUS = {
@@ -2405,7 +2475,8 @@ function TaskDetail({ taskList, user, onBack, onUpdate, users }) {
         );
       })}
 
-      {/* Notes section */}
+      {/* Divider + Notes section */}
+      <div style={{borderTop:'2px solid var(--br)',margin:'22px 0 0'}} />
       <NotesSection refId={taskList.id} refType="task" user={user} />
 
       {/* Export */}
@@ -2822,10 +2893,11 @@ export default function App() {
   );
 
   const handleLogin = async (u) => {
-    setUser(u);
+    // Log first, then set user
     try {
       await db.addLoginLog({ id:uid(), userId:u.id, userName:u.name, role:u.role, at:nowISO() });
-    } catch(e) { /* non-blocking */ }
+    } catch(e) { console.warn('Login log failed:', e); }
+    setUser(u);
   };
 
   if (!user) return (
