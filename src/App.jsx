@@ -1408,12 +1408,20 @@ function EventList({ events, user, onSelect, onCreateNew }) {
   );
 }
 
-function ActivityLog({ users }) {
+function ActivityLog({ users, events }) {
   const [logs, setLogs] = useState([]);
-  const [filterType, setFilterType] = useState('all'); // 'all' | empId | projectName
-  const [filterMode, setFilterMode] = useState('employee'); // 'employee' | 'project'
+  const [filterType, setFilterType] = useState('all');
+  const [filterMode, setFilterMode] = useState('employee');
+  const [section, setSection] = useState('log'); // 'log' | 'leaderboard'
   const [loading, setLoading] = useState(true);
-  useEffect(() => { db.getAllActivity().then(data => { setLogs(data); setLoading(false); }); }, []);
+  const [taskLogs, setTaskLogs] = useState([]);
+  const [lbBoard, setLbBoard] = useState('tasks');
+  const [lbPeriod, setLbPeriod] = useState('weekly');
+  useEffect(() => {
+    Promise.all([db.getAllActivity(), db.getTaskActivity()]).then(([all, tasks]) => {
+      setLogs(all); setTaskLogs(tasks); setLoading(false);
+    });
+  }, []);
 
   const resolveUser = (id) => users.find(u => u.id === id);
   const empIds = [...new Set(logs.map(l => l.user_id).filter(Boolean))];
@@ -1433,9 +1441,99 @@ function ActivityLog({ users }) {
   });
   const totalActions = Object.values(contribMap).reduce((a,b) => a+b, 0);
 
+  // Leaderboard calculations
+  const now = new Date();
+  const filterByPeriod = (arr, dateField='created_at') => arr.filter(l=>{
+    const d = new Date(l[dateField]||l.created_at||l.at);
+    if (lbPeriod==='daily') return d.toDateString()===now.toDateString();
+    if (lbPeriod==='weekly') return d>=new Date(now-7*86400000);
+    if (lbPeriod==='monthly') return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();
+    if (lbPeriod==='yearly') return d.getFullYear()===now.getFullYear();
+    return true;
+  });
+  const taskCompletions = () => {
+    const filtered = filterByPeriod(taskLogs).filter(l=>l.action==='task_status'&&l.detail?.includes('→ completed'));
+    const map = {}; filtered.forEach(l=>{ if(l.user_id) map[l.user_id]=(map[l.user_id]||0)+1; });
+    const allTime = {}; taskLogs.filter(l=>l.action==='task_status'&&l.detail?.includes('→ completed')).forEach(l=>{ if(l.user_id) allTime[l.user_id]=(allTime[l.user_id]||0)+1; });
+    return users.filter(u=>u.active).map(u=>({user:u,count:map[u.id]||0,allTime:allTime[u.id]||0})).sort((a,b)=>b.count-a.count).filter(r=>r.count>0||r.allTime>0);
+  };
+  const projectContribs = () => {
+    const allLogs = (events||[]).flatMap(ev=>(ev.activityLog||[]).map(l=>({...l,eventName:ev.name})));
+    const filtered = filterByPeriod(allLogs,'at').filter(l=>l.action==='status_change');
+    const map = {}; filtered.forEach(l=>{ if(l.userId) map[l.userId]=(map[l.userId]||0)+1; });
+    const total = Object.values(map).reduce((a,b)=>a+b,0);
+    return users.filter(u=>u.active).map(u=>({user:u,count:map[u.id]||0,pct:total>0?Math.round(((map[u.id]||0)/total)*100):0})).sort((a,b)=>b.count-a.count).filter(r=>r.count>0);
+  };
+  const taskRows = taskCompletions();
+  const projRows = projectContribs();
+  const maxTask = taskRows[0]?.count||1;
+  const maxProj = projRows[0]?.count||1;
+
   if (loading) return <div className="empty"><div className="etxt">Loading…</div></div>;
   return (
     <div>
+      {/* Section toggle */}
+      <div className="tabrow" style={{ marginBottom:14 }}>
+        <button className={'btn bsm '+(section==='log'?'bacc':'bghost')} onClick={()=>setSection('log')}>📋 Activity Log</button>
+        <button className={'btn bsm '+(section==='leaderboard'?'bacc':'bghost')} onClick={()=>setSection('leaderboard')}>🏆 Leaderboards</button>
+      </div>
+
+      {section==='leaderboard' && (
+        <div>
+          <div className="tabrow" style={{marginBottom:8}}>
+            <button className={'btn bsm '+(lbBoard==='tasks'?'bacc':'bghost')} onClick={()=>setLbBoard('tasks')}>🏆 Warehouse Tasks</button>
+            <button className={'btn bsm '+(lbBoard==='projects'?'bacc':'bghost')} onClick={()=>setLbBoard('projects')}>🎪 By Project</button>
+          </div>
+          <div className="lb-time-row">
+            {[['daily','Today'],['weekly','This Week'],['monthly','This Month'],['yearly','This Year']].map(([v,l])=>(
+              <button key={v} className={'btn bsm '+(lbPeriod===v?'bacc':'bghost')} onClick={()=>setLbPeriod(v)}>{l}</button>
+            ))}
+          </div>
+          {lbBoard==='tasks' && (
+            <div style={{background:'var(--sf)',border:'1px solid var(--br)',borderRadius:'var(--rl)',overflow:'hidden'}}>
+              <div style={{padding:'12px 14px',borderBottom:'1px solid var(--br)',background:'var(--s2)'}}>
+                <div style={{fontFamily:'var(--fh)',fontSize:13,fontWeight:800,letterSpacing:2,color:'var(--mu)',textTransform:'uppercase'}}>Warehouse Task Completions</div>
+              </div>
+              {taskRows.length===0 && <div className="empty" style={{padding:24}}><div className="etxt">No task completions for this period.</div></div>}
+              {taskRows.map((row,i)=>(
+                <div key={row.user.id} className="lb-row">
+                  <div className={'lb-rank'+(i<3?' top':'')}>{i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</div>
+                  <div className="lb-av">{row.user.name[0]}</div>
+                  <div className="lb-info">
+                    <div className="lb-name">{row.user.name}</div>
+                    <div className="lb-stat">All time: {row.allTime} tasks</div>
+                    <div className="lb-bar"><div className="lb-fill" style={{width:`${Math.round((row.count/maxTask)*100)}%`}} /></div>
+                  </div>
+                  <div className="lb-score">{row.count}</div>
+                </div>
+              ))}
+            </div>
+          )}
+          {lbBoard==='projects' && (
+            <div style={{background:'var(--sf)',border:'1px solid var(--br)',borderRadius:'var(--rl)',overflow:'hidden'}}>
+              <div style={{padding:'12px 14px',borderBottom:'1px solid var(--br)',background:'var(--s2)'}}>
+                <div style={{fontFamily:'var(--fh)',fontSize:13,fontWeight:800,letterSpacing:2,color:'var(--mu)',textTransform:'uppercase'}}>Event Contributions</div>
+              </div>
+              {projRows.length===0 && <div className="empty" style={{padding:24}}><div className="etxt">No event activity for this period.</div></div>}
+              {projRows.map((row,i)=>(
+                <div key={row.user.id} className="lb-row">
+                  <div className={'lb-rank'+(i<3?' top':'')}>{i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</div>
+                  <div className="lb-av">{row.user.name[0]}</div>
+                  <div className="lb-info">
+                    <div className="lb-name">{row.user.name}</div>
+                    <div className="lb-stat">{row.count} gear status updates</div>
+                    <div className="lb-bar"><div className="lb-fill" style={{width:`${Math.round((row.count/maxProj)*100)}%`}} /></div>
+                  </div>
+                  <div className="lb-score">{row.pct}%</div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {section==='log' && (
+      <div>
       {/* Mode toggle */}
       <div className="tabrow" style={{ marginBottom:8 }}>
         <button className={'btn bsm '+(filterMode==='employee'?'bacc':'bghost')} onClick={() => { setFilterMode('employee'); setFilterType('all'); }}>By Employee</button>
@@ -1490,6 +1588,8 @@ function ActivityLog({ users }) {
           );
         })}
       </div>
+      </div>
+      )}
     </div>
   );
 }
@@ -2274,124 +2374,6 @@ function TaskListView({ taskLists, user, onSelect, onCreateNew, onUpdate }) {
   );
 }
 
-// ─── LEADERBOARDS ─────────────────────────────────────────────────────────────
-function Leaderboards({ users, events }) {
-  const [board, setBoard] = useState('tasks'); // 'tasks' | 'projects'
-  const [period, setPeriod] = useState('weekly');
-  const [taskLogs, setTaskLogs] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(()=>{
-    db.getTaskActivity().then(data=>{ setTaskLogs(data); setLoading(false); });
-  },[]);
-
-  const now = new Date();
-  const filterByPeriod = (logs, dateField='created_at') => {
-    return logs.filter(l=>{
-      const d = new Date(l[dateField]||l.created_at||l.at);
-      if (period==='daily') return d.toDateString()===now.toDateString();
-      if (period==='weekly') {
-        const weekAgo = new Date(now-7*86400000);
-        return d>=weekAgo;
-      }
-      if (period==='monthly') {
-        return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();
-      }
-      if (period==='yearly') return d.getFullYear()===now.getFullYear();
-      return true;
-    });
-  };
-
-  const employees = users.filter(u=>u.active&&u.role!=='employee'||u.role==='employee');
-
-  // Task leaderboard
-  const taskCompletions = () => {
-    const filtered = filterByPeriod(taskLogs).filter(l=>l.action==='task_status'&&l.detail?.includes('→ completed'));
-    const map = {};
-    filtered.forEach(l=>{ if(l.user_id) map[l.user_id]=(map[l.user_id]||0)+1; });
-    const allTime = {};
-    taskLogs.filter(l=>l.action==='task_status'&&l.detail?.includes('→ completed')).forEach(l=>{ if(l.user_id) allTime[l.user_id]=(allTime[l.user_id]||0)+1; });
-    return users.filter(u=>u.active).map(u=>({ user:u, count:map[u.id]||0, allTime:allTime[u.id]||0 }))
-      .sort((a,b)=>b.count-a.count).filter(r=>r.count>0||r.allTime>0);
-  };
-
-  // Project leaderboard
-  const projectContribs = () => {
-    const allActivityLogs = events.flatMap(ev=>(ev.activityLog||[]).map(l=>({...l,eventName:ev.name})));
-    const filtered = filterByPeriod(allActivityLogs,'at').filter(l=>l.action==='status_change');
-    const map = {};
-    filtered.forEach(l=>{ if(l.userId) map[l.userId]=(map[l.userId]||0)+1; });
-    const total = Object.values(map).reduce((a,b)=>a+b,0);
-    return users.filter(u=>u.active).map(u=>({
-      user:u, count:map[u.id]||0, pct:total>0?Math.round(((map[u.id]||0)/total)*100):0
-    })).sort((a,b)=>b.count-a.count).filter(r=>r.count>0);
-  };
-
-  const taskRows = taskCompletions();
-  const projRows = projectContribs();
-  const maxTask = taskRows[0]?.count||1;
-  const maxProj = projRows[0]?.count||1;
-
-  if (loading) return <div className="empty"><div className="etxt">Loading…</div></div>;
-
-  return (
-    <div>
-      {/* Board toggle */}
-      <div className="tabrow" style={{marginBottom:8}}>
-        <button className={'btn bsm '+(board==='tasks'?'bacc':'bghost')} onClick={()=>setBoard('tasks')}>🏆 Warehouse Tasks</button>
-        <button className={'btn bsm '+(board==='projects'?'bacc':'bghost')} onClick={()=>setBoard('projects')}>🎪 By Project</button>
-      </div>
-      {/* Period filter */}
-      <div className="lb-time-row">
-        {[['daily','Today'],['weekly','This Week'],['monthly','This Month'],['yearly','This Year']].map(([v,l])=>(
-          <button key={v} className={'btn bsm '+(period===v?'bacc':'bghost')} onClick={()=>setPeriod(v)}>{l}</button>
-        ))}
-      </div>
-
-      {board==='tasks' && (
-        <div style={{background:'var(--sf)',border:'1px solid var(--br)',borderRadius:'var(--rl)',overflow:'hidden'}}>
-          <div style={{padding:'12px 14px',borderBottom:'1px solid var(--br)',background:'var(--s2)'}}>
-            <div style={{fontFamily:'var(--fh)',fontSize:13,fontWeight:800,letterSpacing:2,color:'var(--mu)',textTransform:'uppercase'}}>Warehouse Task Completions — {period}</div>
-          </div>
-          {taskRows.length===0 && <div className="empty" style={{padding:24}}><div className="etxt">No task completions recorded for this period.</div></div>}
-          {taskRows.map((row,i)=>(
-            <div key={row.user.id} className="lb-row">
-              <div className={'lb-rank'+(i<3?' top':'')}>{i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</div>
-              <div className="lb-av">{row.user.name[0]}</div>
-              <div className="lb-info">
-                <div className="lb-name">{row.user.name}</div>
-                <div className="lb-stat">All time: {row.allTime} tasks</div>
-                <div className="lb-bar"><div className="lb-fill" style={{width:`${Math.round((row.count/maxTask)*100)}%`}} /></div>
-              </div>
-              <div className="lb-score">{row.count}</div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {board==='projects' && (
-        <div style={{background:'var(--sf)',border:'1px solid var(--br)',borderRadius:'var(--rl)',overflow:'hidden'}}>
-          <div style={{padding:'12px 14px',borderBottom:'1px solid var(--br)',background:'var(--s2)'}}>
-            <div style={{fontFamily:'var(--fh)',fontSize:13,fontWeight:800,letterSpacing:2,color:'var(--mu)',textTransform:'uppercase'}}>Event Contributions — {period}</div>
-          </div>
-          {projRows.length===0 && <div className="empty" style={{padding:24}}><div className="etxt">No event activity recorded for this period.</div></div>}
-          {projRows.map((row,i)=>(
-            <div key={row.user.id} className="lb-row">
-              <div className={'lb-rank'+(i<3?' top':'')}>{i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</div>
-              <div className="lb-av">{row.user.name[0]}</div>
-              <div className="lb-info">
-                <div className="lb-name">{row.user.name}</div>
-                <div className="lb-stat">{row.count} gear status updates</div>
-                <div className="lb-bar"><div className="lb-fill" style={{width:`${Math.round((row.count/maxProj)*100)}%`}} /></div>
-              </div>
-              <div className="lb-score">{row.pct}%</div>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
 
 // #9 Login — CREWFLOW branding
 function Login({ onLogin, users }) {
@@ -2527,7 +2509,7 @@ export default function App() {
   );
 
   const isAdmin = user.role === 'admin';
-  const ATABS = ['Events','Tasks','Leaderboards','Activity Log','Team','Gear Library','Fleet','Categories'];
+  const ATABS = ['Events','Tasks','Activity Log','Team','Gear Library','Fleet','Categories'];
 
   return (
     <CatContext.Provider value={categories}>
@@ -2542,12 +2524,18 @@ export default function App() {
         </div>
         {!selectedEvent && (
           <div className="nav">
-            {isAdmin ? ATABS.map(t => <button key={t} className={'ntab'+(adminTab===t?' on':'')} onClick={() => setAdminTab(t)}>{t}</button>) : (['Events','Tasks','Leaderboards'].map(t=><button key={t} className={'ntab'+(adminTab===t?' on':'')} onClick={()=>setAdminTab(t)}>{t}</button>))}
+            {isAdmin ? ATABS.map(t => <button key={t} className={'ntab'+(adminTab===t?' on':'')} onClick={() => setAdminTab(t)}>{t}</button>) : (['Events','Tasks'].map(t=><button key={t} className={'ntab'+(adminTab===t?' on':'')} onClick={()=>setAdminTab(t)}>{t}</button>))}
           </div>
         )}
         <div className="main">
           {selectedEvent ? (
             <EventDetail event={selectedEvent} user={user} onBack={() => setSelectedEvent(null)} onUpdate={handleUpdateEvent} masterItems={masterItems} fleet={fleet} users={users} />
+          ) : !isAdmin && adminTab === 'Tasks' ? (
+            selectedTask ? (
+              <TaskDetail taskList={selectedTask} user={user} onBack={()=>setSelectedTask(null)} onUpdate={(tl)=>{ setTaskLists(prev=>prev.map(t=>t.id===tl.id?tl:t)); setSelectedTask(tl); }} users={users} />
+            ) : (
+              <TaskListView taskLists={taskLists} user={user} onSelect={setSelectedTask} onCreateNew={()=>setShowCreateTask(true)} onUpdate={(tl)=>setTaskLists(prev=>prev.map(t=>t.id===tl.id?tl:t))} />
+            )
           ) : !isAdmin ? (
             <EventList events={events} user={user} onSelect={setSelectedEvent} onCreateNew={() => setShowCreate(true)} />
           ) : adminTab === 'Events' ? (
@@ -2558,10 +2546,8 @@ export default function App() {
             ) : (
               <TaskListView taskLists={taskLists} user={user} onSelect={setSelectedTask} onCreateNew={()=>setShowCreateTask(true)} onUpdate={(tl)=>setTaskLists(prev=>prev.map(t=>t.id===tl.id?tl:t))} />
             )
-          ) : adminTab === 'Leaderboards' ? (
-            <Leaderboards users={users} events={events} />
           ) : adminTab === 'Activity Log' ? (
-            <ActivityLog users={users} />
+            <ActivityLog users={users} events={events} />
           ) : adminTab === 'Team' ? (
             <UserManager users={users} onUpdate={setUsers} />
           ) : adminTab === 'Gear Library' ? (
