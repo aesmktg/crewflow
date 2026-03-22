@@ -275,6 +275,54 @@ input,textarea,select,button{font-family:var(--fb)}
 .tabrow{display:flex;gap:6px;margin-bottom:13px;flex-wrap:wrap}
 .infobanner{background:var(--s2);border:1px solid var(--br);border-radius:4px;padding:7px 11px;margin-bottom:12px;font-size:12px;color:var(--mu)}
 .loading{display:flex;align-items:center;justify-content:center;min-height:100vh;background:#F0F2F5;font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;letter-spacing:3px;color:var(--tx)}
+
+/* ─── TASK MODULE ─────────────────────────────────────────────────────────── */
+.tcard{background:var(--sf);border:1px solid var(--br);border-radius:var(--rl);margin-bottom:10px;overflow:hidden;transition:.15s;cursor:pointer}
+.tcard:active{transform:scale(.99);border-color:var(--bl)}
+.tcard.arc{opacity:.52}
+.tcard.atc{border-color:var(--ok);border-width:2px;box-shadow:0 0 0 3px rgba(5,150,105,.15),0 4px 20px rgba(5,150,105,.2)}
+.tcard.nodate{border-left:4px solid var(--wn)}
+.tcard.overdue{border-left:4px solid var(--dn)}
+.thd{padding:14px 14px 8px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.ttitle{font-family:var(--fh);font-size:22px;font-weight:900;line-height:1.1;color:var(--tx)}
+.ttype-badge{font-size:9px;font-weight:800;letter-spacing:1.5px;padding:3px 8px;border-radius:20px;text-transform:uppercase;border:1px solid;white-space:nowrap;flex-shrink:0}
+.ttype-daily{color:var(--bl);border-color:rgba(37,99,235,.4);background:var(--bl2)}
+.ttype-weekly{color:#7C3AED;border-color:rgba(124,58,237,.4);background:rgba(124,58,237,.1)}
+.ttype-nodate{color:var(--wn);border-color:rgba(217,119,6,.4);background:var(--wn2)}
+.tmeta{padding:0 14px 8px;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.tmchip{background:var(--s2);border-radius:4px;padding:4px 8px;font-size:11px;color:var(--mu);font-weight:600}
+.tprog{padding:0 14px 12px}
+.tatc-banner{background:rgba(5,150,105,.08);border:2px solid var(--ok);border-radius:var(--rl);padding:12px 14px;margin-bottom:11px;display:flex;align-items:center;gap:10px}
+.tatc-btn{width:100%;background:linear-gradient(135deg,rgba(5,150,105,.12),rgba(5,150,105,.06));border:2px solid var(--ok);border-radius:var(--rl);padding:16px;color:var(--ok);font-family:var(--fh);font-size:18px;font-weight:900;letter-spacing:2px;text-transform:uppercase;cursor:pointer;margin-bottom:18px;display:flex;align-items:center;justify-content:center;gap:8px}
+.tatc-locked{width:100%;background:rgba(5,150,105,.04);border:2px dashed rgba(5,150,105,.25);border-radius:var(--rl);padding:13px;color:rgba(5,150,105,.45);font-family:var(--fh);font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:18px;display:flex;align-items:center;justify-content:center;gap:7px;cursor:default}
+.titem{background:var(--sf);border:1px solid var(--br);border-radius:var(--r);padding:12px 13px;margin-bottom:6px;display:flex;align-items:flex-start;gap:10px}
+.titem.done{opacity:.7;background:var(--s2)}
+.titem.needs{border-left:3px solid var(--dn)}
+.tchk{width:26px;height:26px;border-radius:50%;border:2px solid var(--br2);background:var(--s2);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.18s;margin-top:1px}
+.tchk.completed{border-color:var(--ok);background:var(--ok2)}
+.tchk.needs_support{border-color:var(--dn);background:var(--dn2)}
+.tmain{flex:1;min-width:0}
+.tname{font-size:16px;font-weight:600;color:var(--tx);line-height:1.3;word-break:break-word;white-space:normal}
+.tnotes{font-size:12px;color:var(--mu);margin-top:3px;line-height:1.4}
+.tassign{font-size:11px;color:var(--bl);margin-top:3px;font-weight:600}
+.tcarryover{font-size:10px;color:var(--dn);margin-top:4px;font-weight:600;line-height:1.5}
+.tright{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0}
+.tbadge{font-size:8px;font-weight:800;letter-spacing:.8px;padding:3px 8px;border-radius:20px;text-transform:uppercase;white-space:nowrap;border:1px solid}
+.msq-item{background:var(--sf);border:1px solid var(--dn);border-left:4px solid var(--dn);border-radius:var(--r);padding:11px 13px;margin-bottom:7px}
+.msq-title{font-size:13px;font-weight:700;color:var(--dn)}
+.msq-meta{font-size:11px;color:var(--mu);margin-top:3px}
+.lb-row{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--br)}
+.lb-row:last-child{border-bottom:none}
+.lb-rank{font-family:var(--fh);font-size:20px;font-weight:900;color:var(--mu);width:28px;flex-shrink:0}
+.lb-rank.top{color:var(--wn)}
+.lb-av{width:36px;height:36px;border-radius:50%;background:var(--bl2);border:2px solid var(--bl);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;font-family:var(--fh);color:var(--bl);flex-shrink:0}
+.lb-info{flex:1;min-width:0}
+.lb-name{font-size:14px;font-weight:700;color:var(--tx)}
+.lb-stat{font-size:11px;color:var(--mu);margin-top:1px}
+.lb-score{font-family:var(--fh);font-size:22px;font-weight:900;color:var(--bl)}
+.lb-bar{height:5px;background:var(--s2);border-radius:3px;margin-top:4px;overflow:hidden}
+.lb-fill{height:100%;background:var(--bl);border-radius:3px;transition:width .4s}
+.lb-time-row{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
 `;
 
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
@@ -379,6 +427,61 @@ const db = {
   updateCategory: async (oldName, newName) => supabase.from('cf_categories').update({ name:newName }).eq('name', oldName),
   deleteCategory: async (name) => supabase.from('cf_categories').delete().eq('name', name),
   getAllActivity: async () => { const { data } = await supabase.from('cf_activity_log').select('*').order('created_at', { ascending:false }).limit(200); return data || []; },
+
+  // Task Lists
+  getTaskLists: async () => {
+    const { data: lists } = await supabase.from('cf_task_lists').select('*').order('created_at', { ascending:false });
+    if (!lists) return [];
+    const { data: items } = await supabase.from('cf_task_items').select('*').order('sort_order');
+    const { data: audit } = await supabase.from('cf_task_audit').select('*').order('created_at');
+    return lists.map(tl => ({
+      id: tl.id, title: tl.title, type: tl.type,
+      dateStart: tl.date_start, dateEnd: tl.date_end,
+      brief: tl.brief, archived: tl.archived, archivedAt: tl.archived_at,
+      allTasksComplete: tl.all_tasks_complete || false,
+      createdAt: tl.created_at,
+      items: (items||[]).filter(i => i.list_id === tl.id).map(i => ({
+        id: i.id, name: i.name, notes: i.notes||'',
+        status: i.status||'pending',
+        assignedTo: i.assigned_to||[], lead: i.lead||'', openToAll: i.open_to_all||false,
+        completedBy: i.completed_by||'', completedAt: i.completed_at||null,
+        needsSupportBy: i.needs_support_by||'', needsSupportAt: i.needs_support_at||null,
+        carryoverLog: i.carryover_log||[], removedAt: i.removed_at||null,
+        addedBy: i.added_by||'', addedAt: i.added_at||null,
+      })),
+      auditLog: (audit||[]).filter(a => a.list_id === tl.id).map(a => ({
+        type: a.type, itemName: a.item_name, changes: a.changes, by: a.by_name, at: a.created_at,
+      })),
+    }));
+  },
+  upsertTaskList: async (tl) => supabase.from('cf_task_lists').upsert({
+    id: tl.id, title: tl.title, type: tl.type,
+    date_start: tl.dateStart||null, date_end: tl.dateEnd||null,
+    brief: tl.brief||'', archived: tl.archived||false,
+    archived_at: tl.archivedAt||null,
+    all_tasks_complete: tl.allTasksComplete||false,
+    updated_at: new Date().toISOString(),
+  }),
+  upsertTaskItem: async (item, listId) => supabase.from('cf_task_items').upsert({
+    id: item.id, list_id: listId, name: item.name, notes: item.notes||'',
+    status: item.status||'pending',
+    assigned_to: item.assignedTo||[], lead: item.lead||'', open_to_all: item.openToAll||false,
+    completed_by: item.completedBy||'', completed_at: item.completedAt||null,
+    needs_support_by: item.needsSupportBy||'', needs_support_at: item.needsSupportAt||null,
+    carryover_log: item.carryoverLog||[], removed_at: item.removedAt||null,
+    added_by: item.addedBy||'', added_at: item.addedAt||null,
+  }),
+  addTaskAudit: async (listId, entry) => supabase.from('cf_task_audit').insert({
+    id: Math.random().toString(36).slice(2,9), list_id: listId,
+    type: entry.type, item_name: entry.itemName||'', changes: entry.changes||'', by_name: entry.by,
+  }),
+  addTaskActivity: async (listId, listTitle, log) => supabase.from('cf_activity_log').insert({
+    id: log.id||Math.random().toString(36).slice(2,9),
+    event_id: listId, event_name: listTitle,
+    action: log.action, detail: log.detail, by_name: log.by, user_id: log.userId||'',
+    activity_type: 'task',
+  }),
+  getTaskActivity: async () => { const { data } = await supabase.from('cf_activity_log').select('*').where ? await supabase.from('cf_activity_log').select('*').eq('activity_type','task').order('created_at',{ascending:false}).limit(500) : await supabase.from('cf_activity_log').select('*').order('created_at',{ascending:false}).limit(500); return (data||[]).filter(l => l.activity_type === 'task'); },
 };
 
 // ─── SMALL COMPONENTS ─────────────────────────────────────────────────────────
@@ -1550,6 +1653,746 @@ function CategoryManager({ categories, onUpdate }) {
   );
 }
 
+
+// ─── TASK HELPERS ─────────────────────────────────────────────────────────────
+const TASK_STATUS = {
+  pending:        { label:'Pending',              color:'#6B7280', bg:'rgba(107,114,128,0.1)'  },
+  completed:      { label:'Completed',            color:'#059669', bg:'rgba(5,150,105,0.1)'    },
+  needs_support:  { label:'Needs Manager Support',color:'#DC2626', bg:'rgba(220,38,38,0.1)'   },
+};
+
+const fmtDate = (d) => d ? new Date(d+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—';
+const isOverdue = (tl) => {
+  if (tl.type === 'nodate' || tl.archived) return false;
+  const ref = tl.dateEnd || tl.dateStart;
+  if (!ref) return false;
+  return new Date(ref+'T23:59:59') < new Date();
+};
+const isTodayList = (tl) => {
+  if (tl.type === 'nodate') return false;
+  const today = new Date().toISOString().slice(0,10);
+  if (tl.type === 'daily') return tl.dateStart === today;
+  if (tl.type === 'weekly') return tl.dateStart <= today && today <= (tl.dateEnd||tl.dateStart);
+  return false;
+};
+
+// ─── TASK ITEM MODAL ──────────────────────────────────────────────────────────
+function TaskItemModal({ item, onSave, onClose, users, isAdmin }) {
+  const isEdit = !!item;
+  const employees = (users||[]).filter(u => u.active);
+  const [name, setName] = useState(item?.name||'');
+  const [notes, setNotes] = useState(item?.notes||'');
+  const [openToAll, setOpenToAll] = useState(item?.openToAll||false);
+  const [assignedTo, setAssignedTo] = useState(item?.assignedTo||[]);
+  const [lead, setLead] = useState(item?.lead||'');
+  const [confirmSave, setConfirmSave] = useState(false);
+
+  const toggleAssign = (name) => {
+    setAssignedTo(prev => prev.includes(name) ? prev.filter(n=>n!==name) : [...prev,name]);
+    if (lead === name) setLead('');
+  };
+
+  const doSave = () => {
+    if (!name.trim()) return;
+    const base = isEdit ? {...item} : { id:Math.random().toString(36).slice(2,9), status:'pending', carryoverLog:[], removedAt:null };
+    onSave({...base, name:name.trim(), notes, openToAll, assignedTo: openToAll?[]:assignedTo, lead: openToAll?'':lead });
+    setConfirmSave(false);
+  };
+
+  if (confirmSave) return (
+    <div className="mback ctr"><div className="mover" onClick={()=>setConfirmSave(false)} />
+      <div className="modal"><Confirm title="Save Changes?" body={`Confirm changes to "${item.name}"?`} onConfirm={doSave} onCancel={()=>setConfirmSave(false)} confirmLabel="Yes, Save" /></div>
+    </div>
+  );
+
+  return (
+    <div className="mback"><div className="mover" onClick={onClose} />
+      <div className="modal">
+        <div className="mtitle">{isEdit?'✏️ Edit Task':'Add Task'}</div>
+        <div className="field"><label className="flbl">Task Name *</label><input className="fi" value={name} onChange={e=>setName(e.target.value)} placeholder="e.g. Restock cable bins" autoFocus /></div>
+        <div className="field"><label className="flbl">Notes / Details</label><textarea className="fta" value={notes} onChange={e=>setNotes(e.target.value)} rows={2} /></div>
+        <div className="field">
+          <label className="flbl">Assignment</label>
+          <div style={{background:'var(--s2)',border:'1px solid var(--br)',borderRadius:'var(--r)',padding:'10px 12px',marginBottom:8}}>
+            <div className="crew-member" onClick={()=>{setOpenToAll(o=>!o); if(!openToAll){setAssignedTo([]); setLead('');}}}>
+              <div className={'crew-cb'+(openToAll?' on':'')}>
+                {openToAll&&<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--bl)" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>}
+              </div>
+              <span className="crew-name" style={{fontWeight:700}}>🌐 Open to All — anyone available</span>
+            </div>
+          </div>
+          {!openToAll && employees.length > 0 && (
+            <div style={{background:'var(--s2)',border:'1px solid var(--br)',borderRadius:'var(--r)',padding:'10px 12px'}}>
+              {employees.map(u=>(
+                <div key={u.id} style={{marginBottom:6}}>
+                  <div className="crew-member" onClick={()=>toggleAssign(u.name)}>
+                    <div className={'crew-cb'+(assignedTo.includes(u.name)?' on':'')}>
+                      {assignedTo.includes(u.name)&&<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--bl)" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>}
+                    </div>
+                    <span className="crew-name">{u.name}</span>
+                  </div>
+                  {assignedTo.includes(u.name) && (
+                    <div style={{display:'flex',alignItems:'center',gap:6,paddingLeft:22,marginTop:3}} onClick={()=>setLead(lead===u.name?'':u.name)}>
+                      <div style={{width:14,height:14,borderRadius:7,border:`2px solid ${lead===u.name?'#D97706':'var(--br2)'}`,background:lead===u.name?'#D97706':'transparent',display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer',flexShrink:0}}>
+                        {lead===u.name&&<svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>}
+                      </div>
+                      <span style={{fontSize:10,color:lead===u.name?'#D97706':'var(--mu)',fontWeight:700}}>⭐ Lead</span>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+        <div className="macts">
+          <button className="btn bghost" onClick={onClose}>Cancel</button>
+          <button className="btn bprim" style={{flex:2}} onClick={()=>isEdit?setConfirmSave(true):doSave()}>{isEdit?'Save Changes':'Add Task'}</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── TASK LIST FORM ───────────────────────────────────────────────────────────
+function TaskListForm({ onSave, onClose, existing, users }) {
+  const e = existing||{};
+  const employees = (users||[]).filter(u=>u.active);
+  const [title, setTitle] = useState(e.title||'');
+  const [type, setType] = useState(e.type||'daily');
+  const [dateStart, setDateStart] = useState(e.dateStart||new Date().toISOString().slice(0,10));
+  const [dateEnd, setDateEnd] = useState(e.dateEnd||'');
+  const [brief, setBrief] = useState(e.brief||'');
+  const [items, setItems] = useState((e.items||[]).filter(i=>!i.removedAt));
+  const [showItemModal, setShowItemModal] = useState(false);
+  const [editItem, setEditItem] = useState(null);
+
+  const handleAddItem = (item) => { setItems(p=>[...p,{...item,addedBy:'admin',addedAt:new Date().toISOString()}]); setShowItemModal(false); };
+  const handleEditItem = (item) => { setItems(p=>p.map(i=>i.id===item.id?item:i)); setEditItem(null); };
+
+  const save = () => {
+    if (!title.trim()) return;
+    onSave({...e, id:e.id||Math.random().toString(36).slice(2,9), title, type,
+      dateStart: type==='nodate'?null:dateStart, dateEnd: type==='weekly'?dateEnd:null,
+      brief, items:[...items,...(e.items||[]).filter(i=>i.removedAt)],
+      archived:e.archived||false, allTasksComplete:e.allTasksComplete||false,
+      createdAt:e.createdAt||new Date().toISOString() });
+  };
+
+  return (
+    <div className="mback"><div className="mover" onClick={onClose}/>
+      <div className="modal">
+        <div className="mtitle">{existing?'✏️ Edit Task List':'➕ New Task List'}</div>
+        <div className="field"><label className="flbl">Title *</label><input className="fi" value={title} onChange={e=>setTitle(e.target.value)} placeholder="e.g. Monday Warehouse Checklist" /></div>
+        <div className="field">
+          <label className="flbl">Type</label>
+          <div style={{display:'flex',gap:8}}>
+            {[['daily','📅 Daily'],['weekly','📆 Weekly'],['nodate','🗂 No Date']].map(([v,l])=>(
+              <button key={v} className={'btn bsm '+(type===v?'bacc':'bghost')} style={{flex:1}} onClick={()=>setType(v)}>{l}</button>
+            ))}
+          </div>
+        </div>
+        {type!=='nodate' && (
+          <div className="frow">
+            <div className="field"><label className="flbl">{type==='weekly'?'Start Date':'Date'}</label><input className="fi" type="date" value={dateStart} onChange={e=>setDateStart(e.target.value)} /></div>
+            {type==='weekly' && <div className="field"><label className="flbl">End Date</label><input className="fi" type="date" value={dateEnd} onChange={e=>setDateEnd(e.target.value)} /></div>}
+          </div>
+        )}
+        <div className="field"><label className="flbl">Admin Brief</label><textarea className="fta" value={brief} onChange={e=>setBrief(e.target.value)} rows={2} placeholder="Notes for the crew..." /></div>
+        <div className="field">
+          <label className="flbl">Task Items</label>
+          <div style={{background:'var(--s2)',border:'1px solid var(--br)',borderRadius:'var(--r)',padding:10,marginBottom:8}}>
+            {items.length===0 && <div style={{fontSize:12,color:'var(--mu)',padding:'4px 0'}}>No items yet — add below.</div>}
+            {items.map(it=>(
+              <div key={it.id} style={{display:'flex',alignItems:'center',gap:8,padding:'6px 8px',background:'var(--sf)',borderRadius:'var(--r)',marginBottom:5}}>
+                <span style={{flex:1,fontSize:13,color:'var(--tx)',fontWeight:600}}>{it.name}</span>
+                {it.openToAll && <span style={{fontSize:10,color:'var(--bl)'}}>🌐 Open</span>}
+                {!it.openToAll && it.assignedTo?.length>0 && <span style={{fontSize:10,color:'var(--mu)'}}>{it.assignedTo.join(', ')}</span>}
+                <button style={{background:'none',border:'none',color:'var(--bl)',fontSize:12,cursor:'pointer',fontWeight:700}} onClick={()=>setEditItem(it)}>Edit</button>
+                <button style={{background:'none',border:'none',color:'var(--dn)',fontSize:16,cursor:'pointer'}} onClick={()=>setItems(p=>p.filter(i=>i.id!==it.id))}>×</button>
+              </div>
+            ))}
+          </div>
+          <button className="btn bacc bsm" style={{width:'100%'}} onClick={()=>setShowItemModal(true)}>+ Add Task Item</button>
+        </div>
+        <div className="macts">
+          <button className="btn bghost" onClick={onClose}>Cancel</button>
+          <button className="btn bprim" style={{flex:2}} onClick={save}>{existing?'Save':'Create'}</button>
+        </div>
+      </div>
+      {showItemModal && <TaskItemModal onSave={handleAddItem} onClose={()=>setShowItemModal(false)} users={users} isAdmin={true} />}
+      {editItem && <TaskItemModal item={editItem} onSave={handleEditItem} onClose={()=>setEditItem(null)} users={users} isAdmin={true} />}
+    </div>
+  );
+}
+
+// ─── TASK LIST DETAIL ─────────────────────────────────────────────────────────
+function TaskDetail({ taskList, user, onBack, onUpdate, users }) {
+  const isAdmin = user.role==='admin';
+  const [showAdd, setShowAdd] = useState(false);
+  const [editItem, setEditItem] = useState(null);
+  const [removeTarget, setRemoveTarget] = useState(null);
+  const [statusTarget, setStatusTarget] = useState(null);
+  const [pendingStatus, setPendingStatus] = useState(null);
+  const [showATCConfirm, setShowATCConfirm] = useState(false);
+  const [showUnlock, setShowUnlock] = useState(false);
+  const [auditOpen, setAuditOpen] = useState(false);
+  const [infoOpen, setInfoOpen] = useState(true);
+  const [showExport, setShowExport] = useState(false);
+  const [toast, setToast] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const pt = (msg,type)=>setToast({msg,type});
+
+  const items = taskList.items||[];
+  const active = items.filter(i=>!i.removedAt);
+  const allDone = active.length>0 && active.every(i=>i.status==='completed');
+  const isATC = taskList.allTasksComplete;
+  const isLocked = isATC && !isAdmin;
+  const pct = active.length ? Math.round((active.filter(i=>i.status==='completed').length/active.length)*100) : 0;
+
+  const handleStatusSelect = async (status) => {
+    const item = statusTarget;
+    setSaving(true);
+    const now = new Date().toISOString();
+    const updatedItem = {...item, status,
+      completedBy: status==='completed'?user.name:item.completedBy,
+      completedAt: status==='completed'?now:item.completedAt,
+      needsSupportBy: status==='needs_support'?user.name:item.needsSupportBy,
+      needsSupportAt: status==='needs_support'?now:item.needsSupportAt,
+    };
+    await db.upsertTaskItem(updatedItem, taskList.id);
+    await db.addTaskActivity(taskList.id, taskList.title, {
+      action:'task_status', detail:`"${item.name}": ${item.status} → ${status}`, by:user.name, userId:user.id
+    });
+    onUpdate({...taskList, items:items.map(i=>i.id===item.id?updatedItem:i)});
+    setStatusTarget(null); setPendingStatus(null); setSaving(false);
+    pt(`${item.name} → ${TASK_STATUS[status].label}`, status==='completed'?'ok':'err');
+  };
+
+  const handleAddItem = async (item) => {
+    setSaving(true);
+    const newItem = {...item, addedBy:user.name, addedAt:new Date().toISOString()};
+    await db.upsertTaskItem(newItem, taskList.id);
+    await db.addTaskAudit(taskList.id, {type:'add', itemName:item.name, by:user.name});
+    onUpdate({...taskList, items:[...items, newItem]});
+    setShowAdd(false); setSaving(false);
+    pt(`"${item.name}" added`, 'ok');
+  };
+
+  const handleEditItem = async (updated) => {
+    const orig = editItem;
+    const changes = [];
+    if (orig.name!==updated.name) changes.push(`name: "${orig.name}"→"${updated.name}"`);
+    if (orig.notes!==updated.notes) changes.push('notes updated');
+    setSaving(true);
+    await db.upsertTaskItem(updated, taskList.id);
+    await db.addTaskAudit(taskList.id, {type:'mod', itemName:orig.name, changes:changes.join(', '), by:user.name});
+    onUpdate({...taskList, items:items.map(i=>i.id===updated.id?updated:i)});
+    setEditItem(null); setSaving(false);
+    pt('Task updated','ok');
+  };
+
+  const handleRemove = async () => {
+    const item = removeTarget;
+    setSaving(true);
+    const updated = {...item, removedAt:new Date().toISOString()};
+    await db.upsertTaskItem(updated, taskList.id);
+    await db.addTaskAudit(taskList.id, {type:'rm', itemName:item.name, by:user.name});
+    onUpdate({...taskList, items:items.map(i=>i.id===item.id?updated:i)});
+    setRemoveTarget(null); setSaving(false);
+    pt(`"${item.name}" removed`,'err');
+  };
+
+  const handleATC = async () => {
+    const updated = {...taskList, allTasksComplete:true, archived:true, archivedAt:new Date().toISOString()};
+    await db.upsertTaskList(updated);
+    onUpdate(updated);
+    setShowATCConfirm(false);
+    pt('✅ All Tasks Complete — list archived!','ok');
+    setTimeout(onBack, 1200);
+  };
+
+  const handleUnlock = async () => {
+    const updated = {...taskList, allTasksComplete:false};
+    await db.upsertTaskList(updated);
+    onUpdate(updated);
+    setShowUnlock(false);
+    pt('Task list unlocked for editing','ok');
+  };
+
+  const exportText = () => {
+    const lines = ['CREWFLOW — TASK LIST SNAPSHOT',
+      '⚠ SNAPSHOT ONLY — Verify against the live CrewFlow app before use.','',
+      `List: ${taskList.title}`, `Type: ${taskList.type}`,
+      taskList.dateStart?`Date: ${fmtDate(taskList.dateStart)}${taskList.dateEnd?' – '+fmtDate(taskList.dateEnd):''}`:''
+    ];
+    if (taskList.brief) lines.push('','Brief: '+taskList.brief);
+    lines.push('','TASKS:');
+    active.forEach((item,i)=>{
+      lines.push(`${i+1}. [${item.status.toUpperCase()}] ${item.name}${item.notes?' — '+item.notes:''}`);
+      if (item.carryoverLog?.length) lines.push(`   ↩ Carried over from: ${item.carryoverLog.map(c=>c.date).join(', ')}`);
+    });
+    lines.push('','Generated: '+new Date().toLocaleString());
+    navigator.clipboard.writeText(lines.join('\n')).then(()=>pt('Copied!','ok'));
+  };
+
+  return (
+    <div>
+      {toast && <Toast msg={toast.msg} type={toast.type} onDone={()=>setToast(null)} />}
+      {saving && <div style={{position:'fixed',top:52,left:0,right:0,height:2,background:'var(--bl)',zIndex:200}} />}
+      <div className="backrow" onClick={onBack}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        <span>All Tasks</span>
+      </div>
+
+      {/* Info block */}
+      <div className="dh">
+        <div className="dh-always">
+          <div style={{flex:1}}>
+            <div className="dname">{taskList.title}</div>
+            {!infoOpen && taskList.dateStart && <div className="dsub" style={{marginTop:4}}>{fmtDate(taskList.dateStart)}{taskList.dateEnd?' – '+fmtDate(taskList.dateEnd):''}</div>}
+          </div>
+          <div style={{display:'flex',alignItems:'flex-start',gap:6,flexShrink:0}}>
+            <div className="pills" style={{marginBottom:6}}>
+              <span className={'ttype-badge ttype-'+taskList.type}>{taskList.type==='daily'?'📅 Daily':taskList.type==='weekly'?'📆 Weekly':'🗂 No Date'}</span>
+              {isATC && <span className="pill prtr">✓ Complete</span>}
+              {isAdmin && !taskList.archived && <button className="btn bacc bsm" onClick={()=>onUpdate({...taskList, _edit:true})}>Edit</button>}
+            </div>
+          </div>
+        </div>
+        <div style={{padding:'4px 16px 8px',display:'flex',justifyContent:'flex-end'}}>
+          <button className="dh-collapse-btn" onClick={()=>setInfoOpen(o=>!o)}>{infoOpen?'▲ collapse':'▼ expand'}</button>
+        </div>
+        {infoOpen && (
+          <div className="dh-body">
+            {taskList.type!=='nodate' && (
+              <div className="dgrid">
+                <div className="ichip"><div className="icl">{taskList.type==='weekly'?'Start':'Date'}</div><div className="icv">{fmtDate(taskList.dateStart)}</div></div>
+                {taskList.type==='weekly' && <div className="ichip"><div className="icl">End</div><div className="icv">{fmtDate(taskList.dateEnd)}</div></div>}
+              </div>
+            )}
+            {taskList.brief && <div className="brief-inline"><div className="brieft">📋 Admin Brief</div><div className="briefb">{taskList.brief}</div></div>}
+          </div>
+        )}
+      </div>
+
+      {/* Progress */}
+      <div className="pblock">
+        <div className="phd"><span>Progress</span><span style={{color:isATC?'var(--ok)':'var(--bl)'}}>{pct}%</span></div>
+        <div className="ptrack"><div className="pfill" style={{width:`${pct}%`,background:isATC?'var(--ok)':'#B45309'}} /></div>
+        {isATC ? (
+          <div style={{marginTop:8,textAlign:'center',color:'var(--ok)',fontFamily:'var(--fh)',fontSize:15,fontWeight:900,letterSpacing:2}}>✓ ALL TASKS COMPLETE</div>
+        ) : (
+          <div className="spills">
+            {Object.entries(TASK_STATUS).map(([k,v])=>(
+              <span key={k} className="spill" style={{color:v.color,borderColor:`${v.color}44`,background:v.bg}}>{active.filter(i=>i.status===k).length} {v.label}</span>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* ATC button */}
+      {!taskList.archived && !isATC && (
+        allDone ? (
+          <button className="tatc-btn" onClick={()=>setShowATCConfirm(true)}>✅ Mark All Tasks Complete</button>
+        ) : (
+          <div className="tatc-locked">🔒 {active.filter(i=>i.status!=='completed').length} task{active.filter(i=>i.status!=='completed').length!==1?'s':''} remaining</div>
+        )
+      )}
+      {isATC && (
+        <div className="tatc-banner">
+          <span style={{fontSize:22}}>✅</span>
+          <div style={{flex:1}}><div style={{fontFamily:'var(--fh)',fontSize:16,fontWeight:900,color:'var(--ok)',letterSpacing:2,textTransform:'uppercase'}}>All Tasks Complete</div></div>
+          <button className="edit-event-btn" style={{margin:0}} onClick={()=>setShowUnlock(true)}>Edit List</button>
+        </div>
+      )}
+
+      {/* Task items */}
+      {!isLocked && !taskList.archived && (
+        <div className="shd" style={{marginBottom:14,marginTop:8}}>
+          <span className="slbl">Tasks ({active.length})</span>
+          <button className="btn" style={{background:'var(--bl)',color:'#fff',padding:'8px 16px',fontSize:13,fontWeight:800,borderRadius:'var(--r)'}} onClick={()=>setShowAdd(true)}>+ Add Task</button>
+        </div>
+      )}
+
+      {active.length===0 && <div className="empty"><div className="eico">📋</div><div className="etxt">No tasks yet.</div></div>}
+
+      {active.map(item=>{
+        const sc = TASK_STATUS[item.status||'pending'];
+        return (
+          <div key={item.id} className={'titem'+(item.status==='completed'?' done':'')+(item.status==='needs_support'?' needs':'')}>
+            <div className={'tchk '+item.status}
+              onClick={()=>{ if(!isLocked&&!taskList.archived){ setStatusTarget(item); setPendingStatus(null); }}}>
+              {item.status==='completed' && <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>}
+              {item.status==='needs_support' && <span style={{fontSize:12}}>🔴</span>}
+            </div>
+            <div className="tmain">
+              <div className="tname" style={{textDecoration:item.status==='completed'?'line-through':'none'}}>{item.name}</div>
+              {item.notes && <div className="tnotes">{item.notes}</div>}
+              {item.openToAll && <div className="tassign">🌐 Open to all</div>}
+              {!item.openToAll && item.assignedTo?.length>0 && (
+                <div className="tassign">
+                  👤 {item.assignedTo.join(', ')}
+                  {item.lead && <span style={{color:'#D97706',marginLeft:6}}>⭐ Lead: {item.lead}</span>}
+                </div>
+              )}
+              {item.completedBy && item.status==='completed' && <div className="iby">✓ {item.completedBy} · {item.completedAt?new Date(item.completedAt).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):''}</div>}
+              {item.needsSupportBy && item.status==='needs_support' && <div style={{fontSize:10,color:'var(--dn)',fontStyle:'italic',marginTop:3}}>🔴 Flagged by {item.needsSupportBy}</div>}
+              {item.carryoverLog?.length>0 && (
+                <div className="tcarryover">
+                  ↩ Carried over from: {item.carryoverLog.map(c=>`${c.date}${c.fromTitle?' ('+c.fromTitle+')':''}`).join(' → ')}
+                </div>
+              )}
+            </div>
+            <div className="tright">
+              <span className="tbadge" style={{color:sc.color,borderColor:`${sc.color}44`,background:sc.bg}}>{sc.label}</span>
+              {!isLocked && !taskList.archived && (
+                <div style={{display:'flex',gap:4}}>
+                  <button className="btn bghost bsm" onClick={()=>setEditItem(item)}>Edit</button>
+                  {isAdmin && <button className="btn bdng bsm" onClick={()=>setRemoveTarget(item)}>✕</button>}
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      })}
+
+      {/* Export */}
+      <div className="export-row">
+        <button className="export-btn" onClick={exportText}><span className="export-ico">📋</span>Copy Text</button>
+      </div>
+
+      {/* Audit log */}
+      {(taskList.auditLog||[]).length>0 && (
+        <div className="auditsec">
+          <div className="audit-hdr" onClick={()=>setAuditOpen(o=>!o)}>
+            <div className="auditt">⚠ Audit Log <span style={{fontSize:10,color:'var(--mu)'}}>({(taskList.auditLog||[]).length} entries)</span></div>
+            <span style={{fontSize:11,color:'var(--mu)',fontWeight:700}}>{auditOpen?'▲':'▼'}</span>
+          </div>
+          {auditOpen && (
+            <div className="audit-body">
+              {(taskList.auditLog||[]).map((l,i)=>(
+                <div key={i} className={'aurow '+(l.type==='rm'?'rm':l.type==='add'?'add':'mod')}>
+                  <div className="auitem">{l.type==='rm'?'🗑':l.type==='add'?'✚':'✏'} {l.itemName}{l.changes?' — '+l.changes:''}</div>
+                  <div className="aumeta">by {l.by} · {l.at?new Date(l.at).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):''}</div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+      <div className="spacer" />
+
+      {/* Status selection */}
+      {statusTarget && !pendingStatus && (
+        <>
+          <div className="sback" onClick={()=>setStatusTarget(null)} />
+          <div className="sheet">
+            <div className="stitle">Update — {statusTarget.name}</div>
+            {Object.entries(TASK_STATUS).map(([s,sc])=>(
+              <div key={s} className="sopt" onClick={()=>setPendingStatus(s)}>
+                <div className="sdot" style={{background:sc.color}} />
+                <span className="solbl" style={{color:sc.color}}>{sc.label}</span>
+                {statusTarget.status===s && <span className="scur">current</span>}
+              </div>
+            ))}
+            <button className="btn bghost" style={{width:'100%',marginTop:6}} onClick={()=>setStatusTarget(null)}>Cancel</button>
+          </div>
+        </>
+      )}
+      {statusTarget && pendingStatus && (
+        <>
+          <div className="sback" onClick={()=>{setStatusTarget(null);setPendingStatus(null);}} />
+          <div className="sheet">
+            <div className="stitle">Confirm</div>
+            <div className="cdlg" style={{marginBottom:14}}>
+              <div className="ct" style={{color:TASK_STATUS[pendingStatus].color}}>Confirm: {TASK_STATUS[pendingStatus].label}</div>
+              <div className="cb">Set <strong>{statusTarget.name}</strong> to <strong style={{color:TASK_STATUS[pendingStatus].color}}>{TASK_STATUS[pendingStatus].label}</strong>?</div>
+              <div className="cbtns">
+                <button className="btn bghost bsm" onClick={()=>setPendingStatus(null)}>Back</button>
+                <button className="btn bacc bsm" onClick={()=>handleStatusSelect(pendingStatus)}>Confirm</button>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+
+      {removeTarget && (
+        <div className="mback ctr"><div className="mover" onClick={()=>setRemoveTarget(null)} />
+          <div className="modal"><Confirm title="Remove Task?" body={`Remove "${removeTarget.name}"? This will be logged.`} danger onConfirm={handleRemove} onCancel={()=>setRemoveTarget(null)} confirmLabel="Yes, Remove" /></div>
+        </div>
+      )}
+      {showATCConfirm && (
+        <div className="mback ctr"><div className="mover" onClick={()=>setShowATCConfirm(false)} />
+          <div className="modal">
+            <div className="mtitle" style={{color:'var(--ok)'}}>✅ All Tasks Complete?</div>
+            <div style={{background:'var(--ok2)',border:'2px solid var(--ok)',borderRadius:'var(--rl)',padding:16,marginBottom:16}}>
+              <div style={{fontFamily:'var(--fh)',fontSize:15,fontWeight:800,color:'var(--ok)',marginBottom:6,letterSpacing:1}}>⚠ VERIFY BEFORE CONFIRMING</div>
+              <div style={{fontSize:13,color:'var(--tx)',lineHeight:1.6}}>Confirming will mark this list as <strong>All Tasks Complete</strong> and archive it immediately. Make sure every task is genuinely done.</div>
+            </div>
+            <div className="macts">
+              <button className="btn bghost" onClick={()=>setShowATCConfirm(false)}>Go Back</button>
+              <button className="btn bprim" style={{flex:2,background:'var(--ok)'}} onClick={handleATC}>✓ Confirm Complete</button>
+            </div>
+          </div>
+        </div>
+      )}
+      {showUnlock && (
+        <div className="mback ctr"><div className="mover" onClick={()=>setShowUnlock(false)} />
+          <div className="modal">
+            <Confirm title="Edit This List?" body="Editing will remove the All Tasks Complete status. You'll need to resubmit when done." danger onConfirm={handleUnlock} onCancel={()=>setShowUnlock(false)} confirmLabel="Yes, Unlock & Edit" />
+          </div>
+        </div>
+      )}
+      {showAdd && <TaskItemModal onSave={handleAddItem} onClose={()=>setShowAdd(false)} users={users} isAdmin={isAdmin} />}
+      {editItem && <TaskItemModal item={editItem} onSave={handleEditItem} onClose={()=>setEditItem(null)} users={users} isAdmin={isAdmin} />}
+    </div>
+  );
+}
+
+// ─── TASK LIST VIEW ───────────────────────────────────────────────────────────
+function TaskListView({ taskLists, user, onSelect, onCreateNew, onUpdate }) {
+  const [tab, setTab] = useState('active');
+  const isAdmin = user.role==='admin';
+
+  // Midnight carryover check
+  useEffect(()=>{
+    const checkCarryover = async () => {
+      const today = new Date().toISOString().slice(0,10);
+      const yesterday = new Date(Date.now()-86400000).toISOString().slice(0,10);
+      const toCarry = taskLists.filter(tl =>
+        !tl.archived && tl.type!=='nodate' && !tl.allTasksComplete &&
+        (tl.dateEnd||tl.dateStart) < today
+      );
+      for (const tl of toCarry) {
+        const incomplete = (tl.items||[]).filter(i=>!i.removedAt && i.status!=='completed');
+        if (incomplete.length===0) continue;
+        // Find or create today's list
+        let todayList = taskLists.find(t=>t.type==='daily'&&t.dateStart===today&&!t.archived);
+        if (!todayList) {
+          todayList = {
+            id:Math.random().toString(36).slice(2,9), title:`Daily Tasks — ${today}`,
+            type:'daily', dateStart:today, dateEnd:null, brief:'Auto-generated from carryover.',
+            archived:false, allTasksComplete:false, items:[], auditLog:[],
+            createdAt:new Date().toISOString(),
+          };
+          await db.upsertTaskList(todayList);
+        }
+        // Carry items over
+        for (const item of incomplete) {
+          const carried = {...item,
+            id:Math.random().toString(36).slice(2,9),
+            status:'pending', completedBy:'', completedAt:null,
+            needsSupportBy:'', needsSupportAt:null,
+            carryoverLog:[...(item.carryoverLog||[]),{date:tl.dateStart||yesterday, fromTitle:tl.title}],
+          };
+          await db.upsertTaskItem(carried, todayList.id);
+        }
+        // Archive old list
+        const archived = {...tl, archived:true, archivedAt:new Date().toISOString()};
+        await db.upsertTaskList(archived);
+        onUpdate(archived);
+      }
+    };
+    checkCarryover();
+  },[]);
+
+  const sort = (arr) => [...arr].sort((a,b)=>{
+    if (a.type==='nodate') return 1;
+    if (b.type==='nodate') return -1;
+    const da = a.dateStart||'';
+    const db2 = b.dateStart||'';
+    return da < db2 ? -1 : da > db2 ? 1 : 0;
+  });
+
+  const active = sort(taskLists.filter(tl=>!tl.archived));
+  const archived = sort(taskLists.filter(tl=>tl.archived));
+  const visible = tab==='active' ? active : archived;
+
+  // Manager support queue
+  const msSupportItems = taskLists.filter(tl=>!tl.archived).flatMap(tl=>
+    (tl.items||[]).filter(i=>!i.removedAt&&i.status==='needs_support').map(i=>({...i,listTitle:tl.title,listId:tl.id}))
+  );
+
+  return (
+    <div>
+      {isAdmin && msSupportItems.length>0 && (
+        <div style={{background:'var(--dn2)',border:'2px solid var(--dn)',borderRadius:'var(--rl)',padding:'12px 14px',marginBottom:14}}>
+          <div style={{fontFamily:'var(--fh)',fontSize:13,fontWeight:800,color:'var(--dn)',letterSpacing:1,textTransform:'uppercase',marginBottom:8}}>🔴 Needs Manager Support ({msSupportItems.length})</div>
+          {msSupportItems.map(item=>(
+            <div key={item.id} className="msq-item">
+              <div className="msq-title">{item.name}</div>
+              <div className="msq-meta">From: {item.listTitle} · Flagged by {item.needsSupportBy} · {item.needsSupportAt?new Date(item.needsSupportAt).toLocaleDateString('en-US',{month:'short',day:'numeric'}):''}</div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div className="tabrow">
+        <button className={'btn bsm '+(tab==='active'?'bacc':'bghost')} onClick={()=>setTab('active')}>Active ({active.length})</button>
+        <button className={'btn bsm '+(tab==='archived'?'bacc':'bghost')} onClick={()=>setTab('archived')}>Archived ({archived.length})</button>
+      </div>
+
+      {visible.length===0 && <div className="empty"><div className="eico">📋</div><div className="etxt">{tab==='active'?'No active task lists.':'No archived task lists.'}</div></div>}
+
+      {visible.map(tl=>{
+        const activeItems = (tl.items||[]).filter(i=>!i.removedAt);
+        const done = activeItems.filter(i=>i.status==='completed').length;
+        const pct = activeItems.length?Math.round((done/activeItems.length)*100):0;
+        const overdue = isOverdue(tl);
+        const isATC = tl.allTasksComplete;
+        const today = isTodayList(tl);
+        return (
+          <div key={tl.id} className={'tcard'+(tl.archived?' arc':'')+(isATC?' atc':'')+(overdue&&!tl.archived?' overdue':'')+(tl.type==='nodate'?' nodate':'')} onClick={()=>onSelect(tl)}>
+            <div className="thd">
+              <div style={{flex:1}}>
+                <div className="ttitle">{tl.title}</div>
+                {today && <div style={{fontSize:10,fontWeight:800,color:'var(--bl)',letterSpacing:1,marginTop:3}}>📅 TODAY</div>}
+                {overdue && <div style={{fontSize:10,fontWeight:800,color:'var(--dn)',letterSpacing:1,marginTop:3}}>⚠ OVERDUE</div>}
+              </div>
+              <div style={{display:'flex',flexDirection:'column',alignItems:'flex-end',gap:4}}>
+                <span className={'ttype-badge ttype-'+tl.type}>{tl.type==='daily'?'📅 Daily':tl.type==='weekly'?'📆 Weekly':'🗂 No Date'}</span>
+                {isATC && <span className="pill prtr" style={{fontSize:9}}>✓ Complete</span>}
+              </div>
+            </div>
+            <div className="tmeta">
+              {tl.type!=='nodate' && tl.dateStart && <span className="tmchip">📅 {fmtDate(tl.dateStart)}{tl.dateEnd?' – '+fmtDate(tl.dateEnd):''}</span>}
+              <span className="tmchip">{activeItems.length} tasks</span>
+              {msSupportItems.filter(i=>i.listId===tl.id).length>0 && <span className="tmchip" style={{color:'var(--dn)',borderColor:'var(--dn)'}}>🔴 {msSupportItems.filter(i=>i.listId===tl.id).length} needs support</span>}
+            </div>
+            <div className="tprog">
+              <div className="ptrack"><div className="pfill" style={{width:`${pct}%`,background:isATC?'var(--ok)':'#B45309'}} /></div>
+              <div className={'plbls'+(isATC?' rtr':'')}>
+                <span>{activeItems.length} tasks</span>
+                <span>{isATC?'✓ COMPLETE':`${pct}% done`}</span>
+              </div>
+            </div>
+          </div>
+        );
+      })}
+      {isAdmin && tab==='active' && <button className="fab" onClick={onCreateNew}>＋</button>}
+    </div>
+  );
+}
+
+// ─── LEADERBOARDS ─────────────────────────────────────────────────────────────
+function Leaderboards({ users, events }) {
+  const [board, setBoard] = useState('tasks'); // 'tasks' | 'projects'
+  const [period, setPeriod] = useState('weekly');
+  const [taskLogs, setTaskLogs] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(()=>{
+    db.getTaskActivity().then(data=>{ setTaskLogs(data); setLoading(false); });
+  },[]);
+
+  const now = new Date();
+  const filterByPeriod = (logs, dateField='created_at') => {
+    return logs.filter(l=>{
+      const d = new Date(l[dateField]||l.created_at||l.at);
+      if (period==='daily') return d.toDateString()===now.toDateString();
+      if (period==='weekly') {
+        const weekAgo = new Date(now-7*86400000);
+        return d>=weekAgo;
+      }
+      if (period==='monthly') {
+        return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();
+      }
+      if (period==='yearly') return d.getFullYear()===now.getFullYear();
+      return true;
+    });
+  };
+
+  const employees = users.filter(u=>u.active&&u.role!=='employee'||u.role==='employee');
+
+  // Task leaderboard
+  const taskCompletions = () => {
+    const filtered = filterByPeriod(taskLogs).filter(l=>l.action==='task_status'&&l.detail?.includes('→ completed'));
+    const map = {};
+    filtered.forEach(l=>{ if(l.user_id) map[l.user_id]=(map[l.user_id]||0)+1; });
+    const allTime = {};
+    taskLogs.filter(l=>l.action==='task_status'&&l.detail?.includes('→ completed')).forEach(l=>{ if(l.user_id) allTime[l.user_id]=(allTime[l.user_id]||0)+1; });
+    return users.filter(u=>u.active).map(u=>({ user:u, count:map[u.id]||0, allTime:allTime[u.id]||0 }))
+      .sort((a,b)=>b.count-a.count).filter(r=>r.count>0||r.allTime>0);
+  };
+
+  // Project leaderboard
+  const projectContribs = () => {
+    const allActivityLogs = events.flatMap(ev=>(ev.activityLog||[]).map(l=>({...l,eventName:ev.name})));
+    const filtered = filterByPeriod(allActivityLogs,'at').filter(l=>l.action==='status_change');
+    const map = {};
+    filtered.forEach(l=>{ if(l.userId) map[l.userId]=(map[l.userId]||0)+1; });
+    const total = Object.values(map).reduce((a,b)=>a+b,0);
+    return users.filter(u=>u.active).map(u=>({
+      user:u, count:map[u.id]||0, pct:total>0?Math.round(((map[u.id]||0)/total)*100):0
+    })).sort((a,b)=>b.count-a.count).filter(r=>r.count>0);
+  };
+
+  const taskRows = taskCompletions();
+  const projRows = projectContribs();
+  const maxTask = taskRows[0]?.count||1;
+  const maxProj = projRows[0]?.count||1;
+
+  if (loading) return <div className="empty"><div className="etxt">Loading…</div></div>;
+
+  return (
+    <div>
+      {/* Board toggle */}
+      <div className="tabrow" style={{marginBottom:8}}>
+        <button className={'btn bsm '+(board==='tasks'?'bacc':'bghost')} onClick={()=>setBoard('tasks')}>🏆 Warehouse Tasks</button>
+        <button className={'btn bsm '+(board==='projects'?'bacc':'bghost')} onClick={()=>setBoard('projects')}>🎪 By Project</button>
+      </div>
+      {/* Period filter */}
+      <div className="lb-time-row">
+        {[['daily','Today'],['weekly','This Week'],['monthly','This Month'],['yearly','This Year']].map(([v,l])=>(
+          <button key={v} className={'btn bsm '+(period===v?'bacc':'bghost')} onClick={()=>setPeriod(v)}>{l}</button>
+        ))}
+      </div>
+
+      {board==='tasks' && (
+        <div style={{background:'var(--sf)',border:'1px solid var(--br)',borderRadius:'var(--rl)',overflow:'hidden'}}>
+          <div style={{padding:'12px 14px',borderBottom:'1px solid var(--br)',background:'var(--s2)'}}>
+            <div style={{fontFamily:'var(--fh)',fontSize:13,fontWeight:800,letterSpacing:2,color:'var(--mu)',textTransform:'uppercase'}}>Warehouse Task Completions — {period}</div>
+          </div>
+          {taskRows.length===0 && <div className="empty" style={{padding:24}}><div className="etxt">No task completions recorded for this period.</div></div>}
+          {taskRows.map((row,i)=>(
+            <div key={row.user.id} className="lb-row">
+              <div className={'lb-rank'+(i<3?' top':'')}>{i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</div>
+              <div className="lb-av">{row.user.name[0]}</div>
+              <div className="lb-info">
+                <div className="lb-name">{row.user.name}</div>
+                <div className="lb-stat">All time: {row.allTime} tasks</div>
+                <div className="lb-bar"><div className="lb-fill" style={{width:`${Math.round((row.count/maxTask)*100)}%`}} /></div>
+              </div>
+              <div className="lb-score">{row.count}</div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {board==='projects' && (
+        <div style={{background:'var(--sf)',border:'1px solid var(--br)',borderRadius:'var(--rl)',overflow:'hidden'}}>
+          <div style={{padding:'12px 14px',borderBottom:'1px solid var(--br)',background:'var(--s2)'}}>
+            <div style={{fontFamily:'var(--fh)',fontSize:13,fontWeight:800,letterSpacing:2,color:'var(--mu)',textTransform:'uppercase'}}>Event Contributions — {period}</div>
+          </div>
+          {projRows.length===0 && <div className="empty" style={{padding:24}}><div className="etxt">No event activity recorded for this period.</div></div>}
+          {projRows.map((row,i)=>(
+            <div key={row.user.id} className="lb-row">
+              <div className={'lb-rank'+(i<3?' top':'')}>{i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</div>
+              <div className="lb-av">{row.user.name[0]}</div>
+              <div className="lb-info">
+                <div className="lb-name">{row.user.name}</div>
+                <div className="lb-stat">{row.count} gear status updates</div>
+                <div className="lb-bar"><div className="lb-fill" style={{width:`${Math.round((row.count/maxProj)*100)}%`}} /></div>
+              </div>
+              <div className="lb-score">{row.pct}%</div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // #9 Login — CREWFLOW branding
 function Login({ onLogin, users }) {
   const [userId, setUserId] = useState('');
@@ -1626,6 +2469,9 @@ export default function App() {
   const [showCreate, setShowCreate] = useState(false);
   const [toast, setToast] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [taskLists, setTaskLists] = useState([]);
+  const [selectedTask, setSelectedTask] = useState(null);
+  const [showCreateTask, setShowCreateTask] = useState(false);
 
   useEffect(() => {
     const style = document.createElement('style');
@@ -1637,14 +2483,15 @@ export default function App() {
   useEffect(() => {
     (async () => {
       try {
-        const [evs, us, mi, fl, cats] = await Promise.all([
-          db.getEvents(), db.getUsers(), db.getMasterItems(), db.getFleet(), db.getCategories()
+        const [evs, us, mi, fl, cats, tls] = await Promise.all([
+          db.getEvents(), db.getUsers(), db.getMasterItems(), db.getFleet(), db.getCategories(), db.getTaskLists()
         ]);
         setEvents(evs);
         setUsers(us.map(u => ({ id:u.id, name:u.name, pin:u.pin, role:u.role, email:u.email||'', active:u.active, deactivatedAt:u.deactivated_at, createdAt:u.created_at })));
         setMasterItems(mi);
         setFleet(fl);
         setCategories(cats.length > 0 ? cats : DEFAULT_CATEGORIES);
+        setTaskLists(tls||[]);
       } catch (err) {
         console.error('Load error:', err);
       }
@@ -1680,7 +2527,7 @@ export default function App() {
   );
 
   const isAdmin = user.role === 'admin';
-  const ATABS = ['Events','Activity Log','Team','Gear Library','Fleet','Categories'];
+  const ATABS = ['Events','Tasks','Leaderboards','Activity Log','Team','Gear Library','Fleet','Categories'];
 
   return (
     <CatContext.Provider value={categories}>
@@ -1690,12 +2537,12 @@ export default function App() {
           <div className="brand"><img src="/CrewFlowLogo.png" alt="CrewFlow" style={{ height:32, objectFit:"contain" }} /></div>
           <div className="hdr-r">
             <div className="uchip"><div className="uav">{user.name[0]}</div><span className="uname">{user.name}</span>{isAdmin&&<span className="abadge">Admin</span>}</div>
-            <button className="signout" onClick={() => { setUser(null); setSelectedEvent(null); setAdminTab('Events'); }}>Sign Out</button>
+            <button className="signout" onClick={() => { setUser(null); setSelectedEvent(null); setSelectedTask(null); setAdminTab('Events'); }}>Sign Out</button>
           </div>
         </div>
         {!selectedEvent && (
           <div className="nav">
-            {isAdmin ? ATABS.map(t => <button key={t} className={'ntab'+(adminTab===t?' on':'')} onClick={() => setAdminTab(t)}>{t}</button>) : <button className="ntab on">My Events</button>}
+            {isAdmin ? ATABS.map(t => <button key={t} className={'ntab'+(adminTab===t?' on':'')} onClick={() => setAdminTab(t)}>{t}</button>) : (['Events','Tasks','Leaderboards'].map(t=><button key={t} className={'ntab'+(adminTab===t?' on':'')} onClick={()=>setAdminTab(t)}>{t}</button>))}
           </div>
         )}
         <div className="main">
@@ -1705,6 +2552,14 @@ export default function App() {
             <EventList events={events} user={user} onSelect={setSelectedEvent} onCreateNew={() => setShowCreate(true)} />
           ) : adminTab === 'Events' ? (
             <EventList events={events} user={user} onSelect={setSelectedEvent} onCreateNew={() => setShowCreate(true)} />
+          ) : adminTab === 'Tasks' ? (
+            selectedTask ? (
+              <TaskDetail taskList={selectedTask} user={user} onBack={()=>setSelectedTask(null)} onUpdate={(tl)=>{ setTaskLists(prev=>prev.map(t=>t.id===tl.id?tl:t)); setSelectedTask(tl); }} users={users} />
+            ) : (
+              <TaskListView taskLists={taskLists} user={user} onSelect={setSelectedTask} onCreateNew={()=>setShowCreateTask(true)} onUpdate={(tl)=>setTaskLists(prev=>prev.map(t=>t.id===tl.id?tl:t))} />
+            )
+          ) : adminTab === 'Leaderboards' ? (
+            <Leaderboards users={users} events={events} />
           ) : adminTab === 'Activity Log' ? (
             <ActivityLog users={users} />
           ) : adminTab === 'Team' ? (
@@ -1718,6 +2573,7 @@ export default function App() {
           ) : null}
         </div>
         {showCreate && <EventForm masterItems={masterItems} users={users} onSave={handleCreateEvent} onClose={() => setShowCreate(false)} />}
+        {showCreateTask && <TaskListForm users={users} onSave={async (tl)=>{ await db.upsertTaskList(tl); for(const item of tl.items||[]){ await db.upsertTaskItem(item,tl.id); } setTaskLists(prev=>[tl,...prev.filter(t=>t.id!==tl.id)]); setShowCreateTask(false); }} onClose={()=>setShowCreateTask(false)} />}
       </div>
     </CatContext.Provider>
   );
