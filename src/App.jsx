@@ -423,6 +423,7 @@ const db = {
   }),
   getMasterItems: async () => { const { data } = await supabase.from('cf_master_items').select('*').order('name'); return data || []; },
   addMasterItem: async (item) => supabase.from('cf_master_items').insert({ id:item.id, name:item.name, category:item.category }),
+  updateMasterItem: async (item) => supabase.from('cf_master_items').update({ name:item.name, category:item.category }).eq('id', item.id),
   deleteMasterItem: async (id) => supabase.from('cf_master_items').delete().eq('id', id),
   getFleet: async () => {
     const { data } = await supabase.from('cf_fleet').select('*').order('created_at');
@@ -430,6 +431,7 @@ const db = {
     return { trucks: data.filter(f=>f.type==='truck'), trailers: data.filter(f=>f.type==='trailer') };
   },
   addFleetItem: async (item) => supabase.from('cf_fleet').insert({ id:item.id, type:item.type, name:item.name, detail:item.detail||'' }),
+  updateFleetItem: async (item) => supabase.from('cf_fleet').update({ name:item.name, detail:item.detail||'', type:item.type }).eq('id', item.id),
   deleteFleetItem: async (id) => supabase.from('cf_fleet').delete().eq('id', id),
   getCategories: async () => { const { data } = await supabase.from('cf_categories').select('*').order('sort_order'); return (data||[]).map(c=>c.name); },
   addCategory: async (name, order) => supabase.from('cf_categories').insert({ name, sort_order:order }),
@@ -1914,28 +1916,115 @@ function UserManager({ users, onUpdate }) {
 function MasterItemList({ masterItems, onUpdate }) {
   const categories = useContext(CatContext);
   const [showAdd, setShowAdd] = useState(false);
+  const [editItem, setEditItem] = useState(null);
   const [newItem, setNewItem] = useState({ name:'', category:categories[0] });
   const [confirmDel, setConfirmDel] = useState(null);
   const [toast, setToast] = useState(null);
+
+  const handleAdd = async () => {
+    if (!newItem.name.trim()) return;
+    const item = { id:uid(), name:newItem.name.trim(), category:newItem.category };
+    await db.addMasterItem(item);
+    onUpdate([...masterItems, item]);
+    setNewItem({ name:'', category:categories[0] });
+    setShowAdd(false);
+    setToast({ msg:'Added to Gear Library', type:'ok' });
+  };
+
+  const handleEdit = async () => {
+    if (!editItem.name.trim()) return;
+    await db.updateMasterItem(editItem);
+    onUpdate(masterItems.map(m => m.id === editItem.id ? editItem : m));
+    setEditItem(null);
+    setToast({ msg:'Item updated', type:'ok' });
+  };
+
   return (
     <div>
       {toast && <Toast msg={toast.msg} type={toast.type} onDone={() => setToast(null)} />}
-      <div className="shd" style={{ marginBottom:8 }}><span className="slbl">Gear Library ({masterItems.length})</span><button className="btn bacc bsm" onClick={() => setShowAdd(true)}>+ Add</button></div>
+      <div className="shd" style={{ marginBottom:8 }}>
+        <span className="slbl">Gear Library ({masterItems.length})</span>
+        <button className="btn bacc bsm" onClick={() => setShowAdd(true)}>+ Add</button>
+      </div>
       <div className="infobanner">These items appear as autocomplete suggestions when adding gear to events.</div>
-      {categories.map(cat => { const catItems = masterItems.filter(m => m.category === cat); if (!catItems.length) return null; return (<div key={cat} className="catblk"><div className="catlbl">{cat}</div>{catItems.map(m => (<div key={m.id} className="mitem"><span className="mname">{m.name}</span><span className="mcat">{m.category}</span><button className="btn bdng bsm" onClick={() => setConfirmDel(m)}>✕</button></div>))}</div>); })}
-      {showAdd && (<div className="mback ctr"><div className="mover" onClick={() => setShowAdd(false)} /><div className="modal"><div className="mtitle">Add to Gear Library</div><div className="field"><label className="flbl">Item Name *</label><input className="fi" value={newItem.name} onChange={e=>setNewItem(p=>({...p,name:e.target.value}))} autoFocus /></div><div className="field"><label className="flbl">Category</label><select className="fsel" value={newItem.category} onChange={e=>setNewItem(p=>({...p,category:e.target.value}))}>{categories.map(c=><option key={c}>{c}</option>)}</select></div><div className="macts"><button className="btn bghost" onClick={() => setShowAdd(false)}>Cancel</button><button className="btn bprim" style={{ flex:2 }} onClick={async () => { if(!newItem.name.trim())return; const item={id:uid(),name:newItem.name.trim(),category:newItem.category}; await db.addMasterItem(item); onUpdate([...masterItems,item]); setNewItem({name:'',category:categories[0]}); setShowAdd(false); setToast({msg:'Added to Gear Library',type:'ok'}); }}>Add</button></div></div></div>)}
-      {confirmDel && (<div className="mback ctr"><div className="mover" onClick={() => setConfirmDel(null)} /><div className="modal"><Confirm title="Remove from Library?" body={`Remove "${confirmDel.name}"?`} danger onConfirm={async () => { await db.deleteMasterItem(confirmDel.id); onUpdate(masterItems.filter(m=>m.id!==confirmDel.id)); setConfirmDel(null); setToast({msg:'Removed',type:'err'}); }} onCancel={() => setConfirmDel(null)} confirmLabel="Remove" /></div></div>)}
+      {categories.map(cat => {
+        const catItems = masterItems.filter(m => m.category === cat);
+        if (!catItems.length) return null;
+        return (
+          <div key={cat} className="catblk">
+            <div className="catlbl">{cat}</div>
+            {catItems.map(m => (
+              <div key={m.id} className="mitem">
+                <span className="mname">{m.name}</span>
+                <span className="mcat">{m.category}</span>
+                <button className="btn bghost bsm" onClick={() => setEditItem({...m})}>Edit</button>
+                <button className="btn bdng bsm" onClick={() => setConfirmDel(m)}>✕</button>
+              </div>
+            ))}
+          </div>
+        );
+      })}
+
+      {/* Add modal */}
+      {showAdd && (
+        <div className="mback ctr"><div className="mover" onClick={() => setShowAdd(false)} />
+          <div className="modal">
+            <div className="mtitle">Add to Gear Library</div>
+            <div className="field"><label className="flbl">Item Name *</label><input className="fi" value={newItem.name} onChange={e=>setNewItem(p=>({...p,name:e.target.value}))} autoFocus /></div>
+            <div className="field"><label className="flbl">Category</label>
+              <select className="fsel" value={newItem.category} onChange={e=>setNewItem(p=>({...p,category:e.target.value}))}>
+                {categories.map(c=><option key={c}>{c}</option>)}
+              </select>
+            </div>
+            <div className="macts">
+              <button className="btn bghost" onClick={() => setShowAdd(false)}>Cancel</button>
+              <button className="btn bprim" style={{flex:2}} onClick={handleAdd}>Add</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit modal */}
+      {editItem && (
+        <div className="mback ctr"><div className="mover" onClick={() => setEditItem(null)} />
+          <div className="modal">
+            <div className="mtitle">✏️ Edit Gear Item</div>
+            <div className="field"><label className="flbl">Item Name *</label><input className="fi" value={editItem.name} onChange={e=>setEditItem(p=>({...p,name:e.target.value}))} autoFocus /></div>
+            <div className="field"><label className="flbl">Category</label>
+              <select className="fsel" value={editItem.category} onChange={e=>setEditItem(p=>({...p,category:e.target.value}))}>
+                {categories.map(c=><option key={c}>{c}</option>)}
+              </select>
+            </div>
+            <div className="macts">
+              <button className="btn bghost" onClick={() => setEditItem(null)}>Cancel</button>
+              <button className="btn bprim" style={{flex:2}} onClick={handleEdit}>Save Changes</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {confirmDel && (
+        <div className="mback ctr"><div className="mover" onClick={() => setConfirmDel(null)} />
+          <div className="modal">
+            <Confirm title="Remove from Library?" body={`Remove "${confirmDel.name}"?`} danger
+              onConfirm={async () => { await db.deleteMasterItem(confirmDel.id); onUpdate(masterItems.filter(m=>m.id!==confirmDel.id)); setConfirmDel(null); setToast({msg:'Removed',type:'err'}); }}
+              onCancel={() => setConfirmDel(null)} confirmLabel="Remove" />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
 function FleetLibrary({ fleet, onUpdate }) {
   const [showAdd, setShowAdd] = useState(null);
+  const [editItem, setEditItem] = useState(null);
   const [newItem, setNewItem] = useState({ name:'', detail:'' });
   const [confirmDel, setConfirmDel] = useState(null);
   const [toast, setToast] = useState(null);
   const trucks = (fleet && fleet.trucks) ? fleet.trucks : [];
   const trailers = (fleet && fleet.trailers) ? fleet.trailers : [];
+
   const handleAdd = async () => {
     if (!newItem.name.trim()) return;
     const entry = { id:uid(), type:showAdd, name:newItem.name.trim(), detail:newItem.detail.trim() };
@@ -1944,11 +2033,28 @@ function FleetLibrary({ fleet, onUpdate }) {
     onUpdate(updated); setNewItem({ name:'', detail:'' }); setShowAdd(null);
     setToast({ msg:(showAdd==='truck'?'Truck':'Trailer')+' added!', type:'ok' });
   };
+
+  const handleEdit = async () => {
+    if (!editItem.name.trim()) return;
+    await db.updateFleetItem(editItem);
+    // Rebuild fleet — item may have switched type (truck ↔ trailer)
+    const allItems = [...trucks, ...trailers].map(t => t.id === editItem.id ? editItem : t);
+    onUpdate({
+      trucks: allItems.filter(t=>t.type==='truck'),
+      trailers: allItems.filter(t=>t.type==='trailer'),
+    });
+    setEditItem(null);
+    setToast({ msg:'Vehicle updated', type:'ok' });
+  };
+
   const handleDel = async () => {
     await db.deleteFleetItem(confirmDel.id);
-    const updated = confirmDel.type === 'truck' ? { ...fleet, trucks:trucks.filter(t=>t.id!==confirmDel.id) } : { ...fleet, trailers:trailers.filter(t=>t.id!==confirmDel.id) };
+    const updated = confirmDel.type === 'truck'
+      ? { ...fleet, trucks:trucks.filter(t=>t.id!==confirmDel.id) }
+      : { ...fleet, trailers:trailers.filter(t=>t.id!==confirmDel.id) };
     onUpdate(updated); setConfirmDel(null); setToast({ msg:'Removed from fleet', type:'err' });
   };
+
   const renderSection = (title, items, type, icon) => (
     <div style={{ marginBottom:20 }}>
       <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:8 }}>
@@ -1956,17 +2062,79 @@ function FleetLibrary({ fleet, onUpdate }) {
         <button className="btn bacc bsm" onClick={() => { setShowAdd(type); setNewItem({ name:'', detail:'' }); }}>+ Add</button>
       </div>
       {items.length === 0 && <div style={{ fontSize:12, color:'var(--mu)', padding:'8px 0' }}>No {title.toLowerCase()} yet.</div>}
-      {items.map(t => (<div key={t.id} className="mitem"><div style={{ flex:1 }}><div className="mname">{t.name}</div>{t.detail&&<div style={{ fontSize:11, color:'var(--mu)', marginTop:2 }}>{t.detail}</div>}</div><button className="btn bdng bsm" onClick={() => setConfirmDel({ type, id:t.id, name:t.name })}>✕</button></div>))}
+      {items.map(t => (
+        <div key={t.id} className="mitem">
+          <div style={{ flex:1 }}>
+            <div className="mname">{t.name}</div>
+            {t.detail && <div style={{ fontSize:11, color:'var(--mu)', marginTop:2 }}>{t.detail}</div>}
+          </div>
+          <button className="btn bghost bsm" onClick={() => setEditItem({...t})}>Edit</button>
+          <button className="btn bdng bsm" onClick={() => setConfirmDel({ type, id:t.id, name:t.name })}>✕</button>
+        </div>
+      ))}
     </div>
   );
+
   return (
     <div>
       {toast && <Toast msg={toast.msg} type={toast.type} onDone={() => setToast(null)} />}
       <div className="infobanner">Trucks and trailers here appear as dropdown options when assigning vehicles to events.</div>
       {renderSection('Trucks', trucks, 'truck', '🚛')}
       {renderSection('Trailers', trailers, 'trailer', '🚚')}
-      {showAdd && (<div className="mback ctr"><div className="mover" onClick={() => setShowAdd(null)} /><div className="modal"><div className="mtitle">Add {showAdd==='truck'?'Truck':'Trailer'}</div><div className="field"><label className="flbl">Name / ID *</label><input className="fi" value={newItem.name} onChange={e=>setNewItem(p=>({...p,name:e.target.value}))} autoFocus /></div><div className="field"><label className="flbl">Make / Model</label><input className="fi" value={newItem.detail} onChange={e=>setNewItem(p=>({...p,detail:e.target.value}))} /></div><div className="macts"><button className="btn bghost" onClick={() => setShowAdd(null)}>Cancel</button><button className="btn bprim" style={{ flex:2 }} onClick={handleAdd}>Add</button></div></div></div>)}
-      {confirmDel && (<div className="mback ctr"><div className="mover" onClick={() => setConfirmDel(null)} /><div className="modal"><Confirm title="Remove Vehicle?" body={`Remove "${confirmDel.name}"?`} danger onConfirm={handleDel} onCancel={() => setConfirmDel(null)} confirmLabel="Remove" /></div></div>)}
+
+      {/* Add modal */}
+      {showAdd && (
+        <div className="mback ctr"><div className="mover" onClick={() => setShowAdd(null)} />
+          <div className="modal">
+            <div className="mtitle">Add {showAdd==='truck'?'Truck':'Trailer'}</div>
+            <div className="field"><label className="flbl">Name / ID *</label>
+              <input className="fi" value={newItem.name} onChange={e=>setNewItem(p=>({...p,name:e.target.value}))}
+                placeholder={showAdd==='truck'?'e.g. Box Truck #3':'e.g. 20ft Enclosed #3'} autoFocus />
+            </div>
+            <div className="field"><label className="flbl">Make / Model</label>
+              <input className="fi" value={newItem.detail} onChange={e=>setNewItem(p=>({...p,detail:e.target.value}))}
+                placeholder={showAdd==='truck'?'e.g. Ford F-650':'e.g. Haulmark 20ft'} />
+            </div>
+            <div className="macts">
+              <button className="btn bghost" onClick={() => setShowAdd(null)}>Cancel</button>
+              <button className="btn bprim" style={{flex:2}} onClick={handleAdd}>Add</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit modal */}
+      {editItem && (
+        <div className="mback ctr"><div className="mover" onClick={() => setEditItem(null)} />
+          <div className="modal">
+            <div className="mtitle">✏️ Edit Vehicle</div>
+            <div className="field"><label className="flbl">Name / ID *</label>
+              <input className="fi" value={editItem.name} onChange={e=>setEditItem(p=>({...p,name:e.target.value}))} autoFocus />
+            </div>
+            <div className="field"><label className="flbl">Make / Model</label>
+              <input className="fi" value={editItem.detail||''} onChange={e=>setEditItem(p=>({...p,detail:e.target.value}))} />
+            </div>
+            <div className="field"><label className="flbl">Type</label>
+              <select className="fsel" value={editItem.type} onChange={e=>setEditItem(p=>({...p,type:e.target.value}))}>
+                <option value="truck">Truck</option>
+                <option value="trailer">Trailer</option>
+              </select>
+            </div>
+            <div className="macts">
+              <button className="btn bghost" onClick={() => setEditItem(null)}>Cancel</button>
+              <button className="btn bprim" style={{flex:2}} onClick={handleEdit}>Save Changes</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {confirmDel && (
+        <div className="mback ctr"><div className="mover" onClick={() => setConfirmDel(null)} />
+          <div className="modal">
+            <Confirm title="Remove Vehicle?" body={`Remove "${confirmDel.name}"?`} danger onConfirm={handleDel} onCancel={() => setConfirmDel(null)} confirmLabel="Remove" />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -2352,6 +2520,46 @@ function TaskDetail({ taskList, user, onBack, onUpdate, users }) {
     navigator.clipboard.writeText(lines.join('\n')).then(()=>pt('Copied!','ok'));
   };
 
+  const exportPDF = () => {
+    const watermark = 'SNAPSHOT ONLY — Verify you are referencing the most current version in the CrewFlow app before use';
+    const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>CrewFlow — ${taskList.title}</title>
+    <style>
+      body{font-family:Arial,sans-serif;padding:30px;color:#111;max-width:700px;margin:0 auto}
+      h1{font-size:24px;margin-bottom:4px}
+      .sub{color:#666;font-size:13px;margin-bottom:16px}
+      .meta{background:#f4f4f4;border-radius:6px;padding:10px 14px;margin-bottom:14px;font-size:13px}
+      .brief{background:#fffbe6;border-left:3px solid #D97706;padding:10px 14px;margin-bottom:16px;font-size:13px}
+      table{width:100%;border-collapse:collapse;margin-top:8px}
+      th{background:#111;color:#fff;padding:8px 10px;font-size:11px;letter-spacing:1px;text-transform:uppercase;text-align:left}
+      td{padding:8px 10px;border-bottom:1px solid #eee;font-size:13px;vertical-align:top}
+      .status{font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;text-transform:uppercase}
+      .pending{background:#ffe5e5;color:#cc0000}
+      .completed{background:#e5f7f0;color:#087050}
+      .needs_support{background:#ffe5e5;color:#cc0000}
+      .carryover{font-size:10px;color:#D97706;margin-top:3px}
+      .watermark{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-35deg);font-size:16px;font-weight:900;color:rgba(0,0,0,0.07);text-align:center;white-space:nowrap;pointer-events:none;z-index:1000;width:100%}
+    </style></head><body>
+    <div class="watermark">${watermark}</div>
+    <h1>${taskList.title}</h1>
+    <div class="sub">${taskList.type==='daily'?'📅 Daily':taskList.type==='weekly'?'📆 Weekly':'🗂 No Date'}${taskList.dateStart?' · '+fmtDate(taskList.dateStart):''}</div>
+    ${taskList.brief?`<div class="brief"><strong>Brief:</strong> ${taskList.brief}</div>`:''}
+    <table><thead><tr><th>#</th><th>Task</th><th>Assigned To</th><th>Status</th></tr></thead><tbody>
+    ${active.map((item,i)=>`<tr>
+      <td>${i+1}</td>
+      <td>${item.name}${item.notes?'<br><small style="color:#888">'+item.notes+'</small>':''}${item.carryoverLog?.length?'<div class="carryover">↩ Carried from: '+item.carryoverLog.map(c=>c.date).join(' → ')+'</div>':''}
+      </td>
+      <td>${item.openToAll?'🌐 Open to all':(item.assignedTo?.length?item.assignedTo.join(', '):'—')}</td>
+      <td><span class="status ${item.status||'pending'}">${(item.status||'pending').replace('_',' ').toUpperCase()}</span></td>
+    </tr>`).join('')}
+    </tbody></table>
+    <p style="margin-top:20px;font-size:11px;color:#999">Generated: ${new Date().toLocaleString()} — ⚠ ${watermark}</p>
+    </body></html>`;
+    const w = window.open('','_blank');
+    w.document.write(html);
+    w.document.close();
+    setTimeout(()=>w.print(), 500);
+  };
+
   return (
     <div>
       {toast && <Toast msg={toast.msg} type={toast.type} onDone={()=>setToast(null)} />}
@@ -2481,6 +2689,7 @@ function TaskDetail({ taskList, user, onBack, onUpdate, users }) {
 
       {/* Export */}
       <div className="export-row" style={{marginTop:18}}>
+        <button className="export-btn" onClick={exportPDF}><span className="export-ico">📄</span>PDF</button>
         <button className="export-btn" onClick={exportText}><span className="export-ico">📋</span>Copy Text</button>
       </div>
 
