@@ -544,7 +544,7 @@ function AutocompleteInput({ value, onChange, masterItems, placeholder }) {
         <div className="aclist">
           {filtered.map(m => (
             <div key={m.id} className="acitem" onMouseDown={() => { onChange(m.name); setOpen(false); }}>
-              <span>{m.name}</span><span className="accat">{m.category}</span>
+              <span>{m.name}</span>
             </div>
           ))}
         </div>
@@ -691,11 +691,7 @@ function ItemModal({ item, onSave, onClose, masterItems, isAdmin }) {
           <div className="field"><label className="flbl">Qty</label><input className="fi" type="number" value={qty} onChange={e => setQty(e.target.value)} min="1" /></div>
           <div className="field"><label className="flbl">Unit</label><select className="fsel" value={unit} onChange={e => setUnit(e.target.value)}>{UNITS.map(u => <option key={u}>{u}</option>)}</select></div>
         </div>
-        {/* Category is auto-assigned from Gear Library — managed in Categories tab only */}
-        <div className="field">
-          <label className="flbl">Category</label>
-          <div className="fi" style={{background:'var(--s2)',color:'var(--mu)',cursor:'default'}}>{cat}</div>
-        </div>
+
         <div className="field"><label className="flbl">Notes (optional)</label><textarea className="fta" value={notes} onChange={e => setNotes(e.target.value)} rows={2} /></div>
         <div className="macts">
           <button className="btn bghost" onClick={onClose}>Cancel</button>
@@ -1331,7 +1327,8 @@ function EventDetail({ event, user, onBack, onUpdate, masterItems, fleet, users 
                 </div>
                 <div className="imain">
                   <div className="iname">{item.name}</div>
-                  <div className="iqty">Qty: {item.qty}{item.notes ? ` · ${item.notes}` : ''}</div>
+                  <div className="iqty">Qty: {item.qty}</div>
+                  {item.notes && <div className="iqty" style={{marginTop:3,whiteSpace:'pre-wrap',lineHeight:1.5}}>{item.notes}</div>}
                   {item.addedBy && item.addedBy !== 'admin' && <div className="iby">Added by {item.addedBy}</div>}
                   {/* #7 Lighter timestamp text */}
                   {item[`${item.status}By`] && item.status !== 'pending' && (
@@ -1999,6 +1996,40 @@ function UserManager({ users, onUpdate }) {
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+
+// ─── GEAR TAB (combined Gear Library + Categories) ────────────────────────────
+function GearTab({ masterItems, onUpdateMaster, categories, onUpdateCategories }) {
+  const [view, setView] = useState('library'); // 'library' | 'categories'
+  return (
+    <div>
+      <div style={{display:'flex',background:'var(--s2)',border:'1px solid var(--br)',borderRadius:'var(--rl)',padding:4,marginBottom:16,gap:4}}>
+        <button
+          onClick={() => setView('library')}
+          style={{flex:1,padding:'8px',borderRadius:'var(--r)',border:'none',fontFamily:'var(--fh)',fontSize:13,fontWeight:800,letterSpacing:1,cursor:'pointer',transition:'.15s',
+            background: view==='library' ? 'var(--sf)' : 'transparent',
+            color: view==='library' ? 'var(--bl)' : 'var(--mu)',
+            boxShadow: view==='library' ? '0 1px 4px rgba(0,0,0,.08)' : 'none'
+          }}>
+          📦 Gear Library
+        </button>
+        <button
+          onClick={() => setView('categories')}
+          style={{flex:1,padding:'8px',borderRadius:'var(--r)',border:'none',fontFamily:'var(--fh)',fontSize:13,fontWeight:800,letterSpacing:1,cursor:'pointer',transition:'.15s',
+            background: view==='categories' ? 'var(--sf)' : 'transparent',
+            color: view==='categories' ? 'var(--bl)' : 'var(--mu)',
+            boxShadow: view==='categories' ? '0 1px 4px rgba(0,0,0,.08)' : 'none'
+          }}>
+          🏷 Categories
+        </button>
+      </div>
+      {view === 'library'
+        ? <MasterItemList masterItems={masterItems} onUpdate={onUpdateMaster} />
+        : <CategoryManager categories={categories} onUpdate={onUpdateCategories} />
+      }
     </div>
   );
 }
@@ -3207,7 +3238,7 @@ export default function App() {
   );
 
   const isAdmin = user.role === 'admin';
-  const ATABS = ['Events','Tasks','Activity Log','Team','Gear Library','Fleet','Categories'];
+  const ATABS = ['Events','Tasks','Activity Log','Team','Gear','Fleet'];
 
   return (
     <CatContext.Provider value={categories}>
@@ -3248,12 +3279,10 @@ export default function App() {
             <ActivityLog users={users} events={events} />
           ) : adminTab === 'Team' ? (
             <UserManager users={users} onUpdate={setUsers} />
-          ) : adminTab === 'Gear Library' ? (
-            <MasterItemList masterItems={masterItems} onUpdate={setMasterItems} />
+          ) : adminTab === 'Gear' ? (
+            <GearTab masterItems={masterItems} onUpdateMaster={setMasterItems} categories={categories} onUpdateCategories={setCategories} />
           ) : adminTab === 'Fleet' ? (
             <FleetLibrary fleet={fleet} onUpdate={setFleet} />
-          ) : adminTab === 'Categories' ? (
-            <CategoryManager categories={categories} onUpdate={setCategories} />
           ) : null}
         </div>
         {showCreate && <EventForm masterItems={masterItems} users={users} onSave={handleCreateEvent} onClose={() => setShowCreate(false)} />}
