@@ -337,7 +337,7 @@ input,textarea,select,button{font-family:var(--fb)}
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
 const uid = () => Math.random().toString(36).slice(2, 9);
 const nowISO = () => new Date().toISOString();
-const fmt = (d) => d ? new Date(d).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }) : '—';
+const fmt = (d) => { if (!d) return '—'; if (d==='TBD'||d==='N/A') return d; return new Date(d).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }); };
 const fmtDT = (d) => {
   if (!d) return '—';
   if (d === 'TBD') return 'TBD';
@@ -387,6 +387,8 @@ const db = {
       })),
     }));
   },
+  unarchiveEvent: async (id) => supabase.from('cf_events').update({ archived:false, archived_at:null, archived_reason:'' }).eq('id', id),
+
   upsertEvent: async (ev) => supabase.from('cf_events').upsert({
     id: ev.id, name: ev.name, venue: ev.venue||'', address: ev.address||'',
     event_start: ev.eventStart||'', event_end: ev.eventEnd||'',
@@ -479,6 +481,8 @@ const db = {
       })),
     }));
   },
+  unarchiveTaskList: async (id) => supabase.from('cf_task_lists').update({ archived:false, archived_at:null, all_tasks_complete:false }).eq('id', id),
+
   upsertTaskList: async (tl) => supabase.from('cf_task_lists').upsert({
     id: tl.id, title: tl.title, type: tl.type,
     date_start: tl.dateStart||null, date_end: tl.dateEnd||null,
@@ -721,18 +725,25 @@ function DateTimeFieldWithTBD({ label, value, onChange }) {
 
 function EventForm({ onSave, onClose, existing, masterItems, users }) {
   const categories = useContext(CatContext);
+  // Check for template from duplicate
+  const templateStr = !existing ? sessionStorage.getItem('cf_template_event') : null;
+  const template = templateStr ? JSON.parse(templateStr) : null;
+  if (templateStr) sessionStorage.removeItem('cf_template_event');
   const e = existing || {};
+  const t = template || {};
   const UNITS = ['units','pcs','ft','m','boxes','cases','rolls','sets','ea'];
-  const [name, setName] = useState(e.name || '');
-  const [venue, setVenue] = useState(e.venue || '');
-  const [address, setAddress] = useState(e.address || '');
+  const [name, setName] = useState(e.name || (t.name ? `${t.name} (Copy)` : ''));
+  const [venue, setVenue] = useState(e.venue || t.venue || '');
+  const [address, setAddress] = useState(e.address || t.address || '');
   const [eventStart, setEventStart] = useState(e.eventStart || '');
   const [eventEnd, setEventEnd] = useState(e.eventEnd || '');
   const [installDT, setInstallDT] = useState(e.installDT || '');
   const [strikeDT, setStrikeDT] = useState(e.strikeDT || '');
   const [departureDT, setDepartureDT] = useState(e.departureDT || '');
-  const [brief, setBrief] = useState(e.brief || '');
-  const [items, setItems] = useState((e.items || []).filter(i => !i.removedAt));
+  const [brief, setBrief] = useState(e.brief || t.brief || '');
+  // For template: copy items but reset statuses
+  const templateItems = t.items ? t.items.filter(i=>!i.removedAt).map(i=>({...i, id:uid(), status:'pending', addedBy:'admin', addedAt:null, preppedBy:'', loadedBy:'', removedAt:null, carryoverLog:[] })) : [];
+  const [items, setItems] = useState((e.items || []).filter(i => !i.removedAt).length > 0 ? (e.items||[]).filter(i=>!i.removedAt) : templateItems);
   const [ni, setNi] = useState({ name:'', qty:'1', unit:'units', cat:categories[0] });
   const [installCrew, setInstallCrew] = useState(e.installCrew || []);
   const [strikeCrew, setStrikeCrew] = useState(e.strikeCrew || []);
@@ -762,13 +773,42 @@ function EventForm({ onSave, onClose, existing, masterItems, users }) {
     <div className="mback">
       <div className="mover" onClick={onClose} />
       <div className="modal">
-        <div className="mtitle">{existing ? '✏️ Edit Event' : '➕ New Event'}</div>
+        <div className="mtitle">{existing ? '✏️ Edit Event' : template ? '⧉ Duplicate Event' : '➕ New Event'}</div>
+        {template && <div className="infobanner" style={{marginBottom:14}}>⧉ Copied from <strong>{template.name}</strong> — update the dates before publishing.</div>}
         <div className="field"><label className="flbl">Event Name *</label><input className="fi" value={name} onChange={e=>setName(e.target.value)} placeholder="e.g. Strut Platform Putback" /></div>
         <div className="field"><label className="flbl">Venue Name</label><input className="fi" value={venue} onChange={e=>setVenue(e.target.value)} /></div>
         <div className="field"><label className="flbl">Address</label><input className="fi" value={address} onChange={e=>setAddress(e.target.value)} /></div>
         <div className="frow">
-          <div className="field"><label className="flbl">Event Start</label><input className="fi" type="date" value={eventStart} onChange={e=>setEventStart(e.target.value)} /></div>
-          <div className="field"><label className="flbl">Event End</label><input className="fi" type="date" value={eventEnd} onChange={e=>setEventEnd(e.target.value)} /></div>
+          <div className="field">
+            <label className="flbl">Event Start</label>
+            {eventStart==='N/A'||eventStart==='TBD' ? (
+              <div style={{display:'flex',gap:6,alignItems:'center'}}>
+                <div className="fi" style={{flex:1,background:'var(--s2)',color:'var(--mu)',cursor:'default'}}>{eventStart}</div>
+                <button className="btn bghost bsm" onClick={()=>setEventStart('')}>Change</button>
+              </div>
+            ) : (
+              <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>
+                <input className="fi" type="date" value={eventStart} onChange={e=>setEventStart(e.target.value)} style={{flex:1,minWidth:120}} />
+                <button className="btn bghost bsm" onClick={()=>setEventStart('TBD')}>TBD</button>
+                <button className="btn bghost bsm" onClick={()=>setEventStart('N/A')}>N/A</button>
+              </div>
+            )}
+          </div>
+          <div className="field">
+            <label className="flbl">Event End</label>
+            {eventEnd==='N/A'||eventEnd==='TBD' ? (
+              <div style={{display:'flex',gap:6,alignItems:'center'}}>
+                <div className="fi" style={{flex:1,background:'var(--s2)',color:'var(--mu)',cursor:'default'}}>{eventEnd}</div>
+                <button className="btn bghost bsm" onClick={()=>setEventEnd('')}>Change</button>
+              </div>
+            ) : (
+              <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>
+                <input className="fi" type="date" value={eventEnd} onChange={e=>setEventEnd(e.target.value)} style={{flex:1,minWidth:120}} />
+                <button className="btn bghost bsm" onClick={()=>setEventEnd('TBD')}>TBD</button>
+                <button className="btn bghost bsm" onClick={()=>setEventEnd('N/A')}>N/A</button>
+              </div>
+            )}
+          </div>
         </div>
         <DateTimeFieldWithTBD label="Install Date/Time" value={installDT} onChange={setInstallDT} />
         <DateTimeFieldWithTBD label="Strike Date/Time" value={strikeDT} onChange={setStrikeDT} />
@@ -1443,17 +1483,39 @@ function EventDetail({ event, user, onBack, onUpdate, masterItems, fleet, users 
   );
 }
 
-function EventList({ events, user, onSelect, onCreateNew }) {
+function EventList({ events, user, onSelect, onCreateNew, onUpdate, onDuplicate }) {
   const [tab, setTab] = useState('active');
+  const [confirmArchive, setConfirmArchive] = useState(null);
+  const [confirmUnarchive, setConfirmUnarchive] = useState(null);
+  const [toast, setToast] = useState(null);
   const isAdmin = user.role === 'admin';
+  const pt = (msg, type) => setToast({ msg, type });
+
+  const handleArchive = async (ev) => {
+    const updated = { ...ev, archived:true, archivedAt:nowISO(), archivedReason:'manual' };
+    await db.upsertEvent(updated);
+    onUpdate(updated);
+    setConfirmArchive(null);
+    pt(`"${ev.name}" archived`, 'ok');
+  };
+
+  const handleUnarchive = async (ev) => {
+    await db.unarchiveEvent(ev.id);
+    const updated = { ...ev, archived:false, archivedAt:null, archivedReason:'' };
+    onUpdate(updated);
+    setConfirmUnarchive(null);
+    pt(`"${ev.name}" reinstated`, 'ok');
+  };
   const live = events.filter(e => !e.archived && (isAdmin || e.live));
   const archived = events.filter(e => e.archived);
 
   // #10 Sort by event start date soonest first
   const sortByDate = (arr) => [...arr].sort((a, b) => {
-    if (!a.eventStart) return 1;
-    if (!b.eventStart) return -1;
-    return new Date(a.eventStart) - new Date(b.eventStart);
+    const da = a.installDT && a.installDT !== 'TBD' ? a.installDT : a.eventStart;
+    const db2 = b.installDT && b.installDT !== 'TBD' ? b.installDT : b.eventStart;
+    if (!da) return 1;
+    if (!db2) return -1;
+    return new Date(da) - new Date(db2);
   });
 
   const visible = tab === 'active' ? sortByDate(live) : sortByDate(archived);
@@ -1473,11 +1535,22 @@ function EventList({ events, user, onSelect, onCreateNew }) {
         return (
           <div key={ev.id} className={'ecard' + (ev.archived ? ' arc' : '') + (isRTR ? ' rtr' : '')} onClick={() => onSelect(ev)}>
             <div className="ehd">
-              <div><div className="ename">{ev.name}</div><div className="evenue">{ev.venue||ev.address||'—'}</div></div>
-              <div className="pills">
-                <span className={'pill ' + (ev.archived ? 'parc' : isRTR ? 'prtr' : ev.live ? 'plive' : 'pdraft')}>
-                  {ev.archived ? 'Archived' : isRTR ? '✓ Ready to Roll' : ev.live ? 'Live' : 'Draft'}
-                </span>
+              <div style={{flex:1}}><div className="ename">{ev.name}</div><div className="evenue">{ev.venue||ev.address||'—'}</div></div>
+              <div style={{display:'flex',flexDirection:'column',alignItems:'flex-end',gap:5}}>
+                <div className="pills">
+                  <span className={'pill ' + (ev.archived ? 'parc' : isRTR ? 'prtr' : ev.live ? 'plive' : 'pdraft')}>
+                    {ev.archived ? 'Archived' : isRTR ? '✓ Ready to Roll' : ev.live ? 'Live' : 'Draft'}
+                  </span>
+                </div>
+                {isAdmin && (
+                  <div style={{display:'flex',gap:4}} onClick={e=>e.stopPropagation()}>
+                    <button className="btn bghost bsm" style={{fontSize:10}} onClick={()=>onDuplicate(ev)}>⧉ Copy</button>
+                    {ev.archived
+                      ? <button className="btn bok bsm" style={{fontSize:10}} onClick={()=>setConfirmUnarchive(ev)}>↩ Reinstate</button>
+                      : <button className="btn bghost bsm" style={{fontSize:10}} onClick={()=>setConfirmArchive(ev)}>Archive</button>
+                    }
+                  </div>
+                )}
               </div>
             </div>
             <div className="emeta">
@@ -1497,6 +1570,24 @@ function EventList({ events, user, onSelect, onCreateNew }) {
         );
       })}
       {isAdmin && tab==='active' && <button className="fab" onClick={onCreateNew}>＋</button>}
+
+      {toast && <Toast msg={toast.msg} type={toast.type} onDone={() => setToast(null)} />}
+      {confirmArchive && (
+        <div className="mback ctr"><div className="mover" onClick={() => setConfirmArchive(null)} />
+          <div className="modal">
+            <Confirm title="Archive Event?" body={`Archive "${confirmArchive.name}"? It will move to Archived and can be reinstated at any time.`}
+              onConfirm={() => handleArchive(confirmArchive)} onCancel={() => setConfirmArchive(null)} confirmLabel="Archive" />
+          </div>
+        </div>
+      )}
+      {confirmUnarchive && (
+        <div className="mback ctr"><div className="mover" onClick={() => setConfirmUnarchive(null)} />
+          <div className="modal">
+            <Confirm title="Reinstate Event?" body={`Reinstate "${confirmUnarchive.name}"? It will move back to Active events.`}
+              onConfirm={() => handleUnarchive(confirmUnarchive)} onCancel={() => setConfirmUnarchive(null)} confirmLabel="Reinstate" />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -1889,8 +1980,8 @@ function UserManager({ users, onUpdate }) {
     setConfirmDel(null); pt(`${confirmDel.name} deactivated — moved to Archived Crew`, 'ok');
   };
 
-  const activeEmployees = users.filter(u => u.role !== 'admin' && u.active);
-  const archivedEmployees = users.filter(u => u.role !== 'admin' && !u.active);
+  const activeEmployees = users.filter(u => u.id !== 'admin' && u.active);
+  const archivedEmployees = users.filter(u => u.id !== 'admin' && !u.active);
 
   return (
     <div>
@@ -2462,13 +2553,18 @@ function TaskItemModal({ item, onSave, onClose, users, isAdmin }) {
 // ─── TASK LIST FORM ───────────────────────────────────────────────────────────
 function TaskListForm({ onSave, onClose, existing, users }) {
   const e = existing||{};
+  const templateStr = !existing ? sessionStorage.getItem('cf_template_task') : null;
+  const template = templateStr ? JSON.parse(templateStr) : null;
+  if (templateStr) sessionStorage.removeItem('cf_template_task');
+  const t = template||{};
   const employees = (users||[]).filter(u=>u.active);
-  const [title, setTitle] = useState(e.title||'');
-  const [type, setType] = useState(e.type||'daily');
+  const [title, setTitle] = useState(e.title||(t.title?`${t.title} (Copy)`:''));
+  const [type, setType] = useState(e.type||t.type||'daily');
   const [dateStart, setDateStart] = useState(e.dateStart||new Date().toISOString().slice(0,10));
   const [dateEnd, setDateEnd] = useState(e.dateEnd||'');
-  const [brief, setBrief] = useState(e.brief||'');
-  const [items, setItems] = useState((e.items||[]).filter(i=>!i.removedAt));
+  const [brief, setBrief] = useState(e.brief||t.brief||'');
+  const templateTaskItems = t.items ? t.items.filter(i=>!i.removedAt).map(i=>({...i,id:Math.random().toString(36).slice(2,9),status:'pending',completedBy:'',completedAt:null,needsSupportBy:'',needsSupportAt:null,carryoverLog:[]})) : [];
+  const [items, setItems] = useState((e.items||[]).filter(i=>!i.removedAt).length>0 ? (e.items||[]).filter(i=>!i.removedAt) : templateTaskItems);
   const [showItemModal, setShowItemModal] = useState(false);
   const [editItem, setEditItem] = useState(null);
 
@@ -2487,7 +2583,8 @@ function TaskListForm({ onSave, onClose, existing, users }) {
   return (
     <div className="mback"><div className="mover" onClick={onClose}/>
       <div className="modal">
-        <div className="mtitle">{existing?'✏️ Edit Task List':'➕ New Task List'}</div>
+        <div className="mtitle">{existing?'✏️ Edit Task List':template?'⧉ Duplicate Task List':'➕ New Task List'}</div>
+        {template && <div className="infobanner" style={{marginBottom:14}}>⧉ Copied from <strong>{template.title}</strong> — update the date before publishing.</div>}
         <div className="field"><label className="flbl">Title *</label><input className="fi" value={title} onChange={e=>setTitle(e.target.value)} placeholder="e.g. Monday Warehouse Checklist" /></div>
         <div className="field">
           <label className="flbl">Type</label>
@@ -2903,9 +3000,29 @@ function TaskDetail({ taskList, user, onBack, onUpdate, users }) {
 }
 
 // ─── TASK LIST VIEW ───────────────────────────────────────────────────────────
-function TaskListView({ taskLists, user, onSelect, onCreateNew, onUpdate }) {
+function TaskListView({ taskLists, user, onSelect, onCreateNew, onUpdate, onDuplicate }) {
   const [tab, setTab] = useState('active');
+  const [confirmArchive, setConfirmArchive] = useState(null);
+  const [confirmUnarchive, setConfirmUnarchive] = useState(null);
+  const [toast, setToast] = useState(null);
   const isAdmin = user.role==='admin';
+  const pt = (msg, type) => setToast({ msg, type });
+
+  const handleArchive = async (tl) => {
+    const updated = { ...tl, archived:true, archivedAt:nowISO() };
+    await db.upsertTaskList(updated);
+    onUpdate(updated);
+    setConfirmArchive(null);
+    pt(`"${tl.title}" archived`, 'ok');
+  };
+
+  const handleUnarchive = async (tl) => {
+    await db.unarchiveTaskList(tl.id);
+    const updated = { ...tl, archived:false, archivedAt:null, allTasksComplete:false };
+    onUpdate(updated);
+    setConfirmUnarchive(null);
+    pt(`"${tl.title}" reinstated`, 'ok');
+  };
 
   // Midnight carryover check
   useEffect(()=>{
@@ -3002,9 +3119,18 @@ function TaskListView({ taskLists, user, onSelect, onCreateNew, onUpdate }) {
                 {today && <div style={{fontSize:10,fontWeight:800,color:'var(--bl)',letterSpacing:1,marginTop:3}}>📅 TODAY</div>}
                 {overdue && <div style={{fontSize:10,fontWeight:800,color:'var(--dn)',letterSpacing:1,marginTop:3}}>⚠ OVERDUE</div>}
               </div>
-              <div style={{display:'flex',flexDirection:'column',alignItems:'flex-end',gap:4}}>
+              <div style={{display:'flex',flexDirection:'column',alignItems:'flex-end',gap:5}}>
                 <span className={'ttype-badge ttype-'+tl.type}>{tl.type==='daily'?'📅 Daily':tl.type==='weekly'?'📆 Weekly':'🗂 No Date'}</span>
                 {isATC && <span className="pill prtr" style={{fontSize:9}}>✓ Complete</span>}
+                {isAdmin && (
+                  <div style={{display:'flex',gap:4}} onClick={e=>e.stopPropagation()}>
+                    <button className="btn bghost bsm" style={{fontSize:10}} onClick={()=>onDuplicate(tl)}>⧉ Copy</button>
+                    {tl.archived
+                      ? <button className="btn bok bsm" style={{fontSize:10}} onClick={()=>setConfirmUnarchive(tl)}>↩ Reinstate</button>
+                      : <button className="btn bghost bsm" style={{fontSize:10}} onClick={()=>setConfirmArchive(tl)}>Archive</button>
+                    }
+                  </div>
+                )}
               </div>
             </div>
             <div className="tmeta">
@@ -3023,6 +3149,24 @@ function TaskListView({ taskLists, user, onSelect, onCreateNew, onUpdate }) {
         );
       })}
       {isAdmin && tab==='active' && <button className="fab" onClick={onCreateNew}>＋</button>}
+
+      {toast && <Toast msg={toast.msg} type={toast.type} onDone={() => setToast(null)} />}
+      {confirmArchive && (
+        <div className="mback ctr"><div className="mover" onClick={() => setConfirmArchive(null)} />
+          <div className="modal">
+            <Confirm title="Archive Task List?" body={`Archive "${confirmArchive.title}"? It will move to Archived and can be reinstated at any time.`}
+              onConfirm={() => handleArchive(confirmArchive)} onCancel={() => setConfirmArchive(null)} confirmLabel="Archive" />
+          </div>
+        </div>
+      )}
+      {confirmUnarchive && (
+        <div className="mback ctr"><div className="mover" onClick={() => setConfirmUnarchive(null)} />
+          <div className="modal">
+            <Confirm title="Reinstate Task List?" body={`Reinstate "${confirmUnarchive.title}"? It will move back to Active lists.`}
+              onConfirm={() => handleUnarchive(confirmUnarchive)} onCancel={() => setConfirmUnarchive(null)} confirmLabel="Reinstate" />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -3263,17 +3407,17 @@ export default function App() {
             selectedTask ? (
               <TaskDetail taskList={selectedTask} user={user} onBack={()=>setSelectedTask(null)} onUpdate={(tl)=>{ setTaskLists(prev=>prev.map(t=>t.id===tl.id?tl:t)); setSelectedTask(tl); }} users={users} />
             ) : (
-              <TaskListView taskLists={taskLists} user={user} onSelect={setSelectedTask} onCreateNew={()=>setShowCreateTask(true)} onUpdate={(tl)=>setTaskLists(prev=>prev.map(t=>t.id===tl.id?tl:t))} />
+              <TaskListView taskLists={taskLists} user={user} onSelect={setSelectedTask} onCreateNew={()=>setShowCreateTask(true)} onUpdate={(tl)=>setTaskLists(prev=>prev.map(t=>t.id===tl.id?tl:t))} onDuplicate={(tl)=>{ setShowCreateTask(true); sessionStorage.setItem('cf_template_task', JSON.stringify(tl)); }} />
             )
           ) : !isAdmin ? (
-            <EventList events={events} user={user} onSelect={setSelectedEvent} onCreateNew={() => setShowCreate(true)} />
+            <EventList events={events} user={user} onSelect={setSelectedEvent} onCreateNew={() => setShowCreate(true)} onUpdate={ev=>setEvents(prev=>prev.map(e=>e.id===ev.id?ev:e))} onDuplicate={ev=>{setShowCreate(true); sessionStorage.setItem('cf_template_event', JSON.stringify(ev));}} />
           ) : adminTab === 'Events' ? (
-            <EventList events={events} user={user} onSelect={setSelectedEvent} onCreateNew={() => setShowCreate(true)} />
+            <EventList events={events} user={user} onSelect={setSelectedEvent} onCreateNew={() => setShowCreate(true)} onUpdate={ev=>setEvents(prev=>prev.map(e=>e.id===ev.id?ev:e))} onDuplicate={ev=>{setShowCreate(true); sessionStorage.setItem('cf_template_event', JSON.stringify(ev));}} />
           ) : adminTab === 'Tasks' ? (
             selectedTask ? (
               <TaskDetail taskList={selectedTask} user={user} onBack={()=>setSelectedTask(null)} onUpdate={(tl)=>{ setTaskLists(prev=>prev.map(t=>t.id===tl.id?tl:t)); setSelectedTask(tl); }} users={users} />
             ) : (
-              <TaskListView taskLists={taskLists} user={user} onSelect={setSelectedTask} onCreateNew={()=>setShowCreateTask(true)} onUpdate={(tl)=>setTaskLists(prev=>prev.map(t=>t.id===tl.id?tl:t))} />
+              <TaskListView taskLists={taskLists} user={user} onSelect={setSelectedTask} onCreateNew={()=>setShowCreateTask(true)} onUpdate={(tl)=>setTaskLists(prev=>prev.map(t=>t.id===tl.id?tl:t))} onDuplicate={(tl)=>{ setShowCreateTask(true); sessionStorage.setItem('cf_template_task', JSON.stringify(tl)); }} />
             )
           ) : adminTab === 'Activity Log' ? (
             <ActivityLog users={users} events={events} />
