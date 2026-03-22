@@ -35,7 +35,7 @@ input,textarea,select,button{font-family:var(--fb)}
 ::-webkit-scrollbar-track{background:var(--bg)}
 ::-webkit-scrollbar-thumb{background:var(--br2);border-radius:2px}
 .app{min-height:100vh;display:flex;flex-direction:column;max-width:680px;margin:0 auto;background:var(--bg);box-shadow:0 0 0 1px var(--br)}
-.hdr{background:var(--sf);border-bottom:1px solid var(--br);padding:0 14px;display:flex;align-items:center;justify-content:space-between;height:52px;position:sticky;top:0;z-index:100}
+.hdr{background:var(--sf);border-bottom:1px solid var(--br);padding:0 14px;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:100}
 .brand{font-family:var(--fh);font-size:22px;font-weight:900;letter-spacing:2px;color:var(--bl);display:flex;align-items:center;gap:7px}
 .bdot{width:7px;height:7px;background:var(--bl);border-radius:50%;animation:bpulse 2.5s infinite}
 @keyframes bpulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.6)}}
@@ -1215,7 +1215,7 @@ function EventDetail({ event, user, onBack, onUpdate, masterItems, fleet, users 
             </div>
             <div className="macts">
               <button className="btn bghost" onClick={() => setShowRTRConfirm(false)}>Go Back & Check</button>
-              <button className="btn bprim" style={{ flex:2, background:'var(--ok)', flex:2 }} onClick={handleReadyToRoll}>✓ Confirm — We're Ready</button>
+              <button className="btn bprim" style={{ flex:2, background:'var(--ok)' }} onClick={handleReadyToRoll}>✓ Confirm — We're Ready</button>
             </div>
           </div>
         </div>
@@ -1572,10 +1572,7 @@ function Login({ onLogin, users }) {
   };
   return (
     <div className="login">
-      <div className="l-eyebrow">Warehouse &amp; Event Management</div>
-      {/* #9 CREWFLOW branding */}
-      <div className="l-title">CREW<em>FLOW</em></div>
-      <div className="l-sub">Powered by AES Marketing</div>
+      <img src="/CrewFlowLogo.png" alt="CrewFlow" style={{ width:'100%', maxWidth:320, marginBottom:24, objectFit:"contain" }} />
       <div className="l-card">
         {stage === 'confirm' && pendingUser ? (
           <div className="l-confirm">
@@ -1671,7 +1668,7 @@ export default function App() {
   if (loading) return (
     <>
       <style>{CSS}</style>
-      <div className="loading">CREWFLOW<span style={{ animation:'bpulse 1s infinite', marginLeft:8 }}>●</span></div>
+      <div className="loading"><img src="/CrewFlowLogo.png" alt="CrewFlow" style={{ height:48, objectFit:"contain" }} /></div>
     </>
   );
 
@@ -1690,7 +1687,7 @@ export default function App() {
       <div className="app">
         {toast && <Toast msg={toast.msg} type={toast.type} onDone={() => setToast(null)} />}
         <div className="hdr">
-          <div className="brand"><div className="bdot" />CREWFLOW</div>
+          <div className="brand"><img src="/CrewFlowLogo.png" alt="CrewFlow" style={{ height:32, objectFit:"contain" }} /></div>
           <div className="hdr-r">
             <div className="uchip"><div className="uav">{user.name[0]}</div><span className="uname">{user.name}</span>{isAdmin&&<span className="abadge">Admin</span>}</div>
             <button className="signout" onClick={() => { setUser(null); setSelectedEvent(null); setAdminTab('Events'); }}>Sign Out</button>
