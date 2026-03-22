@@ -175,7 +175,7 @@ input,textarea,select,button{font-family:var(--fb)}
 .briefb{font-size:13px;color:var(--tx);line-height:1.6;white-space:pre-wrap}
 
 /* PROGRESS BLOCK */
-.pblock{background:var(--sf);border:1px solid var(--br);border-radius:var(--rl);padding:12px 14px;margin-bottom:11px}
+.pblock{background:var(--sf);border:1px solid var(--br);border-radius:var(--rl);padding:14px 16px;margin-bottom:16px}
 .phd{display:flex;justify-content:space-between;margin-bottom:7px}
 .phd span:first-child{font-size:10px;font-weight:700;letter-spacing:2px;color:var(--mu);text-transform:uppercase}
 .phd span:last-child{font-size:14px;font-weight:800;color:var(--bl)}
@@ -193,10 +193,10 @@ input,textarea,select,button{font-family:var(--fb)}
 /* ITEMS */
 .shd{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 .slbl{font-family:var(--fh);font-size:14px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--mu)}
-.catblk{margin-bottom:16px}
+.catblk{margin-bottom:22px}
 /* #7 lighter category labels */
 .catlbl{font-family:var(--fh);font-size:11px;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--mu);border-bottom:1px solid var(--br);padding-bottom:5px;margin-bottom:7px}
-.irow{background:var(--sf);border:1px solid var(--br);border-radius:var(--r);padding:11px 12px;margin-bottom:5px;display:flex;align-items:center;gap:10px}
+.irow{background:var(--sf);border:1px solid var(--br);border-radius:var(--r);padding:13px 13px;margin-bottom:8px;display:flex;align-items:center;gap:10px}
 .ichk{width:26px;height:26px;border-radius:50%;border:2px solid var(--br2);background:var(--s2);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.18s}
 .ichk.prepped{border-color:var(--or);background:var(--or2)}
 /* #4 loaded = bigger bolder checkmark */
@@ -276,6 +276,15 @@ input,textarea,select,button{font-family:var(--fb)}
 .infobanner{background:var(--s2);border:1px solid var(--br);border-radius:4px;padding:7px 11px;margin-bottom:12px;font-size:12px;color:var(--mu)}
 .loading{display:flex;align-items:center;justify-content:center;min-height:100vh;background:#F0F2F5;font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;letter-spacing:3px;color:var(--tx)}
 
+
+/* ─── NOTES ───────────────────────────────────────────────────────────────── */
+.notes-section{background:var(--sf);border:1px solid var(--br);border-radius:var(--rl);padding:14px 16px;margin-top:18px}
+.notes-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.notes-lbl{font-family:var(--fh);font-size:12px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--mu)}
+.note-item{background:var(--s2);border:1px solid var(--br);border-left:3px solid var(--wn);border-radius:var(--r);padding:10px 12px;margin-bottom:8px}
+.note-body{font-size:14px;color:var(--tx);line-height:1.5;white-space:pre-wrap}
+.note-meta{font-size:10px;color:var(--mu);margin-top:5px;font-style:italic}
+
 /* ─── TASK MODULE ─────────────────────────────────────────────────────────── */
 .tcard{background:var(--sf);border:1px solid var(--br);border-radius:var(--rl);margin-bottom:10px;overflow:hidden;transition:.15s;cursor:pointer}
 .tcard:active{transform:scale(.99);border-color:var(--bl)}
@@ -295,7 +304,7 @@ input,textarea,select,button{font-family:var(--fb)}
 .tatc-banner{background:rgba(5,150,105,.08);border:2px solid var(--ok);border-radius:var(--rl);padding:12px 14px;margin-bottom:11px;display:flex;align-items:center;gap:10px}
 .tatc-btn{width:100%;background:linear-gradient(135deg,rgba(5,150,105,.12),rgba(5,150,105,.06));border:2px solid var(--ok);border-radius:var(--rl);padding:16px;color:var(--ok);font-family:var(--fh);font-size:18px;font-weight:900;letter-spacing:2px;text-transform:uppercase;cursor:pointer;margin-bottom:18px;display:flex;align-items:center;justify-content:center;gap:8px}
 .tatc-locked{width:100%;background:rgba(5,150,105,.04);border:2px dashed rgba(5,150,105,.25);border-radius:var(--rl);padding:13px;color:rgba(5,150,105,.45);font-family:var(--fh);font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:18px;display:flex;align-items:center;justify-content:center;gap:7px;cursor:default}
-.titem{background:var(--sf);border:1px solid var(--br);border-radius:var(--r);padding:12px 13px;margin-bottom:6px;display:flex;align-items:flex-start;gap:10px}
+.titem{background:var(--sf);border:1px solid var(--br);border-radius:var(--r);padding:14px 13px;margin-bottom:10px;display:flex;align-items:flex-start;gap:10px}
 .titem.done{opacity:.7;background:var(--s2)}
 .titem.needs{border-left:3px solid var(--dn)}
 .tchk{width:26px;height:26px;border-radius:50%;border:2px solid var(--br2);background:var(--s2);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.18s;margin-top:1px}
@@ -427,6 +436,15 @@ const db = {
   updateCategory: async (oldName, newName) => supabase.from('cf_categories').update({ name:newName }).eq('name', oldName),
   deleteCategory: async (name) => supabase.from('cf_categories').delete().eq('name', name),
   getAllActivity: async () => { const { data } = await supabase.from('cf_activity_log').select('*').order('created_at', { ascending:false }).limit(200); return data || []; },
+
+  // Login log
+  addLoginLog: async (entry) => supabase.from('cf_login_log').insert({ id:entry.id, user_id:entry.userId, user_name:entry.userName, role:entry.role, logged_in_at:entry.at }),
+  getLoginLog: async () => { const { data } = await supabase.from('cf_login_log').select('*').order('logged_in_at', { ascending:false }).limit(300); return data||[]; },
+
+  // Notes
+  getNotes: async (refId) => { const { data } = await supabase.from('cf_notes').select('*').eq('ref_id', refId).order('created_at'); return data || []; },
+  addNote: async (note) => supabase.from('cf_notes').insert({ id:note.id, ref_id:note.refId, ref_type:note.refType, body:note.body, by_name:note.by, user_id:note.userId }),
+  deleteNote: async (id) => supabase.from('cf_notes').delete().eq('id', id),
 
   // Task Lists
   getTaskLists: async () => {
@@ -935,6 +953,68 @@ function ExportModal({ event, onClose }) {
   );
 }
 
+
+// ─── NOTES SECTION ────────────────────────────────────────────────────────────
+function NotesSection({ refId, refType, user }) {
+  const [notes, setNotes] = useState([]);
+  const [showAdd, setShowAdd] = useState(false);
+  const [body, setBody] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    db.getNotes(refId).then(data => { setNotes(data||[]); setLoading(false); });
+  }, [refId]);
+
+  const handleAdd = async () => {
+    if (!body.trim()) return;
+    setSaving(true);
+    const note = { id:uid(), refId, refType, body:body.trim(), by:user.name, userId:user.id };
+    await db.addNote(note);
+    setNotes(prev => [...prev, { ...note, created_at:new Date().toISOString() }]);
+    setBody(''); setShowAdd(false); setSaving(false);
+  };
+
+  return (
+    <div className="notes-section">
+      <div className="notes-hdr">
+        <span className="notes-lbl">📝 Notes ({notes.length})</span>
+        {!showAdd && (
+          <button className="btn" style={{background:'var(--wn)',color:'#fff',padding:'6px 14px',fontSize:12,fontWeight:800,borderRadius:'var(--r)'}} onClick={() => setShowAdd(true)}>+ Add Note</button>
+        )}
+      </div>
+      {showAdd && (
+        <div style={{background:'var(--s2)',border:'1px solid var(--wn)',borderRadius:'var(--r)',padding:12,marginBottom:10}}>
+          <textarea
+            className="fta"
+            value={body}
+            onChange={e => setBody(e.target.value)}
+            placeholder="Type your note here…"
+            rows={3}
+            autoFocus
+            style={{marginBottom:8}}
+          />
+          <div style={{display:'flex',gap:8}}>
+            <button className="btn bghost bsm" onClick={() => { setShowAdd(false); setBody(''); }}>Cancel</button>
+            <button className="btn bsm" style={{flex:1,background:'var(--wn)',color:'#fff',fontWeight:800}} onClick={handleAdd} disabled={saving}>
+              {saving ? 'Saving…' : 'Save Note'}
+            </button>
+          </div>
+        </div>
+      )}
+      {!loading && notes.length === 0 && !showAdd && (
+        <div style={{fontSize:12,color:'var(--mu)',fontStyle:'italic'}}>No notes yet. Add one above.</div>
+      )}
+      {notes.map((n, i) => (
+        <div key={n.id||i} className="note-item">
+          <div className="note-body">{n.body}</div>
+          <div className="note-meta">— {n.by_name||n.by} · {n.created_at ? new Date(n.created_at).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}) : ''}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function EventDetail({ event, user, onBack, onUpdate, masterItems, fleet, users }) {
   const categories = useContext(CatContext);
   const [statusTarget, setStatusTarget] = useState(null);
@@ -1160,7 +1240,7 @@ function EventDetail({ event, user, onBack, onUpdate, masterItems, fleet, users 
       </div>
 
       {/* Progress */}
-      <div className="pblock">
+      <div className="pblock" style={{marginTop:14}}>
         <div className="phd"><span>Progress</span><span style={{ color: isRTR ? 'var(--ok)' : 'var(--ac)' }}>{pct}%</span></div>
         <div className="ptrack"><div className={'pfill' + (isRTR ? ' rtr' : '')} style={{ width:`${pct}%` }} /></div>
         {isRTR ? (
@@ -1175,6 +1255,7 @@ function EventDetail({ event, user, onBack, onUpdate, masterItems, fleet, users 
       </div>
 
       {/* #11 Ready to Roll / unlock */}
+      <div style={{height:6}} />
       {!event.archived && isRTR && (
         <div className="rtr-banner">
           <span style={{ fontSize:22 }}>✅</span>
@@ -1198,6 +1279,7 @@ function EventDetail({ event, user, onBack, onUpdate, masterItems, fleet, users 
       )}
 
       {/* Gear list */}
+      <div style={{height:8}} />
       {canEdit && (
         <div className="shd" style={{ marginBottom:14, marginTop:8 }}>
           <span className="slbl">Gear List ({active.length})</span>
@@ -1262,8 +1344,11 @@ function EventDetail({ event, user, onBack, onUpdate, masterItems, fleet, users 
         </div>
       ))}
 
+      {/* Notes section */}
+      <NotesSection refId={event.id} refType="event" user={user} />
+
       {/* #12 Export buttons */}
-      <div className="export-row">
+      <div className="export-row" style={{marginTop:18}}>
         <button className="export-btn" onClick={() => setShowExport(true)}>
           <span className="export-ico">📤</span>Export
         </button>
@@ -1410,185 +1495,260 @@ function EventList({ events, user, onSelect, onCreateNew }) {
 
 function ActivityLog({ users, events }) {
   const [logs, setLogs] = useState([]);
-  const [filterType, setFilterType] = useState('all');
-  const [filterMode, setFilterMode] = useState('employee');
-  const [section, setSection] = useState('log'); // 'log' | 'leaderboard'
-  const [loading, setLoading] = useState(true);
   const [taskLogs, setTaskLogs] = useState([]);
-  const [lbBoard, setLbBoard] = useState('tasks');
-  const [lbPeriod, setLbPeriod] = useState('weekly');
+  const [loginLogs, setLoginLogs] = useState([]);
+  const [showLoginLog, setShowLoginLog] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [section, setSection] = useState('project');
+  const [projPeriod, setProjPeriod] = useState('week');
+  const [projEvent, setProjEvent] = useState('all');
+  const [whPeriod, setWhPeriod] = useState('week');
+  const [combPeriod, setCombPeriod] = useState('week');
+
   useEffect(() => {
-    Promise.all([db.getAllActivity(), db.getTaskActivity()]).then(([all, tasks]) => {
-      setLogs(all); setTaskLogs(tasks); setLoading(false);
+    Promise.all([db.getAllActivity(), db.getTaskActivity(), db.getLoginLog()]).then(([all, tasks, logins]) => {
+      setLogs(all||[]); setTaskLogs(tasks||[]); setLoginLogs(logins||[]); setLoading(false);
     });
   }, []);
 
   const resolveUser = (id) => users.find(u => u.id === id);
-  const empIds = [...new Set(logs.map(l => l.user_id).filter(Boolean))];
-  const projects = [...new Set(logs.map(l => l.event_name).filter(Boolean))];
-
-  const filtered = filterType === 'all'
-    ? logs
-    : filterMode === 'employee'
-      ? logs.filter(l => l.user_id === filterType)
-      : logs.filter(l => l.event_name === filterType);
-
-  // Contribution % per employee (based on status_change actions)
-  const statusLogs = logs.filter(l => l.action === 'status_change');
-  const contribMap = {};
-  statusLogs.forEach(l => {
-    if (l.user_id) contribMap[l.user_id] = (contribMap[l.user_id] || 0) + 1;
-  });
-  const totalActions = Object.values(contribMap).reduce((a,b) => a+b, 0);
-
-  // Leaderboard calculations
   const now = new Date();
-  const filterByPeriod = (arr, dateField='created_at') => arr.filter(l=>{
-    const d = new Date(l[dateField]||l.created_at||l.at);
-    if (lbPeriod==='daily') return d.toDateString()===now.toDateString();
-    if (lbPeriod==='weekly') return d>=new Date(now-7*86400000);
-    if (lbPeriod==='monthly') return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();
-    if (lbPeriod==='yearly') return d.getFullYear()===now.getFullYear();
+
+  // Period filter — precise calendar boundaries
+  const inPeriod = (dateStr, period) => {
+    if (!dateStr) return false;
+    const d = new Date(dateStr);
+    if (period === 'day') {
+      const start = new Date(now); start.setHours(0,0,0,0);
+      const end = new Date(now); end.setHours(23,59,59,999);
+      return d >= start && d <= end;
+    }
+    if (period === 'week') {
+      const day = now.getDay(); // 0=Sun
+      const monday = new Date(now); monday.setDate(now.getDate() - (day===0?6:day-1)); monday.setHours(0,0,0,0);
+      const sunday = new Date(monday); sunday.setDate(monday.getDate()+6); sunday.setHours(23,59,59,999);
+      return d >= monday && d <= sunday;
+    }
+    if (period === 'month') {
+      return d.getMonth()===now.getMonth() && d.getFullYear()===now.getFullYear();
+    }
+    if (period === 'year') {
+      return d.getFullYear()===now.getFullYear();
+    }
     return true;
-  });
-  const taskCompletions = () => {
-    const filtered = filterByPeriod(taskLogs).filter(l=>l.action==='task_status'&&l.detail?.includes('→ completed'));
-    const map = {}; filtered.forEach(l=>{ if(l.user_id) map[l.user_id]=(map[l.user_id]||0)+1; });
-    const allTime = {}; taskLogs.filter(l=>l.action==='task_status'&&l.detail?.includes('→ completed')).forEach(l=>{ if(l.user_id) allTime[l.user_id]=(allTime[l.user_id]||0)+1; });
-    return users.filter(u=>u.active).map(u=>({user:u,count:map[u.id]||0,allTime:allTime[u.id]||0})).sort((a,b)=>b.count-a.count).filter(r=>r.count>0||r.allTime>0);
   };
-  const projectContribs = () => {
-    const allLogs = (events||[]).flatMap(ev=>(ev.activityLog||[]).map(l=>({...l,eventName:ev.name})));
-    const filtered = filterByPeriod(allLogs,'at').filter(l=>l.action==='status_change');
-    const map = {}; filtered.forEach(l=>{ if(l.userId) map[l.userId]=(map[l.userId]||0)+1; });
+
+  // All event names for dropdown — archive by year
+  const allEventNames = [...new Set(logs.map(l=>l.event_name).filter(Boolean))].sort();
+  const currentYear = now.getFullYear();
+  const eventsByYear = allEventNames.reduce((acc, name) => {
+    // Find most recent log for this event to determine year
+    const evLogs = logs.filter(l=>l.event_name===name);
+    const latest = evLogs.reduce((a,b)=>new Date(a.created_at)>new Date(b.created_at)?a:b, evLogs[0]);
+    const yr = latest ? new Date(latest.created_at).getFullYear() : currentYear;
+    if (!acc[yr]) acc[yr] = [];
+    acc[yr].push(name);
+    return acc;
+  }, {});
+
+  // Project logs (status_change on events)
+  const projLogs = logs.filter(l => l.action==='status_change' && (!l.activity_type || l.activity_type==='event'));
+  const filteredProjLogs = projLogs.filter(l =>
+    inPeriod(l.created_at, projPeriod) &&
+    (projEvent==='all' || l.event_name===projEvent)
+  );
+
+  // Warehouse task logs
+  const filteredWhLogs = taskLogs.filter(l => inPeriod(l.created_at, whPeriod));
+
+  // Contribution calc helper
+  const calcContribs = (logArr, userIdField='user_id') => {
+    const map = {};
+    logArr.forEach(l => { const uid = l[userIdField]||l.userId; if(uid) map[uid]=(map[uid]||0)+1; });
     const total = Object.values(map).reduce((a,b)=>a+b,0);
-    return users.filter(u=>u.active).map(u=>({user:u,count:map[u.id]||0,pct:total>0?Math.round(((map[u.id]||0)/total)*100):0})).sort((a,b)=>b.count-a.count).filter(r=>r.count>0);
+    return { map, total };
   };
-  const taskRows = taskCompletions();
-  const projRows = projectContribs();
-  const maxTask = taskRows[0]?.count||1;
-  const maxProj = projRows[0]?.count||1;
+
+  const PERIODS = [['day','Today'],['week','This Week'],['month','This Month'],['year','This Year']];
+
+  const ContribBar = ({ label, count, total, color='var(--bl)' }) => {
+    const pct = total>0 ? Math.round((count/total)*100) : 0;
+    return (
+      <div style={{marginBottom:10}}>
+        <div style={{display:'flex',justifyContent:'space-between',marginBottom:3}}>
+          <span style={{fontSize:13,fontWeight:600,color:'var(--tx)'}}>{label}</span>
+          <span style={{fontSize:12,fontWeight:700,color}}>{pct}% <span style={{color:'var(--mu)',fontWeight:400}}>({count} actions)</span></span>
+        </div>
+        <div style={{background:'var(--s2)',borderRadius:3,height:7,overflow:'hidden'}}>
+          <div style={{background:color,width:`${pct}%`,height:'100%',borderRadius:3,transition:'width .4s'}} />
+        </div>
+      </div>
+    );
+  };
+
+  const LogList = ({ items }) => (
+    <div style={{background:'var(--sf)',border:'1px solid var(--br)',borderRadius:'var(--rl)',overflow:'hidden',marginTop:10}}>
+      {items.length===0 && <div className="empty" style={{padding:20}}><div className="etxt">No activity for this period.</div></div>}
+      {items.slice(0,100).map((l,i) => {
+        const u = resolveUser(l.user_id);
+        return (
+          <div key={i} className="logrow">
+            <div className="logav">{(u?u.name:l.by_name||'?')[0]}</div>
+            <div className="logbody">
+              <div className="logact"><strong style={{color:'var(--tx)'}}>{l.by_name}</strong> — {l.detail}</div>
+              <div className="logt">{fmtFull(l.created_at)}</div>
+              {l.event_name && <div className="logevt">{l.activity_type==='task'?'Task':'Event'}: {l.event_name}</div>}
+            </div>
+          </div>
+        );
+      })}
+      {items.length>100 && <div style={{padding:'8px 14px',fontSize:11,color:'var(--mu)',textAlign:'center'}}>Showing 100 of {items.length} entries</div>}
+    </div>
+  );
 
   if (loading) return <div className="empty"><div className="etxt">Loading…</div></div>;
+
   return (
     <div>
-      {/* Section toggle */}
-      <div className="tabrow" style={{ marginBottom:14 }}>
-        <button className={'btn bsm '+(section==='log'?'bacc':'bghost')} onClick={()=>setSection('log')}>📋 Activity Log</button>
-        <button className={'btn bsm '+(section==='leaderboard'?'bacc':'bghost')} onClick={()=>setSection('leaderboard')}>🏆 Leaderboards</button>
+      {/* Main section tabs */}
+      <div className="tabrow" style={{marginBottom:14}}>
+        <button className={'btn bsm '+(section==='project'?'bacc':'bghost')} onClick={()=>setSection('project')}>🎪 Project Tasks</button>
+        <button className={'btn bsm '+(section==='warehouse'?'bacc':'bghost')} onClick={()=>setSection('warehouse')}>📦 Warehouse Tasks</button>
+        <button className={'btn bsm '+(section==='combined'?'bacc':'bghost')} onClick={()=>setSection('combined')}>📊 Combined</button>
       </div>
 
-      {section==='leaderboard' && (
-        <div>
-          <div className="tabrow" style={{marginBottom:8}}>
-            <button className={'btn bsm '+(lbBoard==='tasks'?'bacc':'bghost')} onClick={()=>setLbBoard('tasks')}>🏆 Warehouse Tasks</button>
-            <button className={'btn bsm '+(lbBoard==='projects'?'bacc':'bghost')} onClick={()=>setLbBoard('projects')}>🎪 By Project</button>
-          </div>
-          <div className="lb-time-row">
-            {[['daily','Today'],['weekly','This Week'],['monthly','This Month'],['yearly','This Year']].map(([v,l])=>(
-              <button key={v} className={'btn bsm '+(lbPeriod===v?'bacc':'bghost')} onClick={()=>setLbPeriod(v)}>{l}</button>
-            ))}
-          </div>
-          {lbBoard==='tasks' && (
-            <div style={{background:'var(--sf)',border:'1px solid var(--br)',borderRadius:'var(--rl)',overflow:'hidden'}}>
-              <div style={{padding:'12px 14px',borderBottom:'1px solid var(--br)',background:'var(--s2)'}}>
-                <div style={{fontFamily:'var(--fh)',fontSize:13,fontWeight:800,letterSpacing:2,color:'var(--mu)',textTransform:'uppercase'}}>Warehouse Task Completions</div>
-              </div>
-              {taskRows.length===0 && <div className="empty" style={{padding:24}}><div className="etxt">No task completions for this period.</div></div>}
-              {taskRows.map((row,i)=>(
-                <div key={row.user.id} className="lb-row">
-                  <div className={'lb-rank'+(i<3?' top':'')}>{i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</div>
-                  <div className="lb-av">{row.user.name[0]}</div>
-                  <div className="lb-info">
-                    <div className="lb-name">{row.user.name}</div>
-                    <div className="lb-stat">All time: {row.allTime} tasks</div>
-                    <div className="lb-bar"><div className="lb-fill" style={{width:`${Math.round((row.count/maxTask)*100)}%`}} /></div>
-                  </div>
-                  <div className="lb-score">{row.count}</div>
-                </div>
-              ))}
+      {/* ── PROJECT TASKS ── */}
+      {section==='project' && (() => {
+        const { map, total } = calcContribs(filteredProjLogs);
+        const activeEmps = users.filter(u=>u.active&&map[u.id]);
+        return (
+          <div>
+            <div className="tabrow" style={{marginBottom:8}}>
+              {PERIODS.map(([v,l])=><button key={v} className={'btn bsm '+(projPeriod===v?'bacc':'bghost')} onClick={()=>setProjPeriod(v)}>{l}</button>)}
             </div>
-          )}
-          {lbBoard==='projects' && (
-            <div style={{background:'var(--sf)',border:'1px solid var(--br)',borderRadius:'var(--rl)',overflow:'hidden'}}>
-              <div style={{padding:'12px 14px',borderBottom:'1px solid var(--br)',background:'var(--s2)'}}>
-                <div style={{fontFamily:'var(--fh)',fontSize:13,fontWeight:800,letterSpacing:2,color:'var(--mu)',textTransform:'uppercase'}}>Event Contributions</div>
-              </div>
-              {projRows.length===0 && <div className="empty" style={{padding:24}}><div className="etxt">No event activity for this period.</div></div>}
-              {projRows.map((row,i)=>(
-                <div key={row.user.id} className="lb-row">
-                  <div className={'lb-rank'+(i<3?' top':'')}>{i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</div>
-                  <div className="lb-av">{row.user.name[0]}</div>
-                  <div className="lb-info">
-                    <div className="lb-name">{row.user.name}</div>
-                    <div className="lb-stat">{row.count} gear status updates</div>
-                    <div className="lb-bar"><div className="lb-fill" style={{width:`${Math.round((row.count/maxProj)*100)}%`}} /></div>
-                  </div>
-                  <div className="lb-score">{row.pct}%</div>
-                </div>
-              ))}
+            <div className="field">
+              <label className="flbl">Filter by Event</label>
+              <select className="fsel" value={projEvent} onChange={e=>setProjEvent(e.target.value)}>
+                <option value="all">All Events</option>
+                {Object.keys(eventsByYear).sort((a,b)=>b-a).map(yr=>(
+                  <optgroup key={yr} label={yr==currentYear?`${yr} — Current`:`${yr} — Archived`}>
+                    {eventsByYear[yr].map(name=><option key={name} value={name}>{name}</option>)}
+                  </optgroup>
+                ))}
+              </select>
             </div>
-          )}
-        </div>
-      )}
-
-      {section==='log' && (
-      <div>
-      {/* Mode toggle */}
-      <div className="tabrow" style={{ marginBottom:8 }}>
-        <button className={'btn bsm '+(filterMode==='employee'?'bacc':'bghost')} onClick={() => { setFilterMode('employee'); setFilterType('all'); }}>By Employee</button>
-        <button className={'btn bsm '+(filterMode==='project'?'bacc':'bghost')} onClick={() => { setFilterMode('project'); setFilterType('all'); }}>By Project</button>
-      </div>
-
-      {/* Filter buttons */}
-      <div className="tabrow">
-        <button className={'btn bsm '+(filterType==='all'?'bacc':'bghost')} onClick={() => setFilterType('all')}>All</button>
-        {filterMode === 'employee'
-          ? empIds.map(id => { const u = resolveUser(id); return <button key={id} className={'btn bsm '+(filterType===id?'bacc':'bghost')} onClick={() => setFilterType(id)}>{u?u.name:id}</button>; })
-          : projects.map(p => <button key={p} className={'btn bsm '+(filterType===p?'bacc':'bghost')} onClick={() => setFilterType(p)} style={{ maxWidth:120, overflow:'hidden', textOverflow:'ellipsis' }}>{p}</button>)
-        }
-      </div>
-
-      {/* Contribution stats — shown when filtering by employee or all */}
-      {filterMode === 'employee' && totalActions > 0 && (
-        <div style={{ background:'var(--sf)', border:'1px solid var(--br)', borderRadius:'var(--rl)', padding:'12px 14px', marginBottom:12 }}>
-          <div style={{ fontSize:10, fontWeight:700, letterSpacing:2, color:'var(--mu)', textTransform:'uppercase', marginBottom:10 }}>Load Contributions</div>
-          {empIds.map(id => {
-            const u = resolveUser(id);
-            const count = contribMap[id] || 0;
-            const pct = totalActions > 0 ? Math.round((count / totalActions) * 100) : 0;
-            return (
-              <div key={id} style={{ marginBottom:8 }}>
-                <div style={{ display:'flex', justifyContent:'space-between', marginBottom:3 }}>
-                  <span style={{ fontSize:12, fontWeight:600, color:'var(--tx)' }}>{u?u.name:id}</span>
-                  <span style={{ fontSize:12, fontWeight:700, color:'var(--bl)' }}>{pct}% <span style={{ color:'var(--mu)', fontWeight:400 }}>({count} actions)</span></span>
-                </div>
-                <div style={{ background:'var(--s2)', borderRadius:3, height:6, overflow:'hidden' }}>
-                  <div style={{ background:'var(--bl)', width:`${pct}%`, height:'100%', borderRadius:3, transition:'width .4s' }} />
-                </div>
+            {total>0 && (
+              <div style={{background:'var(--sf)',border:'1px solid var(--br)',borderRadius:'var(--rl)',padding:'12px 14px',marginBottom:12}}>
+                <div style={{fontSize:10,fontWeight:700,letterSpacing:2,color:'var(--mu)',textTransform:'uppercase',marginBottom:10}}>Contributions — {filteredProjLogs.length} actions</div>
+                {activeEmps.sort((a,b)=>(map[b.id]||0)-(map[a.id]||0)).map(u=>(
+                  <ContribBar key={u.id} label={u.name} count={map[u.id]||0} total={total} color="var(--bl)" />
+                ))}
               </div>
-            );
-          })}
-        </div>
-      )}
+            )}
+            <LogList items={filteredProjLogs} />
+          </div>
+        );
+      })()}
 
-      {filtered.length === 0 && <div className="empty"><div className="eico">📋</div><div className="etxt">No activity yet.</div></div>}
-      <div style={{ background:'var(--sf)', border:'1px solid var(--br)', borderRadius:'var(--rl)', overflow:'hidden' }}>
-        {filtered.map((l, i) => {
-          const u = resolveUser(l.user_id);
-          return (
+      {/* ── WAREHOUSE TASKS ── */}
+      {section==='warehouse' && (() => {
+        const taskActions = filteredWhLogs.filter(l=>l.action==='task_status');
+        const { map, total } = calcContribs(taskActions);
+        const activeEmps = users.filter(u=>u.active&&map[u.id]);
+        return (
+          <div>
+            <div className="tabrow" style={{marginBottom:8}}>
+              {PERIODS.map(([v,l])=><button key={v} className={'btn bsm '+(whPeriod===v?'bacc':'bghost')} onClick={()=>setWhPeriod(v)}>{l}</button>)}
+            </div>
+            {total>0 && (
+              <div style={{background:'var(--sf)',border:'1px solid var(--br)',borderRadius:'var(--rl)',padding:'12px 14px',marginBottom:12}}>
+                <div style={{fontSize:10,fontWeight:700,letterSpacing:2,color:'var(--mu)',textTransform:'uppercase',marginBottom:10}}>Contributions — {taskActions.length} actions</div>
+                {activeEmps.sort((a,b)=>(map[b.id]||0)-(map[a.id]||0)).map(u=>(
+                  <ContribBar key={u.id} label={u.name} count={map[u.id]||0} total={total} color="var(--ok)" />
+                ))}
+              </div>
+            )}
+            <LogList items={filteredWhLogs} />
+          </div>
+        );
+      })()}
+
+      {/* ── COMBINED ── */}
+      {section==='combined' && (() => {
+        const combProjLogs = projLogs.filter(l=>inPeriod(l.created_at, combPeriod));
+        const combWhLogs = taskLogs.filter(l=>inPeriod(l.created_at, combPeriod) && l.action==='task_status');
+        const { map: pm, total: pt2 } = calcContribs(combProjLogs);
+        const { map: wm, total: wt } = calcContribs(combWhLogs);
+        const totalAll = pt2 + wt;
+        const allActiveEmps = users.filter(u=>u.active&&((pm[u.id]||0)+(wm[u.id]||0)>0));
+        return (
+          <div>
+            <div className="tabrow" style={{marginBottom:14}}>
+              {PERIODS.map(([v,l])=><button key={v} className={'btn bsm '+(combPeriod===v?'bacc':'bghost')} onClick={()=>setCombPeriod(v)}>{l}</button>}
+            </div>
+            {allActiveEmps.length===0 && <div className="empty"><div className="eico">📊</div><div className="etxt">No activity for this period.</div></div>}
+            {allActiveEmps.sort((a,b)=>((pm[b.id]||0)+(wm[b.id]||0))-((pm[a.id]||0)+(wm[a.id]||0))).map(u=>{
+              const projCount = pm[u.id]||0;
+              const whCount = wm[u.id]||0;
+              const total2 = projCount+whCount;
+              const combPct = totalAll>0?Math.round((total2/totalAll)*100):0;
+              const projPct2 = total2>0?Math.round((projCount/total2)*100):0;
+              const whPct2 = 100-projPct2;
+              return (
+                <div key={u.id} style={{background:'var(--sf)',border:'1px solid var(--br)',borderRadius:'var(--rl)',padding:'13px 14px',marginBottom:8}}>
+                  <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}>
+                    <div style={{display:'flex',alignItems:'center',gap:9}}>
+                      <div className="lb-av">{u.name[0]}</div>
+                      <div>
+                        <div style={{fontSize:14,fontWeight:700,color:'var(--tx)'}}>{u.name}</div>
+                        <div style={{fontSize:11,color:'var(--mu)',marginTop:1}}>{total2} total actions · {combPct}% of team</div>
+                      </div>
+                    </div>
+                    <div style={{fontFamily:'var(--fh)',fontSize:24,fontWeight:900,color:'var(--bl)'}}>{combPct}%</div>
+                  </div>
+                  {/* Combined bar */}
+                  <div style={{marginBottom:6}}>
+                    <div style={{height:10,borderRadius:5,overflow:'hidden',display:'flex',background:'var(--s2)'}}>
+                      <div style={{width:`${projPct2}%`,background:'var(--bl)',transition:'width .4s'}} />
+                      <div style={{width:`${whPct2}%`,background:'var(--ok)',transition:'width .4s'}} />
+                    </div>
+                    <div style={{display:'flex',gap:12,marginTop:4}}>
+                      <span style={{fontSize:10,color:'var(--bl)',fontWeight:700}}>■ Project: {projCount} ({projPct2}%)</span>
+                      <span style={{fontSize:10,color:'var(--ok)',fontWeight:700}}>■ Warehouse: {whCount} ({whPct2}%)</span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        );
+      })()}
+      {/* Login Log */}
+      <div style={{marginTop:28,textAlign:'center'}}>
+        <button
+          onClick={() => setShowLoginLog(o=>!o)}
+          style={{background:'none',border:'none',color:'var(--mu)',fontSize:12,cursor:'pointer',textDecoration:'underline',opacity:.7}}>
+          {showLoginLog ? '▲ Hide Login History' : '▼ View Login History'}
+        </button>
+      </div>
+      {showLoginLog && (
+        <div style={{background:'var(--sf)',border:'1px solid var(--br)',borderRadius:'var(--rl)',overflow:'hidden',marginTop:10}}>
+          <div style={{padding:'10px 14px',borderBottom:'1px solid var(--br)',background:'var(--s2)',display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+            <div style={{fontFamily:'var(--fh)',fontSize:12,fontWeight:800,letterSpacing:2,color:'var(--mu)',textTransform:'uppercase'}}>Login History</div>
+            <span style={{fontSize:11,color:'var(--mu)'}}>{loginLogs.length} entries</span>
+          </div>
+          {loginLogs.length===0 && <div className="empty" style={{padding:20}}><div className="etxt">No logins recorded yet.</div></div>}
+          {loginLogs.map((l,i) => (
             <div key={i} className="logrow">
-              <div className="logav">{(u?u.name:l.by_name||'?')[0]}</div>
+              <div className="logav">{(l.user_name||'?')[0]}</div>
               <div className="logbody">
-                <div className="logact"><strong style={{ color:'var(--tx)' }}>{l.by_name}</strong> — {l.detail}</div>
-                <div className="logt">{fmtFull(l.created_at)}</div>
-                <div className="logevt">Event: {l.event_name}</div>
+                <div className="logact"><strong style={{color:'var(--tx)'}}>{l.user_name}</strong> logged in</div>
+                <div className="logt">{fmtFull(l.logged_in_at)}</div>
+                <div className="logevt" style={{color:l.role==='admin'?'var(--bl)':'var(--mu)'}}>{l.role==='admin'?'Admin':'Employee'}</div>
               </div>
             </div>
-          );
-        })}
-      </div>
-      </div>
+          ))}
+        </div>
       )}
     </div>
   );
@@ -1598,15 +1758,17 @@ function UserManager({ users, onUpdate }) {
   const [showAdd, setShowAdd] = useState(false);
   const [editUser, setEditUser] = useState(null);
   const [confirmDel, setConfirmDel] = useState(null);
+  const [showArchived, setShowArchived] = useState(false);
   const [toast, setToast] = useState(null);
-  const [form, setForm] = useState({ name:'', pin:'', email:'', role:'employee' });
+  const [form, setForm] = useState({ name:'', pin:'', role:'employee' });
   const pt = (msg, type) => setToast({ msg, type });
+
   const handleAdd = async () => {
-    if (!form.name.trim() || form.pin.length !== 4) { pt('Name & 4-digit PIN required', 'err'); return; }
-    const newUser = { id:uid(), name:form.name.trim(), pin:form.pin, email:form.email, role:form.role, active:true, createdAt:nowISO() };
+    if (!form.name.trim() || form.pin.length < 4) { pt('Name & 4-digit PIN required', 'err'); return; }
+    const newUser = { id:uid(), name:form.name.trim(), pin:form.pin, email:'', role:form.role, active:true, createdAt:nowISO() };
     await db.upsertUser(newUser);
     onUpdate([...users, newUser]);
-    setShowAdd(false); setForm({ name:'', pin:'', email:'', role:'employee' });
+    setShowAdd(false); setForm({ name:'', pin:'', role:'employee' });
     pt('Team member added!', 'ok');
   };
   const handleEdit = async () => {
@@ -1617,31 +1779,116 @@ function UserManager({ users, onUpdate }) {
   const handleDeactivate = async () => {
     await db.deleteUser(confirmDel.id);
     onUpdate(users.map(u => u.id === confirmDel.id ? { ...u, active:false, deactivatedAt:nowISO() } : u));
-    setConfirmDel(null); pt(`${confirmDel.name} deactivated — data retained`, 'ok');
+    setConfirmDel(null); pt(`${confirmDel.name} deactivated — moved to Archived Crew`, 'ok');
   };
+
+  const activeEmployees = users.filter(u => u.role !== 'admin' && u.active);
+  const archivedEmployees = users.filter(u => u.role !== 'admin' && !u.active);
+
   return (
     <div>
       {toast && <Toast msg={toast.msg} type={toast.type} onDone={() => setToast(null)} />}
       <div className="shd" style={{ marginBottom:14 }}>
-        <span className="slbl">Team ({users.filter(u=>u.active&&u.role!=='admin').length} active)</span>
+        <span className="slbl">Team ({activeEmployees.length} active)</span>
         <button className="btn bacc bsm" onClick={() => setShowAdd(true)}>+ Add</button>
       </div>
-      {users.filter(u => u.role !== 'admin').map(u => (
+
+      {/* Active employees */}
+      {activeEmployees.map(u => (
         <div key={u.id} className="ucard">
-          <div className="uavlg" style={{ opacity:u.active?1:.45 }}>{u.name[0]}</div>
+          <div className="uavlg">{u.name[0]}</div>
           <div className="ucinfo">
-            <div className="ucname">{u.name}{!u.active&&<span className="iabadge">Inactive</span>}</div>
-            <div className="ucmeta">{u.email||'No email'} · PIN: {u.pin}</div>
-            {!u.active && u.deactivatedAt && <div style={{ fontSize:10, color:'var(--dn)', marginTop:2 }}>Deactivated {fmtDT(u.deactivatedAt)}</div>}
+            <div className="ucname">{u.name}</div>
+            <div className="ucmeta">PIN: {u.pin}</div>
           </div>
           <div className="ucacts">
-            {u.active ? (<><button className="btn bghost bsm" onClick={() => setEditUser({...u})}>Edit</button><button className="btn bdng bsm" onClick={() => setConfirmDel(u)}>✕</button></>) : (<button className="btn bok bsm" onClick={async () => { await db.upsertUser({...u,active:true,deactivatedAt:null}); onUpdate(users.map(x=>x.id===u.id?{...x,active:true,deactivatedAt:null}:x)); }}>Restore</button>)}
+            <button className="btn bghost bsm" onClick={() => setEditUser({...u})}>Edit</button>
+            <button className="btn bdng bsm" onClick={() => setConfirmDel(u)}>✕</button>
           </div>
         </div>
       ))}
-      {showAdd && (<div className="mback ctr"><div className="mover" onClick={() => setShowAdd(false)} /><div className="modal"><div className="mtitle">Add Team Member</div><div className="field"><label className="flbl">Full Name *</label><input className="fi" value={form.name} onChange={e=>setForm(p=>({...p,name:e.target.value}))} autoFocus /></div><div className="field"><label className="flbl">Email</label><input className="fi" type="email" value={form.email} onChange={e=>setForm(p=>({...p,email:e.target.value}))} /></div><div className="field"><label className="flbl">4-Digit PIN *</label><input className="fi" type="number" value={form.pin} onChange={e=>setForm(p=>({...p,pin:e.target.value.slice(0,4)}))} /></div><div className="field"><label className="flbl">Role</label><select className="fsel" value={form.role} onChange={e=>setForm(p=>({...p,role:e.target.value}))}><option value="employee">Employee</option><option value="admin">Admin</option></select></div><div className="macts"><button className="btn bghost" onClick={() => setShowAdd(false)}>Cancel</button><button className="btn bprim" style={{ flex:2 }} onClick={handleAdd}>Add Member</button></div></div></div>)}
-      {editUser && (<div className="mback ctr"><div className="mover" onClick={() => setEditUser(null)} /><div className="modal"><div className="mtitle">Edit: {editUser.name}</div><div className="field"><label className="flbl">Full Name</label><input className="fi" value={editUser.name} onChange={e=>setEditUser(p=>({...p,name:e.target.value}))} /></div><div className="field"><label className="flbl">Email</label><input className="fi" type="email" value={editUser.email} onChange={e=>setEditUser(p=>({...p,email:e.target.value}))} /></div><div className="field"><label className="flbl">PIN (4 digits)</label><input className="fi" type="number" value={editUser.pin} onChange={e=>setEditUser(p=>({...p,pin:e.target.value.slice(0,4)}))} /></div><div className="field"><label className="flbl">Role</label><select className="fsel" value={editUser.role} onChange={e=>setEditUser(p=>({...p,role:e.target.value}))}><option value="employee">Employee</option><option value="admin">Admin</option></select></div><div className="macts"><button className="btn bghost" onClick={() => setEditUser(null)}>Cancel</button><button className="btn bprim" style={{ flex:2 }} onClick={handleEdit}>Save Changes</button></div></div></div>)}
-      {confirmDel && (<div className="mback ctr"><div className="mover" onClick={() => setConfirmDel(null)} /><div className="modal"><Confirm title="Deactivate User?" body={`${confirmDel.name} will be locked out. All their activity is preserved.`} danger onConfirm={handleDeactivate} onCancel={() => setConfirmDel(null)} confirmLabel="Deactivate" /></div></div>)}
+
+      {/* Archived crew section */}
+      {archivedEmployees.length > 0 && (
+        <div style={{marginTop:20}}>
+          <div
+            style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'10px 14px',background:'var(--s2)',border:'1px solid var(--br)',borderRadius:'var(--rl)',cursor:'pointer',marginBottom:showArchived?8:0}}
+            onClick={() => setShowArchived(o=>!o)}>
+            <div style={{display:'flex',alignItems:'center',gap:8}}>
+              <span style={{fontSize:16}}>🗄</span>
+              <span style={{fontFamily:'var(--fh)',fontSize:13,fontWeight:800,letterSpacing:1.5,textTransform:'uppercase',color:'var(--mu)'}}>Archived Crew ({archivedEmployees.length})</span>
+            </div>
+            <span style={{fontSize:12,color:'var(--mu)',fontWeight:700}}>{showArchived?'▲':'▼'}</span>
+          </div>
+          {showArchived && archivedEmployees.map(u => (
+            <div key={u.id} className="ucard" style={{opacity:.75,borderStyle:'dashed'}}>
+              <div className="uavlg" style={{opacity:.5}}>{u.name[0]}</div>
+              <div className="ucinfo">
+                <div className="ucname">{u.name}<span className="iabadge" style={{marginLeft:7}}>Inactive</span></div>
+                <div className="ucmeta">PIN: {u.pin}</div>
+                {u.deactivatedAt && <div style={{fontSize:10,color:'var(--dn)',marginTop:2}}>Deactivated {fmtDT(u.deactivatedAt)}</div>}
+              </div>
+              <div className="ucacts">
+                <button className="btn bok bsm" onClick={async () => {
+                  await db.upsertUser({...u,active:true,deactivatedAt:null});
+                  onUpdate(users.map(x=>x.id===u.id?{...x,active:true,deactivatedAt:null}:x));
+                  pt(`${u.name} restored!`,'ok');
+                }}>Restore</button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Add modal */}
+      {showAdd && (
+        <div className="mback ctr"><div className="mover" onClick={() => setShowAdd(false)} />
+          <div className="modal">
+            <div className="mtitle">Add Team Member</div>
+            <div className="field"><label className="flbl">Full Name *</label><input className="fi" value={form.name} onChange={e=>setForm(p=>({...p,name:e.target.value}))} autoFocus /></div>
+            <div className="field"><label className="flbl">4-Digit PIN *</label><input className="fi" type="number" value={form.pin} onChange={e=>setForm(p=>({...p,pin:e.target.value.slice(0,4)}))} /></div>
+            <div className="field"><label className="flbl">Role</label>
+              <select className="fsel" value={form.role} onChange={e=>setForm(p=>({...p,role:e.target.value}))}>
+                <option value="employee">Employee</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+            <div className="macts">
+              <button className="btn bghost" onClick={() => setShowAdd(false)}>Cancel</button>
+              <button className="btn bprim" style={{flex:2}} onClick={handleAdd}>Add Member</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit modal */}
+      {editUser && (
+        <div className="mback ctr"><div className="mover" onClick={() => setEditUser(null)} />
+          <div className="modal">
+            <div className="mtitle">Edit: {editUser.name}</div>
+            <div className="field"><label className="flbl">Full Name</label><input className="fi" value={editUser.name} onChange={e=>setEditUser(p=>({...p,name:e.target.value}))} /></div>
+            <div className="field"><label className="flbl">PIN (4 digits)</label><input className="fi" type="number" value={editUser.pin} onChange={e=>setEditUser(p=>({...p,pin:e.target.value.slice(0,4)}))} /></div>
+            <div className="field"><label className="flbl">Role</label>
+              <select className="fsel" value={editUser.role} onChange={e=>setEditUser(p=>({...p,role:e.target.value}))}>
+                <option value="employee">Employee</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+            <div className="macts">
+              <button className="btn bghost" onClick={() => setEditUser(null)}>Cancel</button>
+              <button className="btn bprim" style={{flex:2}} onClick={handleEdit}>Save Changes</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {confirmDel && (
+        <div className="mback ctr"><div className="mover" onClick={() => setConfirmDel(null)} />
+          <div className="modal">
+            <Confirm title="Deactivate User?" body={`${confirmDel.name} will be locked out and moved to Archived Crew. All their activity is preserved.`} danger onConfirm={handleDeactivate} onCancel={() => setConfirmDel(null)} confirmLabel="Deactivate" />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -2076,7 +2323,7 @@ function TaskDetail({ taskList, user, onBack, onUpdate, users }) {
       </div>
 
       {/* Progress */}
-      <div className="pblock">
+      <div className="pblock" style={{marginTop:14}}>
         <div className="phd"><span>Progress</span><span style={{color:isATC?'var(--ok)':'var(--bl)'}}>{pct}%</span></div>
         <div className="ptrack"><div className="pfill" style={{width:`${pct}%`,background:isATC?'var(--ok)':'#B45309'}} /></div>
         {isATC ? (
@@ -2091,6 +2338,7 @@ function TaskDetail({ taskList, user, onBack, onUpdate, users }) {
       </div>
 
       {/* ATC button */}
+      <div style={{height:6}} />
       {!taskList.archived && !isATC && (
         allDone ? (
           <button className="tatc-btn" onClick={()=>setShowATCConfirm(true)}>✅ Mark All Tasks Complete</button>
@@ -2116,6 +2364,7 @@ function TaskDetail({ taskList, user, onBack, onUpdate, users }) {
 
       {active.length===0 && <div className="empty"><div className="eico">📋</div><div className="etxt">No tasks yet.</div></div>}
 
+      <div style={{height:4}} />
       {active.map(item=>{
         const sc = TASK_STATUS[item.status||'pending'];
         return (
@@ -2156,8 +2405,11 @@ function TaskDetail({ taskList, user, onBack, onUpdate, users }) {
         );
       })}
 
+      {/* Notes section */}
+      <NotesSection refId={taskList.id} refType="task" user={user} />
+
       {/* Export */}
-      <div className="export-row">
+      <div className="export-row" style={{marginTop:18}}>
         <button className="export-btn" onClick={exportText}><span className="export-ico">📋</span>Copy Text</button>
       </div>
 
@@ -2382,22 +2634,83 @@ function Login({ onLogin, users }) {
   const [error, setError] = useState('');
   const [stage, setStage] = useState('select');
   const [pendingUser, setPendingUser] = useState(null);
-  const active = users.filter(u => u.active !== false);
+  const [adminMode, setAdminMode] = useState(false);
+  const [adminPin, setAdminPin] = useState('');
+  const [adminError, setAdminError] = useState('');
+
+  const ADMIN_PIN = '052390';
+  const employees = users.filter(u => u.active !== false && u.role === 'employee');
+  const adminUser = users.find(u => u.role === 'admin');
+
   const handlePad = (v) => {
     if (v === 'back') { setPin(p => p.slice(0,-1)); setError(''); return; }
     if (pin.length < 4) {
       const next = pin + v;
       setPin(next);
       if (next.length === 4) {
-        const u = active.find(u => u.id === userId && u.pin === next);
+        const u = employees.find(u => u.id === userId && u.pin === next);
         if (!u) { setError('Incorrect PIN. Try again.'); setTimeout(() => setPin(''), 300); return; }
         setPendingUser(u); setStage('confirm');
       }
     }
   };
+
+  const handleAdminPad = (v) => {
+    if (v === 'back') { setAdminPin(p => p.slice(0,-1)); setAdminError(''); return; }
+    if (adminPin.length < 6) {
+      const next = adminPin + v;
+      setAdminPin(next);
+      if (next.length === 6) {
+        if (next !== ADMIN_PIN) { setAdminError('Incorrect PIN.'); setTimeout(() => setAdminPin(''), 300); return; }
+        if (adminUser) {
+          setPendingUser(adminUser); setStage('adminconfirm');
+        }
+      }
+    }
+  };
+
+  if (adminMode) return (
+    <div className="login">
+      <img src="/CrewFlowLogo.png" alt="CrewFlow" style={{width:'100%',maxWidth:280,marginBottom:24,objectFit:'contain'}} />
+      <div className="l-card">
+        {stage === 'adminconfirm' && pendingUser ? (
+          <div className="l-confirm">
+            <div className="lc-title">⚡ Admin Login</div>
+            <div className="lc-body">Signing in as <strong>Admin</strong>.<br />Full access will be granted.</div>
+            <div className="lc-btns">
+              <button className="btn bghost" onClick={() => { setStage('select'); setAdminPin(''); setPendingUser(null); }}>Back</button>
+              <button className="btn bprim" onClick={() => onLogin(pendingUser)}>Enter Admin</button>
+            </div>
+          </div>
+        ) : (
+          <>
+            <div style={{fontFamily:'var(--fh)',fontSize:13,fontWeight:800,letterSpacing:2,color:'var(--mu)',textTransform:'uppercase',marginBottom:14,textAlign:'center'}}>Admin Access</div>
+            <div className="field">
+              <label className="flbl">Enter Admin PIN</label>
+              <div className="pdots">
+                {[0,1,2,3,4,5].map(i => <div key={i} className={'pdot'+(i<adminPin.length?' on':'')} style={{height:38}}>{i<adminPin.length?'●':''}</div>)}
+              </div>
+            </div>
+            <div className="pgrid">
+              {['1','2','3','4','5','6','7','8','9','⌫','0','→'].map((k,i) => (
+                <button key={i} className={'pkey'+(k==='→'?' go':'')} style={k==='→'?{opacity:.35,cursor:'default'}:{}}
+                  onClick={() => k==='⌫'?handleAdminPad('back'):k!=='→'?handleAdminPad(k):null}>{k}</button>
+              ))}
+            </div>
+            <div className="l-err">{adminError}</div>
+            <button onClick={() => { setAdminMode(false); setAdminPin(''); setAdminError(''); setStage('select'); }}
+              style={{background:'none',border:'none',color:'var(--mu)',fontSize:12,cursor:'pointer',width:'100%',textAlign:'center',marginTop:10}}>
+              ← Back to crew login
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+  );
+
   return (
     <div className="login">
-      <img src="/CrewFlowLogo.png" alt="CrewFlow" style={{ width:'100%', maxWidth:320, marginBottom:24, objectFit:"contain" }} />
+      <img src="/CrewFlowLogo.png" alt="CrewFlow" style={{width:'100%',maxWidth:280,marginBottom:24,objectFit:'contain'}} />
       <div className="l-card">
         {stage === 'confirm' && pendingUser ? (
           <div className="l-confirm">
@@ -2414,7 +2727,7 @@ function Login({ onLogin, users }) {
               <label className="flbl">Select your name</label>
               <select className="fsel" value={userId} onChange={e => { setUserId(e.target.value); setPin(''); setError(''); setStage('pin'); }}>
                 <option value="">— choose —</option>
-                {active.map(u => <option key={u.id} value={u.id}>{u.name}{u.role==='admin'?' (Admin)':''}</option>)}
+                {employees.map(u => <option key={u.id} value={u.id}>{u.name}</option>)}
               </select>
             </div>
             {userId && (
@@ -2425,12 +2738,19 @@ function Login({ onLogin, users }) {
                 </div>
                 <div className="pgrid">
                   {['1','2','3','4','5','6','7','8','9','⌫','0','→'].map((k,i) => (
-                    <button key={i} className={'pkey'+(k==='→'?' go':'')} style={k==='→'?{opacity:.35,cursor:'default'}:{}} onClick={() => k==='⌫'?handlePad('back'):k!=='→'?handlePad(k):null}>{k}</button>
+                    <button key={i} className={'pkey'+(k==='→'?' go':'')} style={k==='→'?{opacity:.35,cursor:'default'}:{}}
+                      onClick={() => k==='⌫'?handlePad('back'):k!=='→'?handlePad(k):null}>{k}</button>
                   ))}
                 </div>
                 <div className="l-err">{error}</div>
               </>
             )}
+            <div style={{textAlign:'center',marginTop:16}}>
+              <button onClick={() => { setAdminMode(true); setStage('select'); }}
+                style={{background:'none',border:'none',color:'var(--mu)',fontSize:11,cursor:'pointer',textDecoration:'underline',opacity:.6}}>
+                Admin Login
+              </button>
+            </div>
           </>
         )}
       </div>
@@ -2501,10 +2821,17 @@ export default function App() {
     </>
   );
 
+  const handleLogin = async (u) => {
+    setUser(u);
+    try {
+      await db.addLoginLog({ id:uid(), userId:u.id, userName:u.name, role:u.role, at:nowISO() });
+    } catch(e) { /* non-blocking */ }
+  };
+
   if (!user) return (
     <>
       <style>{CSS}</style>
-      <Login onLogin={setUser} users={users} />
+      <Login onLogin={handleLogin} users={users} />
     </>
   );
 
