@@ -1684,7 +1684,7 @@ function ActivityLog({ users, events }) {
         return (
           <div>
             <div className="tabrow" style={{marginBottom:14}}>
-              {PERIODS.map(([v,l])=><button key={v} className={'btn bsm '+(combPeriod===v?'bacc':'bghost')} onClick={()=>setCombPeriod(v)}>{l}</button>}
+              {PERIODS.map(([v,l])=><button key={v} className={'btn bsm '+(combPeriod===v?'bacc':'bghost')} onClick={()=>setCombPeriod(v)}>{l}</button>)}
             </div>
             {allActiveEmps.length===0 && <div className="empty"><div className="eico">📊</div><div className="etxt">No activity for this period.</div></div>}
             {allActiveEmps.sort((a,b)=>((pm[b.id]||0)+(wm[b.id]||0))-((pm[a.id]||0)+(wm[a.id]||0))).map(u=>{
