@@ -441,7 +441,12 @@ const db = {
 
   // Login log
   addLoginLog: async (entry) => supabase.from('cf_login_log').insert({ id:entry.id, user_id:entry.userId, user_name:entry.userName, role:entry.role, logged_in_at:entry.at }),
-  getLoginLog: async () => { const { data } = await supabase.from('cf_login_log').select('*').order('logged_in_at', { ascending:false }).limit(300); return data||[]; },
+  getLoginLog: async () => { const { data } = await supabase.from('cf_login_log').select('*').order('logged_in_at', { ascending:false }).limit(500); return data||[]; },
+  purgeOldLoginLog: async () => {
+    const cutoff = new Date();
+    cutoff.setFullYear(cutoff.getFullYear() - 2);
+    await supabase.from('cf_login_log').delete().lt('logged_in_at', cutoff.toISOString());
+  },
 
   // Notes
   getNotes: async (refId) => { const { data } = await supabase.from('cf_notes').select('*').eq('ref_id', refId).order('created_at'); return data || []; },
@@ -1497,6 +1502,106 @@ function EventList({ events, user, onSelect, onCreateNew }) {
   );
 }
 
+
+// ─── LOGIN HISTORY ────────────────────────────────────────────────────────────
+function LoginHistory({ loginLogs }) {
+  const [period, setPeriod] = useState('week');
+  const now = new Date();
+
+  const inPeriod = (dateStr) => {
+    const d = new Date(dateStr);
+    if (period === 'day') {
+      const start = new Date(now); start.setHours(0,0,0,0);
+      const end = new Date(now); end.setHours(23,59,59,999);
+      return d >= start && d <= end;
+    }
+    if (period === 'week') {
+      const day = now.getDay();
+      const monday = new Date(now); monday.setDate(now.getDate()-(day===0?6:day-1)); monday.setHours(0,0,0,0);
+      const sunday = new Date(monday); sunday.setDate(monday.getDate()+6); sunday.setHours(23,59,59,999);
+      return d >= monday && d <= sunday;
+    }
+    if (period === 'month') return d.getMonth()===now.getMonth() && d.getFullYear()===now.getFullYear();
+    if (period === 'year') return d.getFullYear()===now.getFullYear();
+    return true;
+  };
+
+  const filtered = loginLogs.filter(l => inPeriod(l.logged_in_at));
+
+  // Group by date
+  const grouped = filtered.reduce((acc, l) => {
+    const date = new Date(l.logged_in_at).toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric', year:'numeric' });
+    if (!acc[date]) acc[date] = [];
+    acc[date].push(l);
+    return acc;
+  }, {});
+
+  // Count per user for selected period
+  const userCounts = {};
+  filtered.forEach(l => { userCounts[l.user_name] = (userCounts[l.user_name]||0) + 1; });
+  const topUsers = Object.entries(userCounts).sort((a,b)=>b[1]-a[1]);
+
+  const PERIODS = [['day','Today'],['week','This Week'],['month','This Month'],['year','This Year']];
+
+  return (
+    <div style={{marginTop:10}}>
+      {/* Period filter */}
+      <div className="tabrow" style={{marginBottom:12}}>
+        {PERIODS.map(([v,l]) => (
+          <button key={v} className={'btn bsm '+(period===v?'bacc':'bghost')} onClick={()=>setPeriod(v)}>{l}</button>
+        ))}
+      </div>
+
+      {/* Summary chips */}
+      {filtered.length > 0 && (
+        <div style={{display:'flex',gap:8,flexWrap:'wrap',marginBottom:14}}>
+          <div style={{background:'var(--bl2)',border:'1px solid var(--bl)',borderRadius:'var(--r)',padding:'6px 12px',fontSize:12,color:'var(--bl)',fontWeight:700}}>
+            {filtered.length} login{filtered.length!==1?'s':''}
+          </div>
+          {topUsers.slice(0,3).map(([name,count])=>(
+            <div key={name} style={{background:'var(--s2)',border:'1px solid var(--br)',borderRadius:'var(--r)',padding:'6px 12px',fontSize:12,color:'var(--mu)',fontWeight:600}}>
+              {name}: {count}×
+            </div>
+          ))}
+        </div>
+      )}
+
+      {filtered.length === 0 && (
+        <div className="empty" style={{padding:20}}><div className="etxt">No logins in this period.</div></div>
+      )}
+
+      {/* Grouped by day */}
+      {Object.entries(grouped).map(([date, entries]) => (
+        <div key={date} style={{marginBottom:14}}>
+          <div style={{fontSize:10,fontWeight:800,letterSpacing:2,color:'var(--mu)',textTransform:'uppercase',marginBottom:6,paddingBottom:4,borderBottom:'1px solid var(--br)'}}>
+            {date} — {entries.length} login{entries.length!==1?'s':''}
+          </div>
+          <div style={{background:'var(--sf)',border:'1px solid var(--br)',borderRadius:'var(--rl)',overflow:'hidden'}}>
+            {entries.map((l,i) => (
+              <div key={i} className="logrow">
+                <div className="logav" style={{background:l.role==='admin'?'var(--bl2)':'var(--s2)',borderColor:l.role==='admin'?'var(--bl)':'var(--br)',color:l.role==='admin'?'var(--bl)':'var(--mu)'}}>
+                  {(l.user_name||'?')[0]}
+                </div>
+                <div className="logbody">
+                  <div className="logact">
+                    <strong style={{color:'var(--tx)'}}>{l.user_name}</strong> logged in
+                    {l.role==='admin' && <span style={{marginLeft:6,fontSize:9,fontWeight:800,color:'var(--bl)',background:'var(--bl2)',padding:'1px 6px',borderRadius:10,letterSpacing:1,textTransform:'uppercase'}}>Admin</span>}
+                  </div>
+                  <div className="logt">{new Date(l.logged_in_at).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',second:'2-digit'})}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+
+      <div style={{textAlign:'center',marginTop:8,fontSize:10,color:'var(--mu)'}}>
+        Login history retained for 2 years · {loginLogs.length} total records
+      </div>
+    </div>
+  );
+}
+
 function ActivityLog({ users, events }) {
   const [logs, setLogs] = useState([]);
   const [taskLogs, setTaskLogs] = useState([]);
@@ -1513,6 +1618,7 @@ function ActivityLog({ users, events }) {
     Promise.all([db.getAllActivity(), db.getTaskActivity(), db.getLoginLog()]).then(([all, tasks, logins]) => {
       setLogs(all||[]); setTaskLogs(tasks||[]); setLoginLogs(logins||[]); setLoading(false);
     });
+    db.purgeOldLoginLog(); // silently purge entries older than 2 years
   }, []);
 
   const resolveUser = (id) => users.find(u => u.id === id);
@@ -1751,25 +1857,7 @@ function ActivityLog({ users, events }) {
           {showLoginLog ? '▲ Hide Login History' : '▼ View Login History'}
         </button>
       </div>
-      {showLoginLog && (
-        <div style={{background:'var(--sf)',border:'1px solid var(--br)',borderRadius:'var(--rl)',overflow:'hidden',marginTop:10}}>
-          <div style={{padding:'10px 14px',borderBottom:'1px solid var(--br)',background:'var(--s2)',display:'flex',alignItems:'center',justifyContent:'space-between'}}>
-            <div style={{fontFamily:'var(--fh)',fontSize:12,fontWeight:800,letterSpacing:2,color:'var(--mu)',textTransform:'uppercase'}}>Login History</div>
-            <span style={{fontSize:11,color:'var(--mu)'}}>{loginLogs.length} entries</span>
-          </div>
-          {loginLogs.length===0 && <div className="empty" style={{padding:20}}><div className="etxt">No logins recorded yet.</div></div>}
-          {loginLogs.map((l,i) => (
-            <div key={i} className="logrow">
-              <div className="logav">{(l.user_name||'?')[0]}</div>
-              <div className="logbody">
-                <div className="logact"><strong style={{color:'var(--tx)'}}>{l.user_name}</strong> logged in</div>
-                <div className="logt">{fmtFull(l.logged_in_at)}</div>
-                <div className="logevt" style={{color:l.role==='admin'?'var(--bl)':'var(--mu)'}}>{l.role==='admin'?'Admin':'Employee'}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+      {showLoginLog && <LoginHistory loginLogs={loginLogs} />}
     </div>
   );
 }
