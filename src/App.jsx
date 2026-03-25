@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useContext } from 'react';
+]import React, { useState, useEffect, useRef, useContext } from 'react';
 import { supabase } from './supabaseClient';
 
 // ─── CONSTANTS ────────────────────────────────────────────────────────────────
@@ -500,6 +500,20 @@ const db = {
     carryover_log: item.carryoverLog||[], removed_at: item.removedAt||null,
     added_by: item.addedBy||'', added_at: item.addedAt||null,
   }),
+  moveTaskItem: async (item, fromListId, toListId) => {
+    // Remove from old list
+    await supabase.from('cf_task_items').update({ removed_at: new Date().toISOString() }).eq('id', item.id);
+    // Insert into new list with new id
+    const newItem = { ...item, id: Math.random().toString(36).slice(2,9), list_id: toListId, status:'pending', completed_by:'', completed_at:null, needs_support_by:'', needs_support_at:null };
+    await supabase.from('cf_task_items').insert({
+      id: newItem.id, list_id: toListId, name: newItem.name, notes: newItem.notes||'',
+      status: 'pending', assigned_to: newItem.assignedTo||[], lead: newItem.lead||'',
+      open_to_all: newItem.openToAll||false, completed_by:'', completed_at:null,
+      needs_support_by:'', needs_support_at:null, carryover_log: newItem.carryoverLog||[],
+      removed_at: null, added_by: newItem.addedBy||'', added_at: newItem.addedAt||null,
+    });
+    return newItem;
+  },
   addTaskAudit: async (listId, entry) => supabase.from('cf_task_audit').insert({
     id: Math.random().toString(36).slice(2,9), list_id: listId,
     type: entry.type, item_name: entry.itemName||'', changes: entry.changes||'', by_name: entry.by,
@@ -2558,9 +2572,17 @@ function TaskListForm({ onSave, onClose, existing, users }) {
   if (templateStr) sessionStorage.removeItem('cf_template_task');
   const t = template||{};
   const employees = (users||[]).filter(u=>u.active);
-  const [title, setTitle] = useState(e.title||(t.title?`${t.title} (Copy)`:''));
+  const todayPT = new Date(new Date().toLocaleString('en-US',{timeZone:'America/Los_Angeles'}));
+  const todayStr = todayPT.toISOString().slice(0,10);
+  const makeDateTitle = (dateStr) => {
+    if (!dateStr) return '';
+    const d = new Date(dateStr + 'T12:00:00');
+    return d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+  };
   const [type, setType] = useState(e.type||t.type||'daily');
-  const [dateStart, setDateStart] = useState(e.dateStart||new Date().toISOString().slice(0,10));
+  const [dateStart, setDateStart] = useState(e.dateStart||todayStr);
+  const [customTitle, setCustomTitle] = useState(!!(e.title && !e.title.match(/^(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)/)) || !!(t.title));
+  const [title, setTitle] = useState(e.title||(t.title?`${t.title} (Copy)`:makeDateTitle(e.dateStart||todayStr)));
   const [dateEnd, setDateEnd] = useState(e.dateEnd||'');
   const [brief, setBrief] = useState(e.brief||t.brief||'');
   const templateTaskItems = t.items ? t.items.filter(i=>!i.removedAt).map(i=>({...i,id:Math.random().toString(36).slice(2,9),status:'pending',completedBy:'',completedAt:null,needsSupportBy:'',needsSupportAt:null,carryoverLog:[]})) : [];
@@ -2585,7 +2607,6 @@ function TaskListForm({ onSave, onClose, existing, users }) {
       <div className="modal">
         <div className="mtitle">{existing?'✏️ Edit Task List':template?'⧉ Duplicate Task List':'➕ New Task List'}</div>
         {template && <div className="infobanner" style={{marginBottom:14}}>⧉ Copied from <strong>{template.title}</strong> — update the date before publishing.</div>}
-        <div className="field"><label className="flbl">Title *</label><input className="fi" value={title} onChange={e=>setTitle(e.target.value)} placeholder="e.g. Monday Warehouse Checklist" /></div>
         <div className="field">
           <label className="flbl">Type</label>
           <div style={{display:'flex',gap:8}}>
@@ -2596,10 +2617,32 @@ function TaskListForm({ onSave, onClose, existing, users }) {
         </div>
         {type!=='nodate' && (
           <div className="frow">
-            <div className="field"><label className="flbl">{type==='weekly'?'Start Date':'Date'}</label><input className="fi" type="date" value={dateStart} onChange={e=>setDateStart(e.target.value)} /></div>
+            <div className="field">
+              <label className="flbl">{type==='weekly'?'Start Date':'Date'}</label>
+              <input className="fi" type="date" value={dateStart} onChange={e=>{
+                setDateStart(e.target.value);
+                if (!customTitle) setTitle(makeDateTitle(e.target.value));
+              }} />
+            </div>
             {type==='weekly' && <div className="field"><label className="flbl">End Date</label><input className="fi" type="date" value={dateEnd} onChange={e=>setDateEnd(e.target.value)} /></div>}
           </div>
         )}
+        <div className="field">
+          <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:6}}>
+            <label className="flbl" style={{marginBottom:0}}>Title</label>
+            <label style={{display:'flex',alignItems:'center',gap:6,cursor:'pointer'}}>
+              <input type="checkbox" checked={customTitle} onChange={e=>{
+                setCustomTitle(e.target.checked);
+                if (!e.target.checked) setTitle(makeDateTitle(dateStart));
+              }} style={{width:13,height:13}} />
+              <span style={{fontSize:10,color:'var(--mu)',fontWeight:700,letterSpacing:.5}}>Custom title</span>
+            </label>
+          </div>
+          {customTitle
+            ? <input className="fi" value={title} onChange={e=>setTitle(e.target.value)} placeholder="e.g. Monday Warehouse Deep Clean" />
+            : <div className="fi" style={{background:'var(--s2)',color:'var(--mu)',cursor:'default'}}>{title||makeDateTitle(dateStart)||'Select a date above'}</div>
+          }
+        </div>
         <div className="field"><label className="flbl">Admin Brief</label><textarea className="fta" value={brief} onChange={e=>setBrief(e.target.value)} rows={2} placeholder="Notes for the crew..." /></div>
         <div className="field">
           <label className="flbl">Task Items</label>
@@ -2634,6 +2677,7 @@ function TaskDetail({ taskList, user, onBack, onUpdate, users }) {
   const [showAdd, setShowAdd] = useState(false);
   const [editItem, setEditItem] = useState(null);
   const [removeTarget, setRemoveTarget] = useState(null);
+  const [moveTarget, setMoveTarget] = useState(null);
   const [statusTarget, setStatusTarget] = useState(null);
   const [pendingStatus, setPendingStatus] = useState(null);
   const [showATCConfirm, setShowATCConfirm] = useState(false);
@@ -2641,9 +2685,26 @@ function TaskDetail({ taskList, user, onBack, onUpdate, users }) {
   const [auditOpen, setAuditOpen] = useState(false);
   const [infoOpen, setInfoOpen] = useState(true);
   const [showExport, setShowExport] = useState(false);
+  const [allTaskLists, setAllTaskLists] = useState([]);
   const [toast, setToast] = useState(null);
   const [saving, setSaving] = useState(false);
   const pt = (msg,type)=>setToast({msg,type});
+
+  useEffect(() => {
+    db.getTaskLists().then(lists => setAllTaskLists(lists.filter(l => !l.archived && l.id !== taskList.id)));
+  }, [taskList.id]);
+
+  const handleMove = async (item, targetListId) => {
+    setSaving(true);
+    const targetList = allTaskLists.find(l => l.id === targetListId);
+    const newItem = await db.moveTaskItem(item, taskList.id, targetListId);
+    await db.addTaskAudit(taskList.id, { type:'rm', itemName:item.name, changes:`Moved to "${targetList?.title||targetListId}"`, by:user.name });
+    await db.addTaskAudit(targetListId, { type:'add', itemName:item.name, changes:`Moved from "${taskList.title}"`, by:user.name });
+    onUpdate({ ...taskList, items: items.map(i => i.id===item.id ? {...i, removedAt:new Date().toISOString()} : i) });
+    setMoveTarget(null);
+    setSaving(false);
+    pt(`"${item.name}" moved to "${targetList?.title||'list'}"`, 'ok');
+  };
 
   const items = taskList.items||[];
   const active = items.filter(i=>!i.removedAt);
@@ -2798,7 +2859,7 @@ function TaskDetail({ taskList, user, onBack, onUpdate, users }) {
             <div className="pills" style={{marginBottom:6}}>
               <span className={'ttype-badge ttype-'+taskList.type}>{taskList.type==='daily'?'📅 Daily':taskList.type==='weekly'?'📆 Weekly':'🗂 No Date'}</span>
               {isATC && <span className="pill prtr">✓ Complete</span>}
-              {isAdmin && !taskList.archived && <button className="btn bacc bsm" onClick={()=>onUpdate({...taskList, _edit:true})}>Edit</button>}
+
             </div>
           </div>
         </div>
@@ -2891,8 +2952,9 @@ function TaskDetail({ taskList, user, onBack, onUpdate, users }) {
             <div className="tright">
               <span className="tbadge" style={{color:sc.color,borderColor:`${sc.color}44`,background:sc.bg}}>{sc.label}</span>
               {!isLocked && !taskList.archived && (
-                <div style={{display:'flex',gap:4}}>
+                <div style={{display:'flex',gap:4,flexWrap:'wrap',justifyContent:'flex-end'}}>
                   <button className="btn bghost bsm" onClick={()=>setEditItem(item)}>Edit</button>
+                  <button className="btn bghost bsm" style={{color:'var(--bl)',borderColor:'var(--bl)'}} onClick={()=>setMoveTarget(item)}>↗ Move</button>
                   {isAdmin && <button className="btn bdng bsm" onClick={()=>setRemoveTarget(item)}>✕</button>}
                 </div>
               )}
@@ -2966,6 +3028,31 @@ function TaskDetail({ taskList, user, onBack, onUpdate, users }) {
         </>
       )}
 
+      {/* Move to list modal */}
+      {moveTarget && (
+        <div className="mback ctr"><div className="mover" onClick={()=>setMoveTarget(null)} />
+          <div className="modal">
+            <div className="mtitle">↗ Move Task</div>
+            <p style={{fontSize:13,color:'var(--mu)',marginBottom:16}}>Move <strong style={{color:'var(--tx)'}}>{moveTarget.name}</strong> to which list?</p>
+            {allTaskLists.length === 0 && <div style={{fontSize:13,color:'var(--mu)',textAlign:'center',padding:16}}>No other active task lists available.</div>}
+            {allTaskLists.map(tl => (
+              <div key={tl.id} className="sopt" style={{marginBottom:8,cursor:'pointer'}} onClick={()=>handleMove(moveTarget, tl.id)}>
+                <div style={{flex:1}}>
+                  <div style={{fontSize:14,fontWeight:700,color:'var(--tx)'}}>{tl.title}</div>
+                  <div style={{fontSize:11,color:'var(--mu)',marginTop:2}}>
+                    {tl.type==='daily'?'📅 Daily':tl.type==='weekly'?'📆 Weekly':'🗂 No Date'}
+                    {tl.dateStart?' · '+fmtDate(tl.dateStart):''}
+                    {' · '}{(tl.items||[]).filter(i=>!i.removedAt).length} tasks
+                  </div>
+                </div>
+                <span style={{color:'var(--bl)',fontSize:18}}>›</span>
+              </div>
+            ))}
+            <button className="btn bghost" style={{width:'100%',marginTop:8}} onClick={()=>setMoveTarget(null)}>Cancel</button>
+          </div>
+        </div>
+      )}
+
       {removeTarget && (
         <div className="mback ctr"><div className="mover" onClick={()=>setRemoveTarget(null)} />
           <div className="modal"><Confirm title="Remove Task?" body={`Remove "${removeTarget.name}"? This will be logged.`} danger onConfirm={handleRemove} onCancel={()=>setRemoveTarget(null)} confirmLabel="Yes, Remove" /></div>
@@ -3000,10 +3087,11 @@ function TaskDetail({ taskList, user, onBack, onUpdate, users }) {
 }
 
 // ─── TASK LIST VIEW ───────────────────────────────────────────────────────────
-function TaskListView({ taskLists, user, onSelect, onCreateNew, onUpdate, onDuplicate }) {
+function TaskListView({ taskLists, user, onSelect, onCreateNew, onUpdate, onDuplicate, onDeleteList }) {
   const [tab, setTab] = useState('active');
   const [confirmArchive, setConfirmArchive] = useState(null);
   const [confirmUnarchive, setConfirmUnarchive] = useState(null);
+  const [confirmDelete, setConfirmDelete] = useState(null);
   const [toast, setToast] = useState(null);
   const isAdmin = user.role==='admin';
   const pt = (msg, type) => setToast({ msg, type });
@@ -3024,47 +3112,81 @@ function TaskListView({ taskLists, user, onSelect, onCreateNew, onUpdate, onDupl
     pt(`"${tl.title}" reinstated`, 'ok');
   };
 
-  // Midnight carryover check
+  const handleDelete = async (tl) => {
+    await supabase.from('cf_task_items').delete().eq('list_id', tl.id);
+    await supabase.from('cf_task_audit').delete().eq('list_id', tl.id);
+    await supabase.from('cf_task_lists').delete().eq('id', tl.id);
+    onDeleteList(tl.id);
+    setConfirmDelete(null);
+    pt(`"${tl.title}" permanently deleted`, 'err');
+  };
+
+  // Midnight carryover — Pacific Standard Time (UTC-8), runs once on mount
   useEffect(()=>{
     const checkCarryover = async () => {
-      const today = new Date().toISOString().slice(0,10);
-      const yesterday = new Date(Date.now()-86400000).toISOString().slice(0,10);
+      // Get today's date in Pacific time
+      const nowPT = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }));
+      const todayPT = nowPT.toISOString().slice(0,10);
+
       const toCarry = taskLists.filter(tl =>
         !tl.archived && tl.type!=='nodate' && !tl.allTasksComplete &&
-        (tl.dateEnd||tl.dateStart) < today
+        (tl.dateEnd||tl.dateStart) < todayPT
       );
+
+      if (toCarry.length === 0) return;
+
+      // Find or create today's list ONCE (prevents duplication)
+      let todayList = taskLists.find(t => t.type==='daily' && t.dateStart===todayPT && !t.archived);
+      let todayListCreated = false;
+
+      if (!todayList) {
+        const todayDateObj = new Date(nowPT);
+        const dayName = todayDateObj.toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric', year:'numeric', timeZone:'America/Los_Angeles' });
+        todayList = {
+          id: Math.random().toString(36).slice(2,9),
+          title: dayName,
+          type: 'daily', dateStart: todayPT, dateEnd: null,
+          brief: 'Auto-generated from carryover.',
+          archived: false, allTasksComplete: false, items: [], auditLog: [],
+          createdAt: new Date().toISOString(),
+        };
+        await db.upsertTaskList(todayList);
+        todayListCreated = true;
+      }
+
+      // Track which item IDs have already been carried to prevent duplicates
+      const existingNames = new Set((todayList.items||[]).map(i => i.name + '|' + (i.carryoverLog||[]).length));
+
       for (const tl of toCarry) {
-        const incomplete = (tl.items||[]).filter(i=>!i.removedAt && i.status!=='completed');
-        if (incomplete.length===0) continue;
-        // Find or create today's list
-        let todayList = taskLists.find(t=>t.type==='daily'&&t.dateStart===today&&!t.archived);
-        if (!todayList) {
-          todayList = {
-            id:Math.random().toString(36).slice(2,9), title:`Daily Tasks — ${today}`,
-            type:'daily', dateStart:today, dateEnd:null, brief:'Auto-generated from carryover.',
-            archived:false, allTasksComplete:false, items:[], auditLog:[],
-            createdAt:new Date().toISOString(),
-          };
-          await db.upsertTaskList(todayList);
-        }
-        // Carry items over
+        const incomplete = (tl.items||[]).filter(i => !i.removedAt && i.status!=='completed');
+        if (incomplete.length === 0) continue;
+
         for (const item of incomplete) {
-          const carried = {...item,
-            id:Math.random().toString(36).slice(2,9),
-            status:'pending', completedBy:'', completedAt:null,
-            needsSupportBy:'', needsSupportAt:null,
-            carryoverLog:[...(item.carryoverLog||[]),{date:tl.dateStart||yesterday, fromTitle:tl.title}],
+          // Deduplicate — skip if same item already carried to today
+          const key = item.name + '|' + ((item.carryoverLog||[]).length + 1);
+          if (existingNames.has(key)) continue;
+          existingNames.add(key);
+
+          const carried = {
+            ...item,
+            id: Math.random().toString(36).slice(2,9),
+            status: 'pending', completedBy: '', completedAt: null,
+            needsSupportBy: '', needsSupportAt: null,
+            assignedTo: item.assignedTo || [], // preserve original assignment
+            carryoverLog: [...(item.carryoverLog||[]), { date: tl.dateStart||tl.title, fromTitle: tl.title }],
           };
           await db.upsertTaskItem(carried, todayList.id);
+          todayList = { ...todayList, items: [...(todayList.items||[]), carried] };
         }
-        // Archive old list
-        const archived = {...tl, archived:true, archivedAt:new Date().toISOString()};
+
+        // Archive the original list
+        const archived = { ...tl, archived:true, archivedAt: new Date().toISOString() };
         await db.upsertTaskList(archived);
         onUpdate(archived);
       }
     };
     checkCarryover();
-  },[]);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const sort = (arr) => [...arr].sort((a,b)=>{
     if (a.type==='nodate') return 1;
@@ -3129,6 +3251,7 @@ function TaskListView({ taskLists, user, onSelect, onCreateNew, onUpdate, onDupl
                       ? <button className="btn bok bsm" style={{fontSize:10}} onClick={()=>setConfirmUnarchive(tl)}>↩ Reinstate</button>
                       : <button className="btn bghost bsm" style={{fontSize:10}} onClick={()=>setConfirmArchive(tl)}>Archive</button>
                     }
+                    <button className="btn bdng bsm" style={{fontSize:10}} onClick={()=>setConfirmDelete(tl)}>🗑</button>
                   </div>
                 )}
               </div>
@@ -3164,6 +3287,14 @@ function TaskListView({ taskLists, user, onSelect, onCreateNew, onUpdate, onDupl
           <div className="modal">
             <Confirm title="Reinstate Task List?" body={`Reinstate "${confirmUnarchive.title}"? It will move back to Active lists.`}
               onConfirm={() => handleUnarchive(confirmUnarchive)} onCancel={() => setConfirmUnarchive(null)} confirmLabel="Reinstate" />
+          </div>
+        </div>
+      )}
+      {confirmDelete && (
+        <div className="mback ctr"><div className="mover" onClick={() => setConfirmDelete(null)} />
+          <div className="modal">
+            <Confirm title="Permanently Delete?" body={`Delete "${confirmDelete.title}" and all its tasks forever? This cannot be undone.`}
+              danger onConfirm={() => handleDelete(confirmDelete)} onCancel={() => setConfirmDelete(null)} confirmLabel="Yes, Delete Permanently" />
           </div>
         </div>
       )}
@@ -3407,7 +3538,7 @@ export default function App() {
             selectedTask ? (
               <TaskDetail taskList={selectedTask} user={user} onBack={()=>setSelectedTask(null)} onUpdate={(tl)=>{ setTaskLists(prev=>prev.map(t=>t.id===tl.id?tl:t)); setSelectedTask(tl); }} users={users} />
             ) : (
-              <TaskListView taskLists={taskLists} user={user} onSelect={setSelectedTask} onCreateNew={()=>setShowCreateTask(true)} onUpdate={(tl)=>setTaskLists(prev=>prev.map(t=>t.id===tl.id?tl:t))} onDuplicate={(tl)=>{ setShowCreateTask(true); sessionStorage.setItem('cf_template_task', JSON.stringify(tl)); }} />
+              <TaskListView taskLists={taskLists} user={user} onSelect={setSelectedTask} onCreateNew={()=>setShowCreateTask(true)} onUpdate={(tl)=>setTaskLists(prev=>prev.map(t=>t.id===tl.id?tl:t))} onDuplicate={(tl)=>{ setShowCreateTask(true); sessionStorage.setItem('cf_template_task', JSON.stringify(tl)); }} onDeleteList={(id)=>setTaskLists(prev=>prev.filter(t=>t.id!==id))} />
             )
           ) : !isAdmin ? (
             <EventList events={events} user={user} onSelect={setSelectedEvent} onCreateNew={() => setShowCreate(true)} onUpdate={ev=>setEvents(prev=>prev.map(e=>e.id===ev.id?ev:e))} onDuplicate={ev=>{setShowCreate(true); sessionStorage.setItem('cf_template_event', JSON.stringify(ev));}} />
@@ -3417,7 +3548,7 @@ export default function App() {
             selectedTask ? (
               <TaskDetail taskList={selectedTask} user={user} onBack={()=>setSelectedTask(null)} onUpdate={(tl)=>{ setTaskLists(prev=>prev.map(t=>t.id===tl.id?tl:t)); setSelectedTask(tl); }} users={users} />
             ) : (
-              <TaskListView taskLists={taskLists} user={user} onSelect={setSelectedTask} onCreateNew={()=>setShowCreateTask(true)} onUpdate={(tl)=>setTaskLists(prev=>prev.map(t=>t.id===tl.id?tl:t))} onDuplicate={(tl)=>{ setShowCreateTask(true); sessionStorage.setItem('cf_template_task', JSON.stringify(tl)); }} />
+              <TaskListView taskLists={taskLists} user={user} onSelect={setSelectedTask} onCreateNew={()=>setShowCreateTask(true)} onUpdate={(tl)=>setTaskLists(prev=>prev.map(t=>t.id===tl.id?tl:t))} onDuplicate={(tl)=>{ setShowCreateTask(true); sessionStorage.setItem('cf_template_task', JSON.stringify(tl)); }} onDeleteList={(id)=>setTaskLists(prev=>prev.filter(t=>t.id!==id))} />
             )
           ) : adminTab === 'Activity Log' ? (
             <ActivityLog users={users} events={events} />
