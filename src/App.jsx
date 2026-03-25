@@ -61,8 +61,8 @@ input,textarea,select,button{font-family:var(--fb)}
 .bok{background:var(--ok2);border:1px solid var(--ok);color:var(--ok);padding:8px 13px;font-size:13px}
 .bsm{padding:5px 10px;font-size:11px;font-weight:700;letter-spacing:.4px}
 .field{margin-bottom:13px}
-.flbl{font-size:10px;font-weight:700;letter-spacing:2px;color:var(--mu);text-transform:uppercase;display:block;margin-bottom:6px}
-.fi,.fsel,.fta{width:100%;background:var(--s2);border:1px solid var(--br);border-radius:var(--r);padding:11px 13px;color:var(--tx);font-size:14px;outline:none;transition:border-color .18s;appearance:none}
+.flbl{font-size:11px;font-weight:700;letter-spacing:2px;color:var(--mu);text-transform:uppercase;display:block;margin-bottom:8px}
+.fi,.fsel,.fta{width:100%;background:var(--s2);border:1px solid var(--br);border-radius:var(--r);padding:13px 15px;color:var(--tx);font-size:16px;outline:none;transition:border-color .18s;appearance:none}
 .fi:focus,.fsel:focus,.fta:focus{border-color:var(--bl)}
 .fta{resize:vertical;min-height:74px}
 .frow{display:flex;gap:10px}
@@ -74,12 +74,12 @@ input,textarea,select,button{font-family:var(--fb)}
 .l-title{font-family:var(--fh);font-size:54px;font-weight:900;line-height:.93;text-align:center;margin-bottom:6px}
 .l-title em{color:var(--bl);font-style:normal;display:block}
 .l-sub{font-size:13px;color:var(--mu);margin-bottom:28px;text-align:center}
-.l-card{background:var(--sf);border:1px solid var(--br);border-radius:var(--rx);padding:22px;width:100%;max-width:340px}
+.l-card{background:var(--sf);border:1px solid var(--br);border-radius:var(--rx);padding:28px;width:100%;max-width:420px}
 .pdots{display:flex;gap:10px;margin-bottom:18px}
-.pdot{flex:1;height:48px;background:var(--s2);border:1px solid var(--br);border-radius:var(--r);display:flex;align-items:center;justify-content:center;font-size:18px;transition:.14s}
+.pdot{flex:1;height:58px;background:var(--s2);border:1px solid var(--br);border-radius:var(--r);display:flex;align-items:center;justify-content:center;font-size:22px;transition:.14s}
 .pdot.on{border-color:var(--bl);color:var(--bl)}
 .pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.pkey{background:var(--s2);border:1px solid var(--br);border-radius:var(--r);height:50px;font-family:var(--fh);font-size:22px;font-weight:700;color:var(--tx);cursor:pointer;transition:.1s;display:flex;align-items:center;justify-content:center}
+.pkey{background:var(--s2);border:1px solid var(--br);border-radius:var(--r);height:64px;font-family:var(--fh);font-size:26px;font-weight:700;color:var(--tx);cursor:pointer;transition:.1s;display:flex;align-items:center;justify-content:center}
 .pkey:active{background:var(--bl2);border-color:var(--bl);color:var(--bl)}
 .pkey.go{background:var(--bl);color:#fff;border-color:var(--bl)}
 .l-err{color:var(--dn);font-size:12px;text-align:center;margin-top:8px;min-height:16px}
@@ -3347,7 +3347,7 @@ function Login({ onLogin, users }) {
 
   if (adminMode) return (
     <div className="login">
-      <img src="/CrewFlowLogo.png" alt="CrewFlow" style={{width:'100%',maxWidth:280,marginBottom:24,objectFit:'contain'}} />
+      <img src="/CrewFlowLogo.png" alt="CrewFlow" style={{width:'100%',maxWidth:380,marginBottom:28,objectFit:'contain'}} />
       <div className="l-card">
         {stage === 'adminconfirm' && pendingUser ? (
           <div className="l-confirm">
@@ -3386,7 +3386,7 @@ function Login({ onLogin, users }) {
 
   return (
     <div className="login">
-      <img src="/CrewFlowLogo.png" alt="CrewFlow" style={{width:'100%',maxWidth:280,marginBottom:24,objectFit:'contain'}} />
+      <img src="/CrewFlowLogo.png" alt="CrewFlow" style={{width:'100%',maxWidth:380,marginBottom:28,objectFit:'contain'}} />
       <div className="l-card">
         {stage === 'confirm' && pendingUser ? (
           <div className="l-confirm">
