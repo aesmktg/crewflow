@@ -1074,6 +1074,61 @@ function NotesSection({ refId, refType, user }) {
   );
 }
 
+
+// ─── HOLD TO DELETE ───────────────────────────────────────────────────────────
+function HoldToDelete({ onDelete }) {
+  const [holding, setHolding] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const timerRef = useRef(null);
+  const intervalRef = useRef(null);
+  const HOLD_MS = 1500;
+
+  const startHold = () => {
+    setHolding(true);
+    setProgress(0);
+    const start = Date.now();
+    intervalRef.current = setInterval(() => {
+      const pct = Math.min(((Date.now() - start) / HOLD_MS) * 100, 100);
+      setProgress(pct);
+    }, 30);
+    timerRef.current = setTimeout(() => {
+      clearInterval(intervalRef.current);
+      setHolding(false);
+      setProgress(0);
+      onDelete();
+    }, HOLD_MS);
+  };
+
+  const cancelHold = () => {
+    clearTimeout(timerRef.current);
+    clearInterval(intervalRef.current);
+    setHolding(false);
+    setProgress(0);
+  };
+
+  return (
+    <button
+      className="btn bdng bsm"
+      style={{ position:'relative', overflow:'hidden', minWidth:36, userSelect:'none' }}
+      onMouseDown={startHold}
+      onMouseUp={cancelHold}
+      onMouseLeave={cancelHold}
+      onTouchStart={startHold}
+      onTouchEnd={cancelHold}
+      title="Hold to delete"
+    >
+      {holding && (
+        <div style={{
+          position:'absolute', left:0, top:0, height:'100%',
+          width:`${progress}%`, background:'rgba(220,38,38,0.3)',
+          transition:'none', borderRadius:'var(--r)'
+        }} />
+      )}
+      <span style={{position:'relative'}}>✕</span>
+    </button>
+  );
+}
+
 function EventDetail({ event, user, onBack, onUpdate, masterItems, fleet, users }) {
   const categories = useContext(CatContext);
   const [statusTarget, setStatusTarget] = useState(null);
@@ -1394,7 +1449,10 @@ function EventDetail({ event, user, onBack, onUpdate, masterItems, fleet, users 
                   {canEdit && !isLocked && (
                     <div style={{ display:'flex', gap:4 }}>
                       <button className="btn bghost bsm" onClick={() => setEditTarget(item)}>Edit</button>
-                      <button className="btn bdng bsm" onClick={() => setRemoveTarget(item)}>✕</button>
+                      {isAdmin
+                        ? <button className="btn bdng bsm" onClick={() => setRemoveTarget(item)}>✕</button>
+                        : <HoldToDelete onDelete={() => setRemoveTarget(item)} />
+                      }
                     </div>
                   )}
                 </div>
@@ -2954,7 +3012,7 @@ function TaskDetail({ taskList, user, onBack, onUpdate, users }) {
               {!isLocked && !taskList.archived && (
                 <div style={{display:'flex',gap:4,flexWrap:'wrap',justifyContent:'flex-end'}}>
                   <button className="btn bghost bsm" onClick={()=>setEditItem(item)}>Edit</button>
-                  <button className="btn bghost bsm" style={{color:'var(--bl)',borderColor:'var(--bl)'}} onClick={()=>setMoveTarget(item)}>↗ Move</button>
+                  {isAdmin && <button className="btn bghost bsm" style={{color:'var(--bl)',borderColor:'var(--bl)'}} onClick={()=>setMoveTarget(item)}>↗ Move</button>}
                   {isAdmin && <button className="btn bdng bsm" onClick={()=>setRemoveTarget(item)}>✕</button>}
                 </div>
               )}
